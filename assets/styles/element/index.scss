@@ -1,0 +1,41 @@
+// https://github.com/element-plus/element-plus/blob/dev/packages/theme-chalk/src/common/var.scss
+
+// 设置主题色
+$-colors: (
+  "white": #ffffff,
+  "black": #000000,
+  "primary": (
+    "base": #00b755
+  ),
+  "success": (
+    "base": #67c23a
+  ),
+  "warning": (
+    "base": #e6a23c
+  ),
+  "danger": (
+    "base": #f56c6c
+  ),
+  "error": (
+    "base": #f56c6c
+  ),
+  "info": (
+    "base": #909399
+  )
+);
+
+$-border-radius: (
+  "base": 8px,
+);
+
+
+@forward "element-plus/theme-chalk/src/mixins/config.scss" with (
+  $namespace: "el"
+);
+
+@forward "element-plus/theme-chalk/src/common/var.scss" with (
+  $colors: $-colors,
+  $border-radius: $-border-radius
+);
+
+@use "./dark.scss";

@@ -1,0 +1,85 @@
+// 颜色
+$brand-1: #00b755;
+$brand-2: #50a675;
+$brand-3: #d1ecdd;
+$brand-4: #f0f9f4;
+$brand-5: #00b755;
+$brand-6: #49996d;
+$brand-7: #cae4d6;
+
+$color-line-1: #f0f3f7;
+$color-line-2: #e6e9ed;
+
+$color-fill-1: #c3c5c7;
+$color-fill-2: #d5d7db;
+$color-fill-3: #e1e4e8;
+$color-fill-4: #ebedf0;
+$color-fill-5: #f5f7fa;
+$color-fill-6: #ffffff;
+
+$color-text-1: #141414;
+$color-text-2: #292929;
+$color-text-3: #5e5e5e;
+$color-text-4: #858585;
+$color-text-5: #b8b8b8;
+$color-text-6: #ffffff;
+
+$success-1: #00b42a;
+$success-2: #009a29;
+$success-3: #7be188;
+$success-4: #aff0b5;
+$success-5: #e8ffea;
+
+$warning-1: #ff7d00;
+$warning-2: #d25f00;
+$warning-3: #ffcf8b;
+$warning-4: #ffe4ba;
+$warning-5: #fff7e8;
+
+$danger-1: #f53f3f;
+$danger-2: #cb2634;
+$danger-3: #fbaca3;
+$danger-4: #fdcdc5;
+$danger-5: #ffece8;
+
+// 无箭头滚动条样式
+$scrollbar-size: 16px;
+$scrollbar-thumb-color: rgba(#666, 0.8);
+$scrollbar-thumb-hover-color: rgba(#999, 0.9);
+
+@mixin no-arrow-scrollbar {
+  &::-webkit-scrollbar {
+    width: $scrollbar-size;
+    height: $scrollbar-size;
+
+    // 隐藏所有方向箭头
+    &-button {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+
+    &-track {
+      background: transparent;
+      margin: 0; // 移除轨道边距
+    }
+
+    &-thumb {
+      background: $scrollbar-thumb-color;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: $scrollbar-thumb-hover-color;
+      }
+    }
+
+    &-corner {
+      background: transparent;
+    }
+  }
+
+  // Firefox支持（默认无箭头）
+  scrollbar-width: thin;
+  scrollbar-color: $scrollbar-thumb-color transparent;
+}

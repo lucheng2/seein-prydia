@@ -1,0 +1,156 @@
+@use './variables.scss';
+
+*:root {
+  --bc: #000;
+  --b2: #000;
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+a,
+button,
+input {
+  -webkit-tap-highlight-color: rgba(255, 0, 0, 0);
+}
+
+input,
+button,
+select,
+textarea {
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font: inherit;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+img {
+  width: 100%;
+  user-select: none;
+  /* 禁止选中 */
+  pointer-events: none;
+  /* 禁止点击 */
+  -webkit-user-drag: none;
+  /* 禁止拖拽（适用于WebKit浏览器） */
+}
+
+body {
+  background-color: #0F0F12;
+  font-family: 'PingFang SC';
+}
+
+
+.js-visible[data-shown="0"] .text {
+  opacity: 0;
+  transform: translateY(120%);
+  transition: transform .8s, opacity .8s;
+  will-change: transform, opacity
+}
+
+.js-visible[data-shown="0"] .out {
+  -webkit-clip-path: polygon(0 0, 100% 0, 100% 60%, 0 100%);
+  clip-path: polygon(0 0, 100% 0, 100% 60%, 0 100%);
+  opacity: 0;
+  transform: translateY(-120%);
+  transition: transform .8s, opacity .8s, -webkit-clip-path .8s;
+  transition: clip-path .8s, transform .8s, opacity .8s;
+  transition: clip-path .8s, transform .8s, opacity .8s, -webkit-clip-path .8s;
+  will-change: transform, opacity, clip-path
+}
+
+.js-visible[data-shown="1"] .text {
+  opacity: 1;
+  transform: translate(0);
+  transition: transform 1s, opacity .8s;
+  will-change: transform, opacity
+}
+
+.js-visible[data-shown="1"] .out {
+  -webkit-clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  opacity: 1;
+  transform: translate(0);
+  transition: transform 1s, opacity .8s, -webkit-clip-path .8s;
+  transition: clip-path .8s, transform 1s, opacity .8s;
+  transition: clip-path .8s, transform 1s, opacity .8s, -webkit-clip-path .8s;
+  will-change: transform, opacity, clip-path
+}
+
+.js-visible {
+  transition: none
+}
+
+.js-visible,
+.js-visible .out {
+  will-change: clip-path transform, opacity;
+}
+
+.out,
+.text {
+  display: block;
+  width: 100%;
+}
+
+.js-link-text__in {
+  display: block;
+  height: 50%;
+  overflow: hidden;
+  position: relative
+}
+
+.js-link-text__label,.js-link-text__label-a,.js-link-text__wrap span {
+  display: inline-block
+}
+
+.js-link-text__hover,.js-link-text__hover-a {
+  display: inline-block;
+  left: 0;
+  overflow: hidden;
+  position: absolute;
+  top: 100%;
+  transform: translateY(-50%) translateY(100%);
+  width: 100%
+}
+
+.js-link-text__hover,.js-link-text__label {
+  transform: translate(0) translateY(-100%)
+}
+
+
+
+.glass-effect {
+  position: relative;
+  overflow: hidden;
+  background: rgba(#7F6F99, var(--glass-opacity, 0.4));
+  backdrop-filter: blur(10px); /* 关键：背景模糊 */
+  -webkit-backdrop-filter: blur(10px); /* Safari 兼容 */
+}
+
+/* 可选：增加伪元素提升效果（解决边缘模糊问题） */
+.glass-effect::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: inherit;
+  background: inherit;
+  z-index: -1;
+}

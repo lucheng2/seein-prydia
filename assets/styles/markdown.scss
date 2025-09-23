@@ -1,0 +1,40 @@
+.md-editor {
+  --md-color: #141414;
+  --md-hover-color: #000;
+  --md-bk-color: rgba(255, 255, 255, 0);
+  --md-bk-color-outstand: #f2f2f2;
+  --md-bk-hover-color: #f5f7fa;
+  --md-border-color: #e6e6e6;
+  --md-border-hover-color: #b9b9b9;
+  --md-border-active-color: #999;
+  --md-modal-mask: #00000073;
+  --md-modal-shadow: 0px 6px 24px 2px #00000019;
+  --md-scrollbar-bg-color: #e2e2e2;
+  --md-scrollbar-thumb-color: #0000004d;
+  --md-scrollbar-thumb-hover-color: #00000059;
+  --md-scrollbar-thumb-active-color: #00000061;
+
+  :deep(*) {
+    font-size: 16px;
+  }
+
+  :deep(ol), :deep(ul) {
+    list-style: revert !important;
+  }
+
+  :deep(h1) {
+    margin: 0;
+  }
+
+  :deep(h2) {
+    margin: 0;
+  }
+
+  :deep(.md-editor-preview) {
+    --md-theme-code-inline-color: #244fde;
+  }
+
+  :deep(.md-editor-preview-wrapper .md-editor-preview p) {
+    margin: 0;
+  }
+}
