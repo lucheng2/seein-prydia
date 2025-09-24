@@ -55,7 +55,7 @@ const scrollToUpperSection = () => {
 </script>
 
 <template>
-  <NuxtLayout name="login" :route-list="homeRouteList">
+  <NuxtLayout name="login">
     <template #content>
       <div ref="mainContentRef" class="main relative z-99 h-screen overflow-scroll">
         <!-- 上方标题区域 - 添加引用 -->

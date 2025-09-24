@@ -2,7 +2,7 @@
 import { UiSvgIcon } from '#components'
 
 interface Props {
-  loading: boolean
+  loading?: boolean
   inputDisabled?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
@@ -49,12 +49,12 @@ const sendDisabled = computed(() => {
     >
       <el-input
         v-model="modelValue"
-        placeholder="输入你的问题，发送给Seein"
+        placeholder="Please enter your content, and l will give you the most sincere response."
         :autosize="{
           minRows: 2,
           maxRows: 6,
         }"
-        class="mb-[6px] min-h-[62px]"
+        class="mb-[6px]"
         type="textarea"
         autofocus
         resize="none"
@@ -78,9 +78,6 @@ const sendDisabled = computed(() => {
         />
       </div>
     </div>
-    <div class="py-[12px] text-center text-[12px] text-[#858585]">
-      提示：咨询内容由AI生成，不具备专业医疗建议。如您有紧急情况，建议寻求专业帮助
-    </div>
   </div>
 </template>
 
@@ -88,13 +85,10 @@ const sendDisabled = computed(() => {
 .seein-chat-input::after {
 }
 .seein-chat-input {
-  background: #ffffff;
   border-radius: 12px 16px;
-  box-shadow: 0 0 0 1px var(--el-border-color) inset;
   padding: 12px;
   display: flex;
   flex-direction: column;
-  transition: box-shadow 0.2s ease-in-out;
   position: relative;
   &.is-focus::after {
     width: calc(100% - 24px);
@@ -128,20 +122,7 @@ const sendDisabled = computed(() => {
       width: 0;
     }
   }
-  &::before {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: #ffffff;
-    z-index: -1;
-    border-radius: 12px 16px;
-  }
-  &:hover {
-    box-shadow: 0 0 0 1px var(--el-border-color-hover) inset;
-  }
+
   :deep(.el-input) {
     --el-input-inner-height: unset;
     line-height: unset !important;
@@ -150,7 +131,10 @@ const sendDisabled = computed(() => {
     box-shadow: none;
     padding: unset;
     font-size: 16px;
-    color: $color-text-1;
+    color: #fff;
+    background: #1E1F25 !important;
+    caret-color: #fff;
+
   }
   :deep(.el-textarea.is-disabled .el-textarea__inner) {
     background: unset !important;

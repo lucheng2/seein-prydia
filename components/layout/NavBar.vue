@@ -16,6 +16,7 @@ const props = withDefaults(defineProps<Props>(), {
   logo: 'green',
   width: '100%',
   isAbsolute: false,
+  fixed: false,
   routeList: () => [],
 })
 
@@ -27,6 +28,7 @@ interface Props {
   logo?: string
   width?: string
   isAbsolute?: boolean
+  fixed?: boolean
   routeList: any[]
 }
 
@@ -172,9 +174,10 @@ const { updateNavbarStyles } = useGlass()
 <template>
   <div
     id="navbar"
-    class="fixed w-full"
+    class="w-full"
     :class="{
       'is-absolute': props.isAbsolute,
+      'fixed': props.fixed,
     }"
   >
     <div
@@ -186,14 +189,15 @@ const { updateNavbarStyles } = useGlass()
       justify-center
     >
       <div class="seein-nav z-188 flex items-center justify-between">
-        <div>
+        <div flex="~ items-center justify-center">
           <NuxtLink
             v-if="logoImg"
             to="/"
-            class="seein-nav__logo flex items-center justify-center px-[12px]"
+            class="seein-nav__logo flex items-center justify-center pr-[12px]"
           >
             <img :src="logoImg" alt="logo" />
           </NuxtLink>
+          <slot name="left" />
         </div>
 
         <div class="seein-nav__links">
@@ -348,7 +352,7 @@ const { updateNavbarStyles } = useGlass()
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 24px;
+    padding-right: 20px;
     img {
       width: 100px;
       height: 60px;
