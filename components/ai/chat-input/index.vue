@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { UiSvgIcon } from '#components'
+import CoachSelect from './CoachSelect.vue'
 
 interface Props {
   loading?: boolean
@@ -52,7 +53,7 @@ const sendDisabled = computed(() => {
         placeholder="Please enter your content, and l will give you the most sincere response."
         :autosize="{
           minRows: 2,
-          maxRows: 6,
+          maxRows: 4,
         }"
         class="mb-[6px]"
         type="textarea"
@@ -64,6 +65,9 @@ const sendDisabled = computed(() => {
         @blur="isFocus = false"
       />
       <div class="seein-chat-input__btns">
+        <div>
+          <CoachSelect />
+        </div>
         <UiIcon
           class="seein-chat-input__btns--item send-button"
           :class="[{ 'send-button--disabled': sendDisabled }]"
@@ -85,8 +89,7 @@ const sendDisabled = computed(() => {
 .seein-chat-input::after {
 }
 .seein-chat-input {
-  border-radius: 12px 16px;
-  padding: 12px;
+  padding: 12px 16px;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -132,16 +135,49 @@ const sendDisabled = computed(() => {
     padding: unset;
     font-size: 16px;
     color: #fff;
-    background: #1E1F25 !important;
+    background: #1e1f25 !important;
     caret-color: #fff;
+    /* 深色主题滚动条 - Webkit浏览器 */
+    &::-webkit-scrollbar {
+      width: 12px; /* 垂直滚动条宽度 */
+      height: 12px; /* 水平滚动条高度 */
+    }
 
+    &::-webkit-scrollbar-track {
+      background: #2d2d2d; /* 轨道背景色 */
+      border-radius: 6px;
+      margin: 2px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #555555; /* 滑块颜色 */
+      border-radius: 6px;
+      border: 2px solid #2d2d2d; /* 滑块边框 */
+      transition: background-color 0.2s ease;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: #777777; /* 悬停时滑块颜色 */
+      cursor: pointer;
+    }
+
+    &::-webkit-scrollbar-thumb:active {
+      background: #999999; /* 点击时滑块颜色 */
+    }
+
+    /* 滚动条角落 */
+    &::-webkit-scrollbar-corner {
+      background: #2d2d2d;
+    }
   }
   :deep(.el-textarea.is-disabled .el-textarea__inner) {
     background: unset !important;
   }
   &__btns {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: center;
+
     &--item {
       width: 32px;
       height: 32px;
@@ -175,4 +211,7 @@ const sendDisabled = computed(() => {
   filter: none;
   box-shadow: none;
 }
+</style>
+
+<style lang="scss">
 </style>

@@ -154,3 +154,35 @@ body {
   background: inherit;
   z-index: -1;
 }
+
+/* 深色主题滚动条 - Webkit浏览器 */
+::-webkit-scrollbar {
+  width: 12px; /* 垂直滚动条宽度 */
+  height: 12px; /* 水平滚动条高度 */
+}
+
+::-webkit-scrollbar-track {
+  background: #2d2d2d; /* 轨道背景色 */
+  border-radius: 6px;
+  margin: 2px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #555555; /* 滑块颜色 */
+  border-radius: 6px;
+  border: 2px solid #2d2d2d; /* 滑块边框 */
+  transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #777777; /* 悬停时滑块颜色 */
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: #999999; /* 点击时滑块颜色 */
+}
+
+/* 滚动条角落 */
+::-webkit-scrollbar-corner {
+  background: #2d2d2d;
+}

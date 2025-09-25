@@ -36,7 +36,7 @@ const handleSelect = (conversation: any) => {
 }
 
 onMounted(() => {
-  for (let index = 0; index < 100; index++) {
+  for (let index = 0; index < 30; index++) {
     conversationsGrouped.value[0].list.push({
       theme: 'hello',
       id: index,
@@ -71,7 +71,7 @@ onMounted(() => {
     </LayoutNavBar>
     <div class="seein-default-layout__content relative z-2">
       <div class="sidebar-container" :class="{ collapsed: isCollapsed }">
-        <UiCard style="height: 100%">
+        <UiCard style="height: 100%;z-index: 2;">
           <div class="sidebar">
             <div flex="~ items-center justify-between" p="24px 22px 20px 24px">
               <div text="white 18px">History Chat</div>
@@ -172,7 +172,19 @@ onMounted(() => {
   flex-shrink: 0;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 10;
-  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: fixed;
+    top: -100px;
+    width: 92px;
+    height: 430px;
+    transform: rotate(-35deg);
+    background: linear-gradient(179deg, #7c2bff 0%, #ee3942 63%, #ffdc2d 100%);
+    filter: blur(120px);
+    z-index: 0;
+  }
+
   &.collapsed {
     transform: translateX(calc(-100% - 40px));
   }
@@ -183,37 +195,7 @@ onMounted(() => {
     height: calc(100vh - 94px - 24px);
     display: flex;
     flex-direction: column;
-    /* 深色主题滚动条 - Webkit浏览器 */
-    ::-webkit-scrollbar {
-      width: 12px; /* 垂直滚动条宽度 */
-      height: 12px; /* 水平滚动条高度 */
-    }
 
-    ::-webkit-scrollbar-track {
-      background: #2d2d2d; /* 轨道背景色 */
-      border-radius: 6px;
-      margin: 2px;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: #555555; /* 滑块颜色 */
-      border-radius: 6px;
-      border: 2px solid #2d2d2d; /* 滑块边框 */
-      transition: background-color 0.2s ease;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: #777777; /* 悬停时滑块颜色 */
-    }
-
-    ::-webkit-scrollbar-thumb:active {
-      background: #999999; /* 点击时滑块颜色 */
-    }
-
-    /* 滚动条角落 */
-    ::-webkit-scrollbar-corner {
-      background: #2d2d2d;
-    }
     .active-tab {
       color: #fff;
       &::after {

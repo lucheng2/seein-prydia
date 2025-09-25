@@ -101,12 +101,12 @@ const _borderWidth = computed(() => {
 }
 
 /* Rotating animation */
-@keyframes rotateAnim {
+/* @keyframes rotateAnim {
   from {
     transform: rotate(0deg);
   }
   to {
     transform: rotate(360deg);
   }
-}
+} */
 </style>

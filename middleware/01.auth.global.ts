@@ -6,7 +6,7 @@ const VITE_NODE_ENV = import.meta.env.VITE_NODE_ENV
 const NEED_ENV = ['production', 'dev']
 
 // 白名单
-const WhitePaths = ['/', '/ai', '/about', '/legal/**']
+const WhitePaths = ['/', '/demo', '/ai', '/about', '/legal/**']
 
 // 如果有多个全局中间件，根据ascll（阿斯克码）从小到大排序执行
 export default defineNuxtRouteMiddleware(async (to, from) => {

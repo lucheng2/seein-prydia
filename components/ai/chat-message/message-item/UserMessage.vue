@@ -9,7 +9,10 @@ const props = withDefaults(defineProps<Props>(), {
 
 <template>
   <div class="seein-user-message-item">
-    <div class="seein-user-message-item__content">{{ message.content }}</div>
+    <div class="seein-user-message-item__content max-w-[700px]">{{ message.content }}</div>
+    <div class="ml-[12px] h-[36px] w-[36px] flex-shrink-0 self-end rounded-full bg-[#fff]">
+      <img />
+    </div>
   </div>
 </template>
 
@@ -19,11 +22,11 @@ const props = withDefaults(defineProps<Props>(), {
   display: flex;
   justify-content: flex-end;
   &__content {
-    background: #E9F7EE;
-    border-radius: 8px;
-    padding: 9px 16px;
+    background: linear-gradient(92deg, #703edb 0%, #f773a1 75%, #0c76ff 100%);
+    border-radius: 16px 16px 0px 16px;
+    padding: 16px 20px;
     font-size: 16px;
-    color: $color-text-1;
+    color: #f5f7fa;
     line-height: 24px;
   }
 }
