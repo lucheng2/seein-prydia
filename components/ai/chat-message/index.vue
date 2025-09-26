@@ -50,26 +50,25 @@ defineExpose({
 </script>
 
 <template>
-  <div class="seein-chat-message flex flex-col items-center">
-    <template v-for="item in messageList" :key="item.id">
-      <component
-        v-bind="item.attrs"
-        :is="ComponentsMap[item.sender as keyof typeof ComponentsMap]"
-        :ref="(el: any) => handleSetRefMap(el, item)"
-        :message="item"
-        @on="emit"
-      />
-    </template>
+  <div class="overflow-auto">
+    <div class="seein-chat-message w-full flex flex-col items-center">
+      <template v-for="item in messageList" :key="item.id">
+        <component
+          v-bind="item.attrs"
+          :is="ComponentsMap[item.sender as keyof typeof ComponentsMap]"
+          :ref="(el: any) => handleSetRefMap(el, item)"
+          :message="item"
+          @on="emit"
+        />
+      </template>
+    </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .seein-chat-message {
   & > div {
-    margin-bottom: 20px;
-  }
-  & > div:first-child {
-    margin-top: 0;
+    margin-top: 24px;
   }
 }
 </style>

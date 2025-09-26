@@ -22,8 +22,8 @@ const props = withDefaults(defineProps<Props>(), {
     #ffe600 85%,
     #00c3ff 100%
   )`,
-  rotatingWidth: '200%',
-  rotatingHeight: '200%',
+  rotatingWidth: '500%',
+  rotatingHeight: '500%',
   background: '#1E1F25',
 })
 const _borderRadius = computed(() => `${props.radius}px`)
@@ -47,7 +47,7 @@ const _borderWidth = computed(() => {
 <template>
   <div class="card">
     <div class="gradient-overlay"></div>
-    <div class="z-9">
+    <div class="z-9 h-full w-full">
       <slot />
     </div>
   </div>
@@ -101,12 +101,12 @@ const _borderWidth = computed(() => {
 }
 
 /* Rotating animation */
-@keyframes rotateAnim {
+/* @keyframes rotateAnim {
   from {
     transform: rotate(0deg);
   }
   to {
     transform: rotate(360deg);
   }
-}
+} */
 </style>

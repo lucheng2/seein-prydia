@@ -120,8 +120,13 @@ onUnmounted(() => {
 <template>
   <div v-if="!loading" class="w-full">
     <div class="seein-ai-message-item">
+      <div
+        class="mr-[12px] h-[36px] w-[36px] flex-shrink-0 self-start rounded-full bg-[#fff]"
+      >
+        <img />
+      </div>
       <!-- <div :id="`markdown-content_${message.id}`" class="seein-ai-message-item__content"></div> -->
-      <div class="seein-ai-message-item__content">
+      <div class="seein-ai-message-item__content max-w-[700px]">
         <MdPreview
           v-model="text"
           class="markdown-content"
@@ -140,7 +145,7 @@ onUnmounted(() => {
 
   <div
     v-else
-    class="seein-ai-message-loading h-[52px] w-full flex items-center justify-start gap-1 md:w-[800px]"
+    class="seein-ai-message-loading h-[52px] w-full flex items-center justify-start gap-1 md:w-[900px]"
   >
     <UiLoadingSpinner />
   </div>
@@ -154,11 +159,11 @@ onUnmounted(() => {
   display: flex;
   justify-content: flex-start;
   &__content {
-    background: $color-fill-5;
-    border-radius: 8px;
-    padding: 9px 16px;
+    background: #2c2933;
+    border-radius: 0px 16px 16px 16px;
+    padding: 16px 20px;
     font-size: 16px;
-    color: $color-text-1;
+    color: #f5f7fa;
     line-height: 24px;
   }
 }

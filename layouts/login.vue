@@ -18,6 +18,7 @@ const props = withDefaults(defineProps<Props>(), {
       :logo="logo"
       :route-list="routeList"
       :is-absolute="isAbsolute"
+      fixed
     />
     <div class="seein-default-layout__content relative z-2">
       <slot name="content" />
