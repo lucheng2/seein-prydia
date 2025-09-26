@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import contractIcon from '@/assets/images/icon/contract.png'
 import expandIcon from '@/assets/images/icon/expand.png'
+
+import plusIcon from '@/assets/images/icon/plus.png'
 
 interface Props {
   isAbsolute?: boolean
@@ -58,12 +61,15 @@ onMounted(() => {
         <div flex="~ items-center justify-center">
           <UiCard class="cursor-pointer" @click="toggleSidebar">
             <div class="h-[40px] w-[40px]" flex="~ items-center justify-center">
-              <img class="h-[16px] w-[16px]" :src="expandIcon" alt="expand" />
+              <img
+                class="h-[16px] w-[16px]"
+                :src="isCollapsed ? expandIcon : contractIcon"
+              />
             </div>
           </UiCard>
           <UiCard v-if="isCollapsed" class="ml-[20px] cursor-pointer">
             <div class="h-[40px] w-[40px]" flex="~ items-center justify-center">
-              <img class="h-[16px] w-[16px]" :src="expandIcon" />
+              <img class="h-[16px] w-[16px]" :src="plusIcon" />
             </div>
           </UiCard>
         </div>
@@ -71,7 +77,7 @@ onMounted(() => {
     </LayoutNavBar>
     <div class="seein-default-layout__content relative z-2">
       <div class="sidebar-container" :class="{ collapsed: isCollapsed }">
-        <UiCard style="height: 100%;z-index: 2;">
+        <UiCard style="height: 100%; z-index: 2">
           <div class="sidebar">
             <div flex="~ items-center justify-between" p="24px 22px 20px 24px">
               <div text="white 18px">History Chat</div>
@@ -81,6 +87,7 @@ onMounted(() => {
                   text="#CACCCB 14px"
                   flex="~ items-center justify-center"
                 >
+                  <img class="mr-[6px] h-[16px] w-[16px]" :src="plusIcon" />
                   New Chat
                 </div>
               </UiCard>

@@ -24,12 +24,22 @@ export const useUserStore = defineStore(
             setToken(data.token)
             getUserInfo()
             resolve({})
-            message('登录成功', { type: 'success' })
+            // message('登录成功', { type: 'success' })
           })
           .catch((error) => {
             reject(error)
           })
       })
+    }
+
+    async function loginByToken(param) {
+      try {
+        await setToken(param.token)
+        await getUserInfo()
+      }
+      catch (error) {
+        logout()
+      }
     }
 
     async function logout() {
@@ -45,8 +55,9 @@ export const useUserStore = defineStore(
 
     async function getUserInfo() {
       try {
-        const data = await api.getUserInfo()
-        userInfo.value = data
+        // const data = await api.getUserInfo()
+        // userInfo.value = data
+        userInfo.value = { name: 'admin' }
       }
       catch (error) {
         logout()
@@ -57,6 +68,7 @@ export const useUserStore = defineStore(
       token,
       userInfo,
       login,
+      loginByToken,
       logout,
       getUserInfo,
       getToken,

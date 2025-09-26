@@ -3,6 +3,10 @@ import en from 'element-plus/dist/locale/en.mjs'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 import '@/components/ui/Icon/offlineIcon'
 
+// if (import.meta.client) {
+//   import('amfe-flexible')
+// }
+
 const language = ref('en')
 const locale = computed(() => (language.value === 'zh-cn' ? zhCn : en))
 // defineOgImageComponent('NuxtSeo')

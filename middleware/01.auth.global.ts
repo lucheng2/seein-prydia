@@ -6,7 +6,7 @@ const VITE_NODE_ENV = import.meta.env.VITE_NODE_ENV
 const NEED_ENV = ['production', 'dev']
 
 // 白名单
-const WhitePaths = ['/', '/demo', '/ai', '/about', '/legal/**']
+const WhitePaths = ['/', '/ai', '/about', '/legal/**']
 
 // 如果有多个全局中间件，根据ascll（阿斯克码）从小到大排序执行
 export default defineNuxtRouteMiddleware(async (to, from) => {
@@ -30,7 +30,8 @@ const whiteRouterBefore = (to, from) => {
     if (import.meta.client) openLoginModal()
     return isWhiteFrom ? { path: '/?logic=login' } : from
   }
-  return NEED_ENV.includes(VITE_NODE_ENV) ? devRouterBefore(to, from) : undefined
+  // return NEED_ENV.includes(VITE_NODE_ENV) ? devRouterBefore(to, from) : undefined
+  return undefined
 }
 
 // 开发中，暂时禁用

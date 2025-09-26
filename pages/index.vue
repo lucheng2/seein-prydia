@@ -1,9 +1,13 @@
 <script setup lang="ts">
+import type { FormInstance } from 'element-plus'
+import * as api from '@/apis'
+import bgImg from '@/assets/images/bg.png'
 import closeIcon from '@/assets/images/icon/close.png'
 import loginDescImg from '@/assets/images/login/login-desc.png'
 import prydiaText from '@/assets/svg/prydia.svg'
 import { useHead } from '@unhead/vue'
 import { useEnterLogic } from '~/hooks'
+import { useUserStore } from '~/stores/user'
 
 defineOptions({
   name: 'HomeIndex',
@@ -13,13 +17,12 @@ useHead({
   title: '',
 })
 
+const { login, loginByToken } = useUserStore()
+
 const imageData = ref<ImageData | null>(null)
 
 onMounted(async () => {
   try {
-    // Example: Fetch an SVG image and parse it
-    // The SVG should have a transparent background and black fill color for the best effect
-
     const response = await fetch(prydiaText)
     const blob = await response.blob()
     const file = new File([blob], 'logo.svg', { type: blob.type })
@@ -31,15 +34,135 @@ onMounted(async () => {
   }
 })
 
+const emailRule = [
+  { required: true, message: 'Please input email', trigger: 'blur' },
+  {
+    type: 'email',
+    message: 'Please input correct email address',
+    trigger: ['blur', 'change'],
+  },
+]
+
+const passwordRule = [
+  { required: true, message: 'Please input password', trigger: 'blur' },
+  // 6-20位，只能包含大小写字母、数字、特殊字符
+  // {
+  //   pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{6,20}$/,
+  //   message: 'Please input correct password',
+  //   trigger: ['blur', 'change'],
+  // },
+]
+
+const captchaRule = [
+  { required: true, message: 'Please input captcha', trigger: 'blur' },
+]
+
+const loginForm0 = ref()
+const loginForm0Rules = ref<any>({
+  email: emailRule,
+  password: passwordRule,
+})
+
 const loginForm1 = ref()
+const loginForm1Rules = ref<any>({
+  email: emailRule,
+})
 const loginForm2 = ref()
+const loginForm2Rules = ref<any>({
+  email: emailRule,
+  captcha: captchaRule,
+})
 const loginForm3 = ref()
+const loginForm3Rules = ref<any>({
+  email: emailRule,
+  captcha: captchaRule,
+  password: passwordRule,
+  password2: [
+    ...passwordRule,
+    {
+      // 校验两次密码是否一致
+      validator: (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('Please input the password again'))
+        }
+        else if (value !== loginForm3.value.password) {
+          callback(new Error('The two passwords do not match'))
+        }
+        else {
+          callback()
+        }
+      },
+      trigger: 'blur',
+    },
+  ],
+})
+
+// 校验
+const verifyForm = async (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  try {
+    await formEl.validate((valid, fields) => {
+      if (!valid) throw new Error('error submit!')
+    })
+  }
+  catch (error) {
+    throw new Error(error)
+  }
+}
+
+const useLogin = () => {
+  const loadingLogin = ref(false)
+  const loginForm = ref<any>({
+    email: 'serein@xilikeji.cn',
+    password: '',
+  })
+
+  const handleLogin = async (formEl: FormInstance | undefined) => {
+    await verifyForm(formEl)
+    await doLogin()
+  }
+
+  const doLogin = async () => {
+    try {
+      loadingLogin.value = true
+      await login({
+        email: loginForm.value.email,
+        password: loginForm.value.password,
+      })
+      navigateTo('/demo')
+    }
+    catch (error) {
+      throw new Error(error)
+    }
+    finally {
+      loadingLogin.value = false
+    }
+  }
+
+  return {
+    loadingLogin,
+    loginForm,
+    handleLogin,
+  }
+}
+
+const { handleLogin, loadingLogin, loginForm } = useLogin()
 
 const isClickLogin = ref(false)
 // 注册
 const registerStep = ref(0)
 const useRegister = () => {
-  const registerForm = ref<any>({})
+  const loading = ref({
+    sendCode: false,
+    verifyCode: false,
+    register: false,
+  })
+  const registerForm = ref<any>({
+    email: 'serein@xilikeji.cn',
+    password: '',
+    password2: '',
+    captcha: '',
+  })
 
   const handleBackLogin = () => {
     registerForm.value = {}
@@ -50,17 +173,84 @@ const useRegister = () => {
     registerStep.value = 1
   }
 
-  const handleSendCode = () => {
+  const handleSendCode = async (formEl: FormInstance | undefined) => {
+    await verifyForm(formEl)
+    await doSendCode()
     registerStep.value = 2
   }
 
-  const handleVerifyCode = () => {
+  const doSendCode = async () => {
+    // TODO: 发送验证码
+    try {
+      loading.value.sendCode = true
+      await api.getCaptcha({
+        email: registerForm.value.email,
+      })
+    }
+    catch (error) {
+      throw new Error(error)
+    }
+    finally {
+      loading.value.sendCode = false
+    }
+  }
+
+  const handleVerifyCode = async (formEl: FormInstance | undefined) => {
+    await verifyForm(formEl)
+    await doVerifyCode()
     registerStep.value = 3
   }
 
-  const handleRegister = () => {}
+  const doVerifyCode = async () => {
+    // TODO: 校验验证码
+    try {
+      loading.value.verifyCode = true
+      const data = await api.checkCaptcha({
+        email: registerForm.value.email,
+        captcha: registerForm.value.captcha,
+      })
+      if (!data) {
+        message('error verify code!', { type: 'error' })
+        throw new Error('error verify code!')
+      }
+    }
+    catch (error) {
+      throw new Error(error)
+    }
+    finally {
+      loading.value.verifyCode = false
+    }
+  }
+
+  const handleRegister = async (formEl: FormInstance | undefined) => {
+    await verifyForm(formEl)
+    await doRegister()
+    handleBackLogin()
+  }
+
+  const doRegister = async () => {
+    // TODO: 注册
+    try {
+      loading.value.register = true
+      const { token } = await api.register({
+        email: registerForm.value.email,
+        captcha: registerForm.value.captcha,
+        password: registerForm.value.password,
+      })
+      loginByToken(token)
+      navigateTo('/demo')
+      message('success register!', { type: 'success' })
+    }
+    catch (error) {
+      throw new Error(error)
+    }
+    finally {
+      loading.value.register = false
+    }
+  }
 
   return {
+    loading,
     registerForm,
     handleBackLogin,
     handleToRegister,
@@ -71,6 +261,7 @@ const useRegister = () => {
 }
 
 const {
+  loading,
   registerForm,
   handleBackLogin,
   handleToRegister,
@@ -78,6 +269,36 @@ const {
   handleVerifyCode,
   handleSendCode,
 } = useRegister()
+
+const useBg = () => {
+  const revealImgRef = useTemplateRef<any>('revealImgRef')
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+    const el = revealImgRef.value
+    if (el) {
+      el.style.setProperty('--mx', `${x}px`)
+      el.style.setProperty('--my', `${y + rect.height * 0.5}px`)
+    }
+  }
+
+  const handleMouseLeave = () => {
+    const el = revealImgRef.value
+    if (el) {
+      el.style.setProperty('--mx', '-9999px')
+      el.style.setProperty('--my', '-9999px')
+    }
+  }
+
+  return {
+    revealImgRef,
+    handleMouseMove,
+    handleMouseLeave,
+  }
+}
+
+const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
 </script>
 
 <template>
@@ -90,37 +311,40 @@ const {
           'not-login-click': !isClickLogin,
           'is-login-click': isClickLogin,
         }"
+        @mousemove="handleMouseMove"
+        @mouseleave="handleMouseLeave"
       >
         <UiLaserFlow
           :horizontal-beam-offset="-0.001"
           :vertical-beam-offset="-0.16"
           color="#6633EE"
         />
-        <div v-if="registerStep !== 3" class="logo-text absolute">
-          <div class="logo-title relative h-[74px]">
-            <UiMetallicPaint
-              class="metallic-paint absolute"
-              :image-data="imageData"
-              :params="{
-                patternScale: 3,
-                refraction: 0.07,
-                edge: 0,
-                patternBlur: 0,
-                liquid: 0,
-                speed: 0.3,
-              }"
-            />
-          </div>
-          <div class="logo-desc">Find Your Light and Share Your Pride</div>
-        </div>
+
         <div
-          class="card absolute overflow-hidden rounded-[32px] bg-[#17171A] p-[20px]"
+          class="card absolute rounded-[32px] bg-[#17171A] p-[20px]"
           border="4px solid #6633EE"
           flex="~"
         >
+          <div v-if="registerStep !== 3" class="logo-text absolute">
+            <div class="logo-title relative h-[74px]">
+              <UiMetallicPaint
+                class="metallic-paint absolute"
+                :image-data="imageData"
+                :params="{
+                  patternScale: 3,
+                  refraction: 0.07,
+                  edge: 0,
+                  patternBlur: 0,
+                  liquid: 0,
+                  speed: 0.3,
+                }"
+              />
+            </div>
+            <div class="logo-desc">Find Your Light and Share Your Pride</div>
+          </div>
           <template v-if="isClickLogin">
             <div
-              class="absolute right-[32px] top-[32px] cursor-pointer"
+              class="absolute right-[32px] cursor-pointer"
               @click="isClickLogin = false"
             >
               <img :src="closeIcon" class="h-[24px] w-[24px]" />
@@ -129,8 +353,13 @@ const {
             <div class="ml-[62px] mt-[24px]">
               <Transition name="slide-up">
                 <div v-if="registerStep === 0" class="form-content">
-                  <el-form ref="loginForm1" class="mt-[35px]">
-                    <el-form-item>
+                  <el-form
+                    ref="loginForm0"
+                    :rules="loginForm0Rules"
+                    :model="loginForm"
+                    class="mt-[35px]"
+                  >
+                    <el-form-item prop="email">
                       <div
                         class="h-[60px] w-[376px] rounded-[12px]"
                         flex="~ items-center"
@@ -140,13 +369,14 @@ const {
                           class="ml-[20px] mr-[16px] h-[20px] w-[20px]"
                         ></div>
                         <input
+                          v-model="loginForm.email"
                           text="#fff 16px"
-                          class="h-[24px]"
+                          class="h-[24px] flex-1 pr-[20px]"
                           placeholder="Enter email address"
                         />
                       </div>
                     </el-form-item>
-                    <el-form-item>
+                    <el-form-item prop="password">
                       <div
                         class="h-[60px] w-[376px] rounded-[12px]"
                         flex="~ items-center"
@@ -156,8 +386,9 @@ const {
                           class="ml-[20px] mr-[16px] h-[20px] w-[20px]"
                         ></div>
                         <input
+                          v-model="loginForm.password"
                           text="#fff 16px"
-                          class="h-[24px]"
+                          class="h-[24px] flex-1 pr-[20px]"
                           placeholder="Enter the password"
                           type="password"
                         />
@@ -176,7 +407,13 @@ const {
                       Forgot password
                     </el-button>
                   </div>
-                  <el-button class="login-btn mt-[28px]"> Login </el-button>
+                  <el-button
+                    class="login-btn mt-[28px]"
+                    :loading="loadingLogin"
+                    @click="handleLogin(loginForm0)"
+                  >
+                    Login
+                  </el-button>
                   <div flex="~ justify-center" class="mt-[30px]">
                     <el-button
                       flex="~"
@@ -192,8 +429,13 @@ const {
                   </div>
                 </div>
                 <div v-else-if="registerStep === 1" class="form-content">
-                  <el-form ref="loginForm2" class="mt-[35px]">
-                    <el-form-item>
+                  <el-form
+                    ref="loginForm1"
+                    :rules="loginForm1Rules"
+                    :model="registerForm"
+                    class="mt-[35px]"
+                  >
+                    <el-form-item prop="email">
                       <div
                         class="h-[60px] w-[376px] rounded-[12px]"
                         flex="~ items-center"
@@ -203,8 +445,9 @@ const {
                           class="ml-[20px] mr-[16px] h-[20px] w-[20px]"
                         ></div>
                         <input
+                          v-model="registerForm.email"
                           text="#fff 16px"
-                          class="h-[24px]"
+                          class="h-[24px] flex-1 pr-[20px]"
                           placeholder="Enter email address"
                         />
                       </div>
@@ -212,7 +455,8 @@ const {
                   </el-form>
                   <el-button
                     class="login-btn mt-[28px]"
-                    @click="handleSendCode"
+                    :loading="loading.sendCode"
+                    @click="handleSendCode(loginForm1)"
                   >
                     Send Verification Code
                   </el-button>
@@ -231,8 +475,13 @@ const {
                   </div>
                 </div>
                 <div v-else-if="registerStep === 2" class="form-content">
-                  <el-form ref="loginForm3" class="mt-[35px]">
-                    <el-form-item>
+                  <el-form
+                    ref="loginForm2"
+                    :rules="loginForm2Rules"
+                    :model="registerForm"
+                    class="mt-[35px]"
+                  >
+                    <el-form-item prop="email">
                       <div
                         class="h-[60px] w-[376px] rounded-[12px]"
                         flex="~ items-center"
@@ -242,13 +491,15 @@ const {
                           class="ml-[20px] mr-[16px] h-[20px] w-[20px]"
                         ></div>
                         <input
+                          v-model="registerForm.email"
                           text="#fff 16px"
-                          class="h-[24px]"
+                          class="h-[24px] flex-1 pr-[20px]"
                           placeholder="Enter email address"
+                          disabled
                         />
                       </div>
                     </el-form-item>
-                    <el-form-item>
+                    <el-form-item prop="captcha">
                       <div
                         class="h-[60px] w-[376px] rounded-[12px]"
                         flex="~ items-center"
@@ -258,8 +509,9 @@ const {
                           class="ml-[20px] mr-[16px] h-[20px] w-[20px]"
                         ></div>
                         <input
+                          v-model="registerForm.captcha"
                           text="#fff 16px"
-                          class="h-[24px]"
+                          class="h-[24px] flex-1 pr-[20px]"
                           placeholder="Enter Verification Code"
                         />
                       </div>
@@ -267,7 +519,8 @@ const {
                   </el-form>
                   <el-button
                     class="login-btn mt-[28px]"
-                    @click="handleVerifyCode"
+                    :loading="loading.verifyCode"
+                    @click="handleVerifyCode(loginForm2)"
                   >
                     Verify
                   </el-button>
@@ -286,8 +539,12 @@ const {
                   </div>
                 </div>
                 <div v-else-if="registerStep === 3">
-                  <el-form ref="loginForm3" class="mt-[35px]">
-                    <el-form-item>
+                  <el-form
+                    ref="loginForm3"
+                    :rules="loginForm3Rules"
+                    class="mt-[35px]"
+                  >
+                    <el-form-item prop="email">
                       <div
                         class="h-[60px] w-[376px] rounded-[12px]"
                         flex="~ items-center"
@@ -297,13 +554,15 @@ const {
                           class="ml-[20px] mr-[16px] h-[20px] w-[20px]"
                         ></div>
                         <input
+                          v-model="registerForm.email"
                           text="#fff 16px"
-                          class="h-[24px]"
+                          class="h-[24px] flex-1 pr-[20px]"
                           placeholder="Enter email address"
+                          disabled
                         />
                       </div>
                     </el-form-item>
-                    <el-form-item>
+                    <el-form-item prop="captcha">
                       <div
                         class="h-[60px] w-[376px] rounded-[12px]"
                         flex="~ items-center"
@@ -313,13 +572,15 @@ const {
                           class="ml-[20px] mr-[16px] h-[20px] w-[20px]"
                         ></div>
                         <input
+                          v-model="registerForm.captcha"
                           text="#fff 16px"
-                          class="h-[24px]"
+                          class="h-[24px] flex-1 pr-[20px]"
                           placeholder="Enter Verification Code"
+                          disabled
                         />
                       </div>
                     </el-form-item>
-                    <el-form-item>
+                    <el-form-item prop="password">
                       <div
                         class="h-[60px] w-[376px] rounded-[12px]"
                         flex="~ items-center"
@@ -329,13 +590,14 @@ const {
                           class="ml-[20px] mr-[16px] h-[20px] w-[20px]"
                         ></div>
                         <input
+                          v-model="registerForm.password"
                           text="#fff 16px"
-                          class="h-[24px]"
+                          class="h-[24px] flex-1 pr-[20px]"
                           placeholder="Enter your password"
                         />
                       </div>
                     </el-form-item>
-                    <el-form-item>
+                    <el-form-item prop="password2">
                       <div
                         class="h-[60px] w-[376px] rounded-[12px]"
                         flex="~ items-center"
@@ -345,14 +607,18 @@ const {
                           class="ml-[20px] mr-[16px] h-[20px] w-[20px]"
                         ></div>
                         <input
+                          v-model="registerForm.password2"
                           text="#fff 16px"
-                          class="h-[24px]"
+                          class="h-[24px] flex-1 pr-[20px]"
                           placeholder="Enter your password again"
                         />
                       </div>
                     </el-form-item>
                   </el-form>
-                  <el-button class="login-btn mt-[28px]">
+                  <el-button
+                    class="login-btn mt-[28px]"
+                    @click="handleRegister(loginForm3)"
+                  >
                     Complete Registration
                   </el-button>
                   <div flex="~ justify-center" class="mt-[30px]">
@@ -383,6 +649,43 @@ const {
             </div>
           </template>
         </div>
+
+        <ClientOnly>
+          <img
+            ref="revealImgRef"
+            :src="bgImg"
+            alt="Reveal effect"
+            style="
+              position: absolute;
+              width: 100%;
+              top: -50%;
+              z-index: 5;
+              mix-blend-mode: lighten;
+              opacity: 0.3;
+              pointer-events: none;
+              --mx: -9999px;
+              --my: -9999px;
+              -webkit-mask-image: radial-gradient(
+                circle at var(--mx) var(--my),
+                rgba(255, 255, 255, 1) 0px,
+                rgba(255, 255, 255, 0.95) 60px,
+                rgba(255, 255, 255, 0.6) 120px,
+                rgba(255, 255, 255, 0.25) 180px,
+                rgba(255, 255, 255, 0) 240px
+              );
+              mask-image: radial-gradient(
+                circle at var(--mx) var(--my),
+                rgba(255, 255, 255, 1) 0px,
+                rgba(255, 255, 255, 0.95) 60px,
+                rgba(255, 255, 255, 0.6) 120px,
+                rgba(255, 255, 255, 0.25) 180px,
+                rgba(255, 255, 255, 0) 240px
+              );
+              -webkit-mask-repeat: no-repeat;
+              mask-repeat: no-repeat;
+            "
+          />
+        </ClientOnly>
       </div>
       <!-- <div class="fixed top-0 z-0 h-full w-full">
         <UiPrism />
@@ -450,16 +753,17 @@ const {
 .main {
   .logo-text {
     z-index: 2;
-    transition: all 0.8s ease-out;
+    transition: all 0.6s ease-out;
     .logo-desc {
-      transition: all 0.8s ease-out;
+      white-space: nowrap;
+      transition: all 0.6s ease-out;
     }
     .metallic-paint {
-      transition: all 0.8s ease-out;
+      transition: all 0.6s ease-out;
     }
   }
   .card {
-    transition: all 0.8s ease-out;
+    transition: all 0.6s ease-out;
     .form-content {
       padding-top: 104px;
       z-index: 3;
@@ -471,23 +775,26 @@ const {
 .is-login-click {
   .logo-text {
     left: 50%;
-    top: 25%;
-    width: 300px;
+    top: 8%;
+    width: 200px;
     .metallic-paint {
-      top: -120px;
+      top: -60px;
+      width: 100%;
+    }
+    .logo-desc {
       width: 100%;
     }
   }
   .card {
     width: 860px;
-    height: 574px;
+    height: 558px;
   }
 }
 
 .not-login-click {
   .logo-text {
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%) translateY(-45vh);
     top: 35%;
     width: 680px;
     .logo-desc {
@@ -501,9 +808,9 @@ const {
     }
   }
   .card {
-    transform: translateY(430px);
-    width: 1280px;
-    height: 574px;
+    transform: translateY(76%);
+    width: 86%;
+    height: 60%;
   }
 }
 </style>

@@ -1,4 +1,4 @@
-@use './variables.scss';
+@use "./variables.scss";
 
 *:root {
   --bc: #000;
@@ -55,16 +55,31 @@ img {
 }
 
 body {
-  background-color: #0F0F12;
-  font-family: 'PingFang SC';
+  background-color: #0f0f12;
+  font-family:
+    "Gilroy",
+    -apple-system,
+    BlinkMacSystemFont,
+    avenir next,
+    avenir,
+    segoe ui,
+    helvetica neue,
+    Cantarell,
+    Ubuntu,
+    roboto,
+    noto,
+    helvetica,
+    arial,
+    sans-serif;
 }
-
 
 .js-visible[data-shown="0"] .text {
   opacity: 0;
   transform: translateY(120%);
-  transition: transform .8s, opacity .8s;
-  will-change: transform, opacity
+  transition:
+    transform 0.8s,
+    opacity 0.8s;
+  will-change: transform, opacity;
 }
 
 .js-visible[data-shown="0"] .out {
@@ -72,17 +87,29 @@ body {
   clip-path: polygon(0 0, 100% 0, 100% 60%, 0 100%);
   opacity: 0;
   transform: translateY(-120%);
-  transition: transform .8s, opacity .8s, -webkit-clip-path .8s;
-  transition: clip-path .8s, transform .8s, opacity .8s;
-  transition: clip-path .8s, transform .8s, opacity .8s, -webkit-clip-path .8s;
-  will-change: transform, opacity, clip-path
+  transition:
+    transform 0.8s,
+    opacity 0.8s,
+    -webkit-clip-path 0.8s;
+  transition:
+    clip-path 0.8s,
+    transform 0.8s,
+    opacity 0.8s;
+  transition:
+    clip-path 0.8s,
+    transform 0.8s,
+    opacity 0.8s,
+    -webkit-clip-path 0.8s;
+  will-change: transform, opacity, clip-path;
 }
 
 .js-visible[data-shown="1"] .text {
   opacity: 1;
   transform: translate(0);
-  transition: transform 1s, opacity .8s;
-  will-change: transform, opacity
+  transition:
+    transform 1s,
+    opacity 0.8s;
+  will-change: transform, opacity;
 }
 
 .js-visible[data-shown="1"] .out {
@@ -90,19 +117,31 @@ body {
   clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
   opacity: 1;
   transform: translate(0);
-  transition: transform 1s, opacity .8s, -webkit-clip-path .8s;
-  transition: clip-path .8s, transform 1s, opacity .8s;
-  transition: clip-path .8s, transform 1s, opacity .8s, -webkit-clip-path .8s;
-  will-change: transform, opacity, clip-path
+  transition:
+    transform 1s,
+    opacity 0.8s,
+    -webkit-clip-path 0.8s;
+  transition:
+    clip-path 0.8s,
+    transform 1s,
+    opacity 0.8s;
+  transition:
+    clip-path 0.8s,
+    transform 1s,
+    opacity 0.8s,
+    -webkit-clip-path 0.8s;
+  will-change: transform, opacity, clip-path;
 }
 
 .js-visible {
-  transition: none
+  transition: none;
 }
 
 .js-visible,
 .js-visible .out {
-  will-change: clip-path transform, opacity;
+  will-change:
+    clip-path transform,
+    opacity;
 }
 
 .out,
@@ -115,35 +154,39 @@ body {
   display: block;
   height: 50%;
   overflow: hidden;
-  position: relative
+  position: relative;
 }
 
-.js-link-text__label,.js-link-text__label-a,.js-link-text__wrap span {
-  display: inline-block
+.js-link-text__label,
+.js-link-text__label-a,
+.js-link-text__wrap span {
+  display: inline-block;
 }
 
-.js-link-text__hover,.js-link-text__hover-a {
+.js-link-text__hover,
+.js-link-text__hover-a {
   display: inline-block;
   left: 0;
   overflow: hidden;
   position: absolute;
   top: 100%;
   transform: translateY(-50%) translateY(100%);
-  width: 100%
+  width: 100%;
 }
 
-.js-link-text__hover,.js-link-text__label {
-  transform: translate(0) translateY(-100%)
+.js-link-text__hover,
+.js-link-text__label {
+  transform: translate(0) translateY(-100%);
 }
-
-
 
 .glass-effect {
   position: relative;
   overflow: hidden;
-  background: rgba(#7F6F99, var(--glass-opacity, 0.4));
-  backdrop-filter: blur(10px); /* 关键：背景模糊 */
-  -webkit-backdrop-filter: blur(10px); /* Safari 兼容 */
+  background: rgba(#7f6f99, var(--glass-opacity, 0.4));
+  backdrop-filter: blur(10px);
+  /* 关键：背景模糊 */
+  -webkit-backdrop-filter: blur(10px);
+  /* Safari 兼容 */
 }
 
 /* 可选：增加伪元素提升效果（解决边缘模糊问题） */
@@ -161,29 +204,36 @@ body {
 
 /* 深色主题滚动条 - Webkit浏览器 */
 ::-webkit-scrollbar {
-  width: 12px; /* 垂直滚动条宽度 */
-  height: 12px; /* 水平滚动条高度 */
+  width: 12px;
+  /* 垂直滚动条宽度 */
+  height: 12px;
+  /* 水平滚动条高度 */
 }
 
 ::-webkit-scrollbar-track {
-  background: #2d2d2d; /* 轨道背景色 */
+  background: #2d2d2d;
+  /* 轨道背景色 */
   border-radius: 6px;
   margin: 2px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #555555; /* 滑块颜色 */
+  background: #555555;
+  /* 滑块颜色 */
   border-radius: 6px;
-  border: 2px solid #2d2d2d; /* 滑块边框 */
+  border: 2px solid #2d2d2d;
+  /* 滑块边框 */
   transition: background-color 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #777777; /* 悬停时滑块颜色 */
+  background: #777777;
+  /* 悬停时滑块颜色 */
 }
 
 ::-webkit-scrollbar-thumb:active {
-  background: #999999; /* 点击时滑块颜色 */
+  background: #999999;
+  /* 点击时滑块颜色 */
 }
 
 /* 滚动条角落 */

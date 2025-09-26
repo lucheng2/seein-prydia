@@ -2,20 +2,30 @@ import { request } from '@/apis/utils/http'
 
 /** 登录 */
 export const login = (params: any) => {
-  return request.post('/api/user/website_user/login', params)
+  return request.post('/prydia-api/user/serein_user/login', params)
 }
 
-/** 退出登录 */
-export const logout = () => {
-  return request.post('/api/user/website_user/logout')
-}
-
-/** 获取用户信息 */
-export const getUserInfo = () => {
-  return request.get('/api/user/website_user/getWebsiteUserInfo')
+/** 注册 */
+export const register = (params: any) => {
+  return request.post('/prydia-api/user/serein_user/registerUser', params)
 }
 
 /** 获取验证码 */
 export const getCaptcha = (params: any) => {
-  return request.get('/api/user/website_user/captcha', params)
+  return request.get('/prydia-api/user/serein_user/captcha', params)
+}
+
+/** 校验验证码 */
+export const checkCaptcha = (params: any) => {
+  return request.get('/prydia-api/user/serein_user/checkCaptcha', params)
+}
+
+/** 退出登录 */
+export const logout = () => {
+  return request.post('/prydia-api/user/serein_user/logout')
+}
+
+/** 获取用户信息 */
+export const getUserInfo = () => {
+  return request.get('/prydia-api/user/serein_user/getWebsiteUserInfo')
 }

@@ -179,3 +179,20 @@ export function parseImage(file: File): Promise<{ imageData: ImageData, pngBlob:
     img.src = URL.createObjectURL(file)
   })
 }
+
+export const px2rem = (px: string) => {
+  // 如果包含%或者不包含px，直接返回原值
+  if (/%/.test(px) || !/px/i.test(px)) {
+    return px
+  }
+
+  // 处理包含多个值的字符串（如：'0 10px 10px 0'）
+  return px.split(/\s+/).map((value) => {
+    // 如果是px值，转换为rem
+    if (/px$/i.test(value)) {
+      return `${Number.parseFloat(value) / 37.5}rem`
+    }
+    // 非px值保持原样
+    return value
+  }).join(' ')
+}
