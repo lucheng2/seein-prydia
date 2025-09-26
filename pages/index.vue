@@ -103,10 +103,10 @@ const {
               :image-data="imageData"
               :params="{
                 patternScale: 3,
-                refraction: 0.015,
+                refraction: 0.07,
                 edge: 0,
                 patternBlur: 0,
-                liquid: 0.07,
+                liquid: 0,
                 speed: 0.3,
               }"
             />
