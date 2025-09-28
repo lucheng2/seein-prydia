@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import * as api from '@/apis'
-import { openAgreementModal } from '@/components/modal/agreement/open'
 import { homeRouteList } from '@/constants/home'
 import { openApplyForTestModal } from '~/components/modal/apply-for-test/open'
 
@@ -9,7 +8,7 @@ defineOptions({
 })
 
 useHead({
-  title: '文字聊天',
+  title: 'Chat',
 })
 
 const route = useRoute()
@@ -31,7 +30,11 @@ const useChatConversations = () => {
   const debounceDelay = 100 // 防抖延迟时间（毫秒）
 
   // 加载对话数据
-  const { data, pending, refresh: refreshCurrentPage } = useAsyncData(
+  const {
+    data,
+    pending,
+    refresh: refreshCurrentPage,
+  } = useAsyncData(
     `chat-sessions-${currentPage.value}`,
     () => {
       return api.getChatSession({
@@ -45,26 +48,30 @@ const useChatConversations = () => {
   )
 
   // 处理分页数据
-  watch(data, (newData) => {
-    if (newData) {
-      totalCount.value = newData.totalElements || 0
+  watch(
+    data,
+    (newData) => {
+      if (newData) {
+        totalCount.value = newData.totalElements || 0
 
-      if (currentPage.value === 1) {
-        // 第一页，直接替换
-        allConversations.value = newData.content || []
-      }
-      else {
-        // 后续页，追加数据
-        const newList = newData.content || []
-        allConversations.value = [...allConversations.value, ...newList]
-      }
+        if (currentPage.value === 1) {
+          // 第一页，直接替换
+          allConversations.value = newData.content || []
+        }
+        else {
+          // 后续页，追加数据
+          const newList = newData.content || []
+          allConversations.value = [...allConversations.value, ...newList]
+        }
 
-      // 检查是否还有更多数据
-      const currentTotal = allConversations.value.length
-      hasMore.value = currentTotal < totalCount.value
-      isLoadingMore.value = false
-    }
-  }, { immediate: true })
+        // 检查是否还有更多数据
+        const currentTotal = allConversations.value.length
+        hasMore.value = currentTotal < totalCount.value
+        isLoadingMore.value = false
+      }
+    },
+    { immediate: true },
+  )
 
   // 计算属性：当前可用的对话列表
   const conversations = computed(() => {
@@ -108,7 +115,10 @@ const useChatConversations = () => {
   }
 
   // 创建滚动监听器
-  const createScrollListener = (scrollElement: HTMLElement, threshold = 100) => {
+  const createScrollListener = (
+    scrollElement: HTMLElement,
+    threshold = 100,
+  ) => {
     const handleScroll = () => {
       checkScrollToBottom(scrollElement, threshold)
     }
@@ -175,11 +185,18 @@ const useChatConversations = () => {
   }
 }
 
-const { conversations, currentConversationId, isLoadingMore, createScrollListener } = useChatConversations()
+const {
+  conversations,
+  currentConversationId,
+  isLoadingMore,
+  createScrollListener,
+} = useChatConversations()
 
 // 聊天历史记录
 const useChatHistory = () => {
-  const messages = ref<any[]>(route.params.id === 'new' || route.query.new === 'true' ? [{ id: Date.now(), sender: 'hello', content: '' }] : [])
+  const messages = ref<any[]>(
+    route.params.id === 'new' || route.query.new === 'true' ? [] : [],
+  )
   const historyLoading = ref(false)
   // 缓存已加载的对话数据，避免重复请求
   const conversationCache = new Map()
@@ -216,13 +233,7 @@ const useChatHistory = () => {
     const targetId = conversationId || currentConversationId.value
     if (!targetId) {
       // 新会话显示欢迎消息
-      messages.value = [
-        {
-          id: Date.now(),
-          sender: 'hello',
-          content: '',
-        },
-      ]
+      messages.value = []
     }
     else {
       // 加载历史记录
@@ -257,13 +268,7 @@ const useChatHistory = () => {
       }
       else {
         // 没有历史记录但不是新会话
-        messages.value = [
-          {
-            id: Date.now(),
-            sender: 'hello',
-            content: '',
-          },
-        ]
+        messages.value = []
       }
     }
   }
@@ -272,7 +277,11 @@ const useChatHistory = () => {
   watch(
     () => currentConversationId.value,
     async (newId, oldId) => {
-      if (!currentConversationId.value || currentConversationId.value === 'new' || route.params.id === 'new') {
+      if (
+        !currentConversationId.value
+        || currentConversationId.value === 'new'
+        || route.params.id === 'new'
+      ) {
         isNew.value = true
         await createdChat()
       }
@@ -353,14 +362,13 @@ const useChatRegenerate = () => {
 
     reAbortController.value = new AbortController()
 
-    api
-      .regenerateMessage({
-        messageId: currentMessageId.value,
-        ctrl: reAbortController.value,
-        onMessage,
-        onClose,
-        onError,
-      })
+    api.regenerateMessage({
+      messageId: currentMessageId.value,
+      ctrl: reAbortController.value,
+      onMessage,
+      onClose,
+      onError,
+    })
   }
   return {
     onRegenerate,
@@ -368,6 +376,21 @@ const useChatRegenerate = () => {
 }
 
 const { onRegenerate } = useChatRegenerate()
+
+// 聊天类型
+const useChatType = () => {
+  const chatType = ref('bot')
+  const setChatType = (type: string) => (chatType.value = type)
+  const setChatTypeToBot = () => setChatType('bot')
+  const setChatTypeToCoach = () => setChatType('coach')
+  return {
+    chatType,
+    setChatTypeToBot,
+    setChatTypeToCoach,
+  }
+}
+
+const { chatType, setChatTypeToBot, setChatTypeToCoach } = useChatType()
 
 // 聊天功能
 const useChat = () => {
@@ -379,7 +402,8 @@ const useChat = () => {
   const inputMessage = ref('')
   const isNew = ref(route.params.id === 'new' || route.query.new === 'true')
   // 从历史记录模块获取消息
-  const { messages, historyLoading, loadChatHistory, initializeMessages } = useChatHistory()
+  const { messages, historyLoading, loadChatHistory, initializeMessages }
+    = useChatHistory()
 
   const haveUser = computed(() =>
     messages.value.some(item => item.sender === 'user'),
@@ -397,64 +421,6 @@ const useChat = () => {
       }
     },
   )
-
-  // 功能可用性检查
-  const isAvailable = ref(false)
-  const validateAvailable = () => {
-    if (!isAvailable.value) {
-      openApplyForTestModal()
-      throw new Error('本功能需要申请试用')
-    }
-  }
-
-  // 对话次数限制检查
-  const validateExceedCount = () => {
-    if (sendCount.value > 20) {
-      // modal(
-      //   '提示',
-      //   '对话轮次已达20次上限，您可以退出产品，或刷新页面重新体验',
-      //   {
-      //     confirmButtonText: '重新体验',
-      //     cancelButtonText: '关闭页面',
-      //   },
-      // )
-      //   .then(() => {
-      //     location.reload()
-      //   })
-      //   .catch(() => {
-      //     location.href = '/'
-      //   })
-      // throw new Error('对话次数已超出限制')
-    }
-  }
-
-  // 协议相关
-  const agreementFlag = ref(true)
-  const isAgreement = computed(() => haveUser.value && !agreementFlag.value)
-
-  const validateAgreement = () => {
-    if (isAgreement.value) {
-      messages.value.push({
-        id: Date.now() + 2,
-        sender: 'agreement',
-        content: '',
-        attrs: {
-          onAgree: async () => {
-            await api.agreeOrRefuseAgreement(1)
-            agreementFlag.value = true
-            const findIndex = messages.value.findIndex(
-              item => item.sender === 'agreement',
-            )
-            if (findIndex !== -1) {
-              messages.value.splice(findIndex, 1)
-              doSendMessage(messages.value[findIndex - 1].content)
-            }
-          },
-        },
-      })
-      throw new Error('请先同意用户协议')
-    }
-  }
 
   // 流式消息处理
   const onMessage = (res) => {
@@ -508,7 +474,6 @@ const useChat = () => {
     try {
       const data = await api.createChat()
       currentConversationId.value = String(data)
-      isAvailable.value = true
       // 重新初始化消息（新会话）
       // await initializeMessages(data)
 
@@ -518,9 +483,9 @@ const useChat = () => {
       })
     }
     catch (error) {
-      isAvailable.value = false
-      if (typeof error === 'object' && error?.code === 2003) {
-        openApplyForTestModal()
+      console.log(error)
+      if (error.response?.data?.code === 2005) {
+        navigateTo('/info')
       }
     }
   }
@@ -529,8 +494,6 @@ const useChat = () => {
   const sendMessage = (content = inputMessage.value.trim()) => {
     try {
       if (!content || loading.value) return
-      validateAvailable()
-      validateExceedCount()
 
       const userMsg = {
         id: Date.now(),
@@ -538,7 +501,6 @@ const useChat = () => {
         content,
       }
       messages.value.push(userMsg)
-      validateAgreement()
       doSendMessage(content)
     }
     catch (error) {
@@ -586,43 +548,29 @@ const useChat = () => {
     scrollToBottom(true)
   }
 
-  // 检查协议状态
-  const checkAgreement = async () => {
-    try {
-      const { fetchCheck } = useCheckAgreementStore()
-      const data = await fetchCheck()
-      agreementFlag.value = !!data
-      if (!data) {
-        openAgreementModal((val) => {
-          agreementFlag.value = val
-        })
-      }
-    }
-    catch (error) {
-      console.error('检查协议状态失败:', error)
-    }
-  }
-
   const init = async () => {
-    // 首先检查协议状态
-    await checkAgreement()
-
     currentConversationId.value = route.params.id as string
     // 如果是新会话且没有会话ID，创建新会话
-    if (!currentConversationId.value || currentConversationId.value === 'new' || route.params.id === 'new') {
+    if (
+      !currentConversationId.value
+      || currentConversationId.value === 'new'
+      || route.params.id === 'new'
+    ) {
       isNew.value = true
       await createdChat()
     }
     else {
       // 现有会话，检查可用性并加载历史记录
-      isAvailable.value = true
       await initializeMessages(currentConversationId.value)
     }
   }
 
-  watch(() => route.params.id, () => {
-    currentConversationId.value = route.params.id as string
-  })
+  watch(
+    () => route.params.id,
+    () => {
+      currentConversationId.value = route.params.id as string
+    },
+  )
 
   // 组件挂载时的初始化
   onActivated(init)
@@ -635,7 +583,6 @@ const useChat = () => {
     messages,
     inputMessage,
     loading,
-    isAgreement,
     historyLoading,
     sendMessage,
     createdChat,
@@ -650,12 +597,12 @@ const {
   messages,
   loading,
   inputMessage,
-  isAgreement,
   historyLoading,
   sendMessage,
   createdChat,
 } = useChat()
 
+// 聊天主题生成
 const useChatConversationsTheme = () => {
   // 最大对话轮次
   const MAX_CONVERSATION_ROUND = 4
@@ -666,7 +613,9 @@ const useChatConversationsTheme = () => {
 
   // 替换对话obj
   const replaceConversationObj = (obj: any) => {
-    const current = conversations.value.find((item: any) => item.conversationId === obj.conversationId)
+    const current = conversations.value.find(
+      (item: any) => item.conversationId === obj.conversationId,
+    )
     if (current) {
       current.theme = obj.theme
       current.userId = obj.userId
@@ -674,8 +623,13 @@ const useChatConversationsTheme = () => {
   }
 
   const watchConversationRound = async () => {
-    if (conversationRound.value > 0 && conversationRound.value <= MAX_CONVERSATION_ROUND) {
-      const data = await api.generateTopic({ conversationId: currentConversationId.value })
+    if (
+      conversationRound.value > 0
+      && conversationRound.value <= MAX_CONVERSATION_ROUND
+    ) {
+      const data = await api.generateTopic({
+        conversationId: currentConversationId.value,
+      })
       if (data) {
         replaceConversationObj(data)
       }
@@ -683,8 +637,13 @@ const useChatConversationsTheme = () => {
   }
 
   // 修改会话标题
-  const changeConversationTheme = async (conversationId: string, theme: string) => {
-    const current = conversations.value.find((item: any) => item.conversationId === conversationId)
+  const changeConversationTheme = async (
+    conversationId: string,
+    theme: string,
+  ) => {
+    const current = conversations.value.find(
+      (item: any) => item.conversationId === conversationId,
+    )
     if (current) {
       current.theme = theme
     }
@@ -709,7 +668,11 @@ const useChatConversationsTheme = () => {
   }
 }
 
-const { conversationRound, watchConversationRound, unshiftNewConversationTheme } = useChatConversationsTheme()
+const {
+  conversationRound,
+  watchConversationRound,
+  unshiftNewConversationTheme,
+} = useChatConversationsTheme()
 
 // 滚动处理
 const useScroll = () => {
@@ -761,11 +724,14 @@ const useScroll = () => {
   }
 
   // 当消息更新后自动滚动到底部
-  watch(() => messages.value.length, () => {
-    nextTick(() => {
-      scrollToBottom(true)
-    })
-  })
+  watch(
+    () => messages.value.length,
+    () => {
+      nextTick(() => {
+        scrollToBottom(true)
+      })
+    },
+  )
 
   onBeforeUnmount(() => {
     clearTimer()
@@ -801,77 +767,46 @@ const {
     nav-bar-width="100%"
     :route-list="homeRouteList"
   >
-    <template #conversations>
+    <template #conversations="{ isCollapsed }">
       <AiChatConversations
+        :is-collapsed="isCollapsed"
         :conversation-id="currentConversationId"
         :conversations="conversations"
         :create-scroll-listener="createScrollListener"
       />
     </template>
     <template #content>
-      <div class="seein-ai-chat flex-1 px-[20px] md:px-0">
-        <div class="seein-ai-chat__content">
-          <div class="flex items-center justify-center">
-            <div
-              class="w-full flex flex-col md:w-[800px]"
-              :class="{
-                'justify-between': haveUser || !isNew,
-                'min-h-[100vh]': !haveUser,
-                'h-[calc(100vh)]': haveUser || !isNew,
-              }"
+      <AiChatHello v-if="isNew" />
+      <UiCard
+        v-else
+        border-color="conic-gradient(
+          from 0deg at 50% 50%,
+          #703EDB 0%,
+          #FFD12A 25%,
+          #703EDB 50%,
+          #FFD12A 100%
+        )"
+        rotating-height="100vw"
+        rotating-width="100vw"
+      >
+        <div class="chat-content" flex="~ col justify-center items-center">
+          <AiChatMessage
+            ref="aiChatMessageRef"
+            flex="~ 1"
+            class="my-[20px] w-[900px]"
+            :message-list="messages"
+          />
+          <div>
+            <UiCard
+              class="mb-[12px]"
+              rotating-height="1000%"
+              rotating-width="1000%"
             >
-              <!-- 历史记录加载状态 -->
-              <div v-if="historyLoading && !isNew" class="flex items-center justify-center py-10">
-                <div class="text-gray-500">正在加载历史记录...</div>
-              </div>
-
-              <!-- 消息列表 -->
-              <el-scrollbar
-                v-else
-                ref="messagesScrollbarRef"
-                class="seein-ai-chat__content--messages"
-                @scroll="handleScroll"
-              >
-                <div
-                  class="fixed left-0 top-0 z-2 h-[26px] w-full flex items-center justify-center md:h-[84px]"
-                ></div>
-                <div ref="messagesContainerRef" pt="84px">
-                  <AiChatMessage
-                    ref="aiChatMessageRef"
-                    :message-list="messages"
-                  />
-                </div>
-              </el-scrollbar>
-
-              <!-- 输入框 -->
-              <div class="seein-ai-chat__content--input">
-                <AiChatInput
-                  v-model="inputMessage"
-                  :loading="loading"
-                  :input-disabled="isAgreement || historyLoading"
-                  class="input"
-                  @handle-send="sendMessage"
-                />
-              </div>
-
-              <!-- 提示消息（仅在没有用户消息时显示） -->
-              <div
-                v-if="!haveUser && isNew"
-                class="mt-[20px] w-full flex justify-center"
-              >
-                <AiChatMessageMessageItemPromptsMessage
-                  @handle-hello="sendMessage"
-                />
-              </div>
-            </div>
+              <AiChatInput class="w-[900px]" />
+            </UiCard>
           </div>
         </div>
-      </div>
-    </template>
-    <template #bg>
-      <Transition>
-        <UiDynamicsBg v-if="!haveUser && isNew" />
-      </Transition>
+      </UiCard>
     </template>
   </NuxtLayout>
 </template>
@@ -944,5 +879,9 @@ const {
 .v-enter-from,
 .v-leave-to {
   opacity: 0;
+}
+
+.chat-content {
+  height: calc(100vh - 94px - 24px);
 }
 </style>

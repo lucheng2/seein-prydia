@@ -68,18 +68,15 @@ const sendDisabled = computed(() => {
         <div>
           <CoachSelect />
         </div>
-        <UiIcon
-          class="seein-chat-input__btns--item send-button"
-          :class="[{ 'send-button--disabled': sendDisabled }]"
-          :style="{
+        <div
+class="seein-chat-input__btns--item send-button" :style="{
             cursor: sendDisabled ? 'not-allowed' : 'pointer',
             color: sendDisabled
               ? 'var(--el-color-primary-light-5)'
               : 'var(--el-color-primary)',
-          }"
-          icon="arrow-circle-up-rounded"
-          @click="handleSend"
-        />
+          }" :class="[{ 'send-button--disabled': sendDisabled }]" @click="handleSend"
+>
+</div>
       </div>
     </div>
   </div>
@@ -188,6 +185,7 @@ const sendDisabled = computed(() => {
 .send-button {
   transition: all 0.2s ease-in-out;
   border-radius: 50%;
+  background: linear-gradient( 134deg, #703EDB 0%, #EE3942 59%, #FFD12A 100%);
 }
 
 /* 正常状态的交互效果 */

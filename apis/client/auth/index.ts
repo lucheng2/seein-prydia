@@ -27,5 +27,10 @@ export const logout = () => {
 
 /** 获取用户信息 */
 export const getUserInfo = () => {
-  return request.get('/prydia-api/user/serein_user/getWebsiteUserInfo')
+  return request.get('/prydia-api/user/serein_user/getUserInfo')
+}
+
+/** 保存用户信息 */
+export const saveUserInfo = (params: any) => {
+  return request.post('/prydia-api/user/serein_user/saveUserInfo', params)
 }

@@ -3,6 +3,6 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const user = useCookie('user') as any
   const token = user.value?.token
   if (to.path === '/' && token) {
-    return navigateTo('/demo')
+    return navigateTo('/ai/chat/new?new=true')
   }
 })

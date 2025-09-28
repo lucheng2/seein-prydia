@@ -97,23 +97,10 @@ const loginForm3Rules = ref<any>({
   ],
 })
 
-// 校验
-const verifyForm = async (formEl: FormInstance | undefined) => {
-  if (!formEl) return
-  try {
-    await formEl.validate((valid, fields) => {
-      if (!valid) throw new Error('error submit!')
-    })
-  }
-  catch (error) {
-    throw new Error(error)
-  }
-}
-
 const useLogin = () => {
   const loadingLogin = ref(false)
   const loginForm = ref<any>({
-    email: 'serein@xilikeji.cn',
+    email: '',
     password: '',
   })
 
@@ -129,7 +116,7 @@ const useLogin = () => {
         email: loginForm.value.email,
         password: loginForm.value.password,
       })
-      navigateTo('/demo')
+      navigateTo('/ai/chat/new?new=true')
     }
     catch (error) {
       throw new Error(error)
@@ -158,7 +145,7 @@ const useRegister = () => {
     register: false,
   })
   const registerForm = ref<any>({
-    email: 'serein@xilikeji.cn',
+    email: '',
     password: '',
     password2: '',
     captcha: '',
@@ -238,7 +225,7 @@ const useRegister = () => {
         password: registerForm.value.password,
       })
       loginByToken(token)
-      navigateTo('/demo')
+      navigateTo('/ai/chat/new?new=true')
       message('success register!', { type: 'success' })
     }
     catch (error) {
@@ -661,7 +648,7 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
               top: -50%;
               z-index: 5;
               mix-blend-mode: lighten;
-              opacity: 0.3;
+              opacity: 1;
               pointer-events: none;
               --mx: -9999px;
               --my: -9999px;

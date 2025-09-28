@@ -2,6 +2,7 @@ import { request } from '@/apis/utils/http'
 import { fetchEventSource } from '@microsoft/fetch-event-source'
 
 interface IChatMessage {
+  type?: 'bot' | 'coach'
   round?: number
   messageId?: string
   prompt?: string
@@ -13,6 +14,7 @@ interface IChatMessage {
 
 /** 发送消息SSE - 修复500错误无限重试问题 */
 export const sendMessageStream = async ({
+  type,
   round,
   prompt,
   ctrl,
@@ -26,8 +28,8 @@ export const sendMessageStream = async ({
   // 错误计数器
   let retryCount = 0
   const maxRetries = 2 // 最大重试次数
-
-  return fetchEventSource(`/chat-api/chat/chat`, {
+  const url = type === 'bot' ? '/chat-api/prydia_chat/chatBot' : '/chat-api/prydia_chat/coachChat'
+  return fetchEventSource(url, {
     method: 'post',
     headers: {
       'Accept': 'text/event-stream',
@@ -78,7 +80,7 @@ export const regenerateMessage = async ({
   let retryCount = 0
   const maxRetries = 2 // 最大重试次数
 
-  return fetchEventSource(`/chat-api/chat/chatRegenerate`, {
+  return fetchEventSource(`/chat-api/prydia_chat/chatRegenerate`, {
     method: 'post',
     headers: {
       'Accept': 'text/event-stream',
@@ -115,70 +117,15 @@ export const regenerateMessage = async ({
 
 /** 创建新聊天 */
 export const createChat = (params?: any) => {
-  return request.post('/api/user/chat/startChat', params)
-}
-
-/** 发送消息 */
-export const sendMessage = (params: any) => {
-  return request.post('/api/user/chat/sendMessage', params)
-}
-
-/** 上传语音文件 */
-export const uploadVoice = (params: any) => {
-  return request.upload('/api/user/chat/sendAudioMessage', params)
-}
-
-/** 建立语音聊天 */
-export const createVoiceChat = (params?: any) => {
-  return request.get('/api/user/chat/establishAudioChat', params)
-}
-
-/** 关闭语音聊天 */
-export const closeVoiceChat = (params?: any) => {
-  return request.get('/api/user/chat/finishAudioChat', params)
-}
-
-/** 建立语音聊天WebRTC */
-export const createVoiceChatWebRTC = (params?: any) => {
-  return request.get('/api/user/chat/v2/establishAudioChat', params)
-}
-
-/** 通知WebRTC已就绪 */
-export const notifyVoiceChatWebRTCReady = (params?: any) => {
-  return request.get('/api/user/chat/v2/audioStreamReady', params)
-}
-
-/** 关闭语音聊天WebRTC */
-export const closeVoiceChatWebRTC = (params?: any) => {
-  return request.get('/api/user/chat/v2/finishAudioChat', params)
+  return request.post('/chat-api/prydia_chat/startChat', params)
 }
 
 /** 点赞 */
 export const likeMessage = (params: any) => {
-  return request.post('/chat-api/chat/likeOrDislike', params)
-}
-
-/** 检测是否同意协议 */
-export const checkAgreement = (params?: any) => {
-  return request.get('/api/user/website_user/getAgreeFlag', params)
-}
-
-/** 同意/拒绝协议 */
-export const agreeOrRefuseAgreement = (agreeFlag: number) => {
-  return request.post(`/api/user/website_user/saveAgreeFlag?agreeFlag=${agreeFlag}`)
-}
-
-/** 获取协议内容 */
-export const getAgreementMd = (params?: any) => {
-  return request.get('/api/user/agent_user/getAgentAgreement', params)
-}
-
-/** 申请内测 */
-export const applyAiChat = (params?: any) => {
-  return request.post('/api/user/chat/applyAiChat', params)
+  return request.post('/chat-api/prydia_chat/likeOrDislike', params)
 }
 
 /** 生成对话主题 */
 export const generateTopic = (params?: any) => {
-  return request.get('/chat-api/chat/initChatConversationByConversationId', params)
+  return request.get('/chat-api/prydia_chat/initChatConversationByConversationId', params)
 }

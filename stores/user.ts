@@ -55,9 +55,8 @@ export const useUserStore = defineStore(
 
     async function getUserInfo() {
       try {
-        // const data = await api.getUserInfo()
-        // userInfo.value = data
-        userInfo.value = { name: 'admin' }
+        const data = await api.getUserInfo()
+        userInfo.value = data
       }
       catch (error) {
         logout()

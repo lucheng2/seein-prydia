@@ -1,3 +1,5 @@
+import type { FormInstance } from 'element-plus'
+
 export function parseImage(file: File): Promise<{ imageData: ImageData, pngBlob: Blob }> {
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')
@@ -195,4 +197,17 @@ export const px2rem = (px: string) => {
     // 非px值保持原样
     return value
   }).join(' ')
+}
+
+// 校验
+export const verifyForm = async (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  try {
+    await formEl.validate((valid, fields) => {
+      if (!valid) throw new Error('error submit!')
+    })
+  }
+  catch (error) {
+    throw new Error(error)
+  }
 }

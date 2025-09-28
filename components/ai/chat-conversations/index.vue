@@ -14,44 +14,23 @@ const props = withDefaults(defineProps<Props>(), {
   createScrollListener: () => {},
 })
 
-const isToNew = () => {
-  if (!import.meta.client) return true
-  if (['true', 'false'].includes(localStorage.getItem('toNew'))) {
-    return localStorage.getItem('toNew') === 'true'
-  }
-  return true
-}
-
-const { isMobile } = useView()
-const isCollapsed = reactive({
-  pc: true,
-  mobile: true,
-})
-watch(
-  () => isMobile.value,
-  (val) => {
-    if (val) {
-      isCollapsed.pc = true
-      isCollapsed.mobile = true
-    }
-  },
-)
+const isCollapsed = defineModel('isCollapsed', { type: Boolean })
 </script>
 
 <template>
-  <div>
-    <div class="hidden md:block">
+  <div class="h-full">
+    <div class="hidden h-full md:block">
       <ConversationsA
-        v-model:is-collapsed="isCollapsed.pc"
+        v-model:is-collapsed="isCollapsed"
         :conversation-id="conversationId"
         :conversations="conversations"
         :create-scroll-listener="createScrollListener"
       />
     </div>
-    <div class="block md:hidden">
+    <div class="block h-full md:hidden">
       <ConversationsA
         :key="1232"
-        v-model:is-collapsed="isCollapsed.mobile"
+        v-model:is-collapsed="isCollapsed"
         :conversation-id="conversationId"
         :conversations="conversations"
         :create-scroll-listener="createScrollListener"
