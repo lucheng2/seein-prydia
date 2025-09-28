@@ -16,6 +16,11 @@ export const homeRouteList = [
   {
     routeName: 'Knowledge',
     name: 'Knowledge',
-    path: '/Knowledge',
+    path: '/knowledge',
+  },
+  {
+    routeName: 'wordcloud',
+    name: 'wordcloud',
+    path: '/wordcloud',
   },
 ]

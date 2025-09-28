@@ -1,4 +1,6 @@
 export * from './ai'
 export * from './auth'
+export * from './knowledge'
+export * from './wordcloud'
 export * from './legal'
 export * from './test'
