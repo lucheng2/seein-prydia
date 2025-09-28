@@ -4,17 +4,23 @@ import { useView } from '~/hooks'
 import { groupByCreateTime } from './utils'
 
 const props = withDefaults(defineProps<Props>(), {
-  conversations: () => [],
+  isNew: true,
   conversationId: '',
+  conversations: () => [],
+  conversationsCoach: () => [],
   createScrollListener: () => {},
+  createScrollListenerCoach: () => {},
 })
 
 const router = useRouter()
 
 interface Props {
-  conversations?: any[]
+  isNew?: boolean
   conversationId?: string
+  conversations?: any[]
+  conversationsCoach?: any[]
   createScrollListener?: Function
+  createScrollListenerCoach?: Function
 }
 
 const isCollapsed = defineModel('isCollapsed', { type: Boolean })
@@ -25,6 +31,10 @@ const conversationListRef = ref<HTMLElement>()
 
 const conversationsGrouped = computed(() => {
   return groupByCreateTime(props.conversations)
+})
+
+const conversationsGroupedCoach = computed(() => {
+  return groupByCreateTime(props.conversationsCoach)
 })
 
 // watch(
@@ -74,6 +84,7 @@ const handleSelect = async (conversation) => {
 }
 
 const handleNew = async () => {
+  if (props.isNew) return
   isCollapsed.value = true
   navigateTo('/ai/chat/new?new=true')
 }
@@ -82,10 +93,14 @@ const navigateTo = (path: string) => {
   router.push(path)
 }
 let clearScrollListener
+let clearScrollListenerCoach
 onMounted(() => {
   if (import.meta.client) {
     // isCollapsed.value = localStorage.getItem('isCollapsed') === 'true'
     clearScrollListener = props.createScrollListener(conversationListRef.value)
+    clearScrollListenerCoach = props.createScrollListenerCoach(
+      conversationListRef.value,
+    )
     // 如果有当前对话ID，滚动到对应位置
     if (props.conversationId) {
       nextTick(() => {
@@ -97,17 +112,22 @@ onMounted(() => {
 onBeforeUnmount(() => {
   if (clearScrollListener) {
     clearScrollListener?.()
+    clearScrollListenerCoach?.()
   }
 })
 
-const activeTab = ref('chats')
+const activeTab = defineModel('activeTab', { type: String })
 const handleTab = (tab: string) => {
   activeTab.value = tab
 }
 </script>
 
 <template>
-  <UiCard style="height: 100%; z-index: 2">
+  <UiCard
+    style="height: 100%; z-index: 2"
+    rotating-height="100%"
+    rotating-width="100%"
+  >
     <div class="sidebar">
       <div flex="~ items-center justify-between" p="24px 22px 20px 24px">
         <div text="white 18px">History Chat</div>
@@ -116,6 +136,7 @@ const handleTab = (tab: string) => {
             class="h-[40px] w-[114px] cursor-pointer"
             text="#CACCCB 14px"
             flex="~ items-center justify-center"
+            @click="handleNew"
           >
             <img class="mr-[6px] h-[16px] w-[16px]" :src="plusIcon" />
             New Chat
@@ -129,9 +150,9 @@ const handleTab = (tab: string) => {
           font="500"
           class="relative cursor-pointer pb-[6px]"
           :class="{
-            'active-tab': activeTab === 'chats',
+            'active-tab': activeTab === 'bot',
           }"
-          @click="handleTab('chats')"
+          @click="handleTab('bot')"
         >
           Chats
         </div>
@@ -152,30 +173,59 @@ const handleTab = (tab: string) => {
         ref="conversationListRef"
         class="mb-[10px] mr-[1px] flex-1 overflow-y-auto px-[14px]"
       >
-        <template v-for="item in conversationsGrouped" :key="item.title">
-          <div
-            class="theme-text sticky top-0 z-99 w-full self-start rounded-lg bg-[#1E1F25] pb-[4px] pl-[10px] pt-[10px] text-[14px] text-[#5E5E5E]"
-          >
-            {{ item.title }}
-          </div>
-          <ul name="list" class="w-full self-start">
-            <li
-              v-for="conversation in item.list"
-              :key="conversation.id"
-              :data-conversation-id="conversation.conversationId"
-              class="flex cursor-pointer items-center self-start rounded-lg p-[10px] transition-colors hover:bg-gray-700"
-              :class="{
-                'bg-gray-700': conversationId === conversation.conversationId,
-              }"
-              @click="handleSelect(conversation)"
+        <template v-if="activeTab === 'bot'">
+          <div v-for="item in conversationsGrouped" :key="item.title">
+            <div
+              class="theme-text sticky top-0 z-99 w-full self-start rounded-lg bg-[#1E1F25] pb-[4px] pl-[10px] pt-[10px] text-[14px] text-[#5E5E5E]"
             >
-              <div class="min-w-0 flex-1 overflow-hidden">
-                <p class="truncate text-[14px] text-[#CBCACC]">
-                  {{ conversation.theme }}
-                </p>
-              </div>
-            </li>
-          </ul>
+              {{ item.title }}
+            </div>
+            <ul name="list" class="w-full self-start">
+              <li
+                v-for="conversation in item.list"
+                :key="conversation.id"
+                :data-conversation-id="conversation.conversationId"
+                class="flex cursor-pointer items-center self-start rounded-lg p-[10px] transition-colors hover:bg-gray-700"
+                :class="{
+                  'bg-gray-700': conversationId === conversation.conversationId,
+                }"
+                @click="handleSelect(conversation)"
+              >
+                <div class="min-w-0 flex-1 overflow-hidden">
+                  <p class="truncate text-[14px] text-[#CBCACC]">
+                    {{ conversation.theme }}
+                  </p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </template>
+        <template v-else>
+          <div v-for="item in conversationsGroupedCoach" :key="item.title">
+            <div
+              class="theme-text sticky top-0 z-99 w-full self-start rounded-lg bg-[#1E1F25] pb-[4px] pl-[10px] pt-[10px] text-[14px] text-[#5E5E5E]"
+            >
+              {{ item.title }}
+            </div>
+            <ul name="list" class="w-full self-start">
+              <li
+                v-for="conversation in item.list"
+                :key="conversation.id"
+                :data-conversation-id="conversation.conversationId"
+                class="flex cursor-pointer items-center self-start rounded-lg p-[10px] transition-colors hover:bg-gray-700"
+                :class="{
+                  'bg-gray-700': conversationId === conversation.conversationId,
+                }"
+                @click="handleSelect(conversation)"
+              >
+                <div class="min-w-0 flex-1 overflow-hidden">
+                  <p class="truncate text-[14px] text-[#CBCACC]">
+                    {{ conversation.theme }}
+                  </p>
+                </div>
+              </li>
+            </ul>
+          </div>
         </template>
       </div>
       <slot name="sidebar" />

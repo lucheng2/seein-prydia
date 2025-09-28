@@ -5,15 +5,20 @@ import CoachSelect from './CoachSelect.vue'
 interface Props {
   loading?: boolean
   inputDisabled?: boolean
+  coachList?: any[]
 }
 const props = withDefaults(defineProps<Props>(), {
   loading: false,
   inputDisabled: false,
 })
-const emits = defineEmits(['handleSend'])
+
+const emits = defineEmits(['handleSend', 'handleSelect'])
 const modelValue = defineModel<string>('modelValue')
 const handleSend = () => {
   emits('handleSend', modelValue.value)
+}
+const handleSelect = (val: number) => {
+  emits('handleSelect', val)
 }
 
 const isFocus = ref(true)
@@ -66,17 +71,18 @@ const sendDisabled = computed(() => {
       />
       <div class="seein-chat-input__btns">
         <div>
-          <CoachSelect />
+          <CoachSelect :coach-list="coachList" @handle-select="handleSelect" />
         </div>
         <div
-class="seein-chat-input__btns--item send-button" :style="{
-            cursor: sendDisabled ? 'not-allowed' : 'pointer',
-            color: sendDisabled
-              ? 'var(--el-color-primary-light-5)'
-              : 'var(--el-color-primary)',
-          }" :class="[{ 'send-button--disabled': sendDisabled }]" @click="handleSend"
->
-</div>
+          class="seein-chat-input__btns--item send-button" :style="{
+          cursor: sendDisabled ? 'not-allowed' : 'pointer',
+          color: sendDisabled
+            ? 'var(--el-color-primary-light-5)'
+            : 'var(--el-color-primary)',
+          }"
+          :class="[{ 'send-button--disabled': sendDisabled }]" @click="handleSend"
+        >
+        </div>
       </div>
     </div>
   </div>

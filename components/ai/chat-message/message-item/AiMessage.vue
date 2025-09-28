@@ -126,7 +126,8 @@ onUnmounted(() => {
         <img />
       </div>
       <!-- <div :id="`markdown-content_${message.id}`" class="seein-ai-message-item__content"></div> -->
-      <div class="seein-ai-message-item__content max-w-[700px]">
+      <div>
+        <div class="seein-ai-message-item__content max-w-[700px]">
         <MdPreview
           v-model="text"
           class="markdown-content"
@@ -134,14 +135,15 @@ onUnmounted(() => {
           :auto-fold-threshold="AutoFoldThreshold"
         />
       </div>
-    </div>
-    <DisLike
+      <DisLike
       :show-regenerate="showRegenerate"
       :show-like="showLike"
       :message-id="message.id"
       @regenerate="handleRegenerate"
     />
-  </div>
+      </div>
+    </div>
+</div>
 
   <div
     v-else

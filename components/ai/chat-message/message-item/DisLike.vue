@@ -79,7 +79,7 @@ const submit = async (params: any) => {
   >
     <template v-if="showLike">
       <div
-        class="flex cursor-pointer items-center rounded-[6px] p-[2px] hover:bg-[#F5F7FA]"
+        class="flex cursor-pointer items-center rounded-[6px] p-[2px] hover:bg-gray-700"
         @click="handleLike"
       >
         <UiIcon
@@ -92,7 +92,7 @@ const submit = async (params: any) => {
         />
       </div>
       <div
-      class="flex cursor-pointer items-center rounded-[6px] p-[2px] hover:bg-[#F5F7FA]"
+      class="flex cursor-pointer items-center rounded-[6px] p-[2px] hover:bg-gray-700"
         @click="handleDislike"
       >
         <UiIcon
@@ -107,7 +107,7 @@ const submit = async (params: any) => {
     </template>
     <div
       v-if="showRegenerate"
-      class="flex cursor-pointer items-center rounded-[6px] p-[2px] hover:bg-[#F5F7FA]"
+      class="flex cursor-pointer items-center rounded-[6px] p-[2px] hover:bg-gray-700"
       @click="handleRegenerate"
     >
       <UiIcon

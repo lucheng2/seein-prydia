@@ -14,9 +14,8 @@ useHead({
 const route = useRoute()
 const router = useRouter()
 // 会话管理 - 支持分页
-const useChatConversations = () => {
-  const currentConversationId = ref(route.params.id as string)
-
+const currentConversationId = ref(route.params.id as string)
+const useChatConversations = (type: 'bot' | 'coach') => {
   // 分页相关状态
   const currentPage = ref(1)
   const pageSize = ref(20) // 每页数量，可根据需要调整
@@ -35,11 +34,12 @@ const useChatConversations = () => {
     pending,
     refresh: refreshCurrentPage,
   } = useAsyncData(
-    `chat-sessions-${currentPage.value}`,
+    `chat-sessions-${type}-${currentPage.value}`,
     () => {
       return api.getChatSession({
         pageNum: currentPage.value,
         pageSize: pageSize.value,
+        prydiaChatType: type === 'bot' ? 'CHAT_BOT' : 'COACH',
       })
     },
     {
@@ -75,6 +75,8 @@ const useChatConversations = () => {
 
   // 计算属性：当前可用的对话列表
   const conversations = computed(() => {
+    console.log(allConversations.value)
+
     return allConversations.value
   })
 
@@ -105,6 +107,7 @@ const useChatConversations = () => {
 
   // 滚动到底部检测函数
   const checkScrollToBottom = (scrollElement: HTMLElement, threshold = 100) => {
+    if (chatType.value !== type) return
     const { scrollTop, scrollHeight, clientHeight } = scrollElement
     const distanceToBottom = scrollHeight - scrollTop - clientHeight
 
@@ -163,7 +166,6 @@ const useChatConversations = () => {
   })
 
   return {
-    currentConversationId,
     conversations,
     pending,
 
@@ -187,10 +189,15 @@ const useChatConversations = () => {
 
 const {
   conversations,
-  currentConversationId,
   isLoadingMore,
   createScrollListener,
-} = useChatConversations()
+} = useChatConversations('bot')
+
+const {
+  conversations: conversationsCoach,
+  isLoadingMore: isLoadingMoreCoach,
+  createScrollListener: createScrollListenerCoach,
+} = useChatConversations('coach')
 
 // 聊天历史记录
 const useChatHistory = () => {
@@ -236,9 +243,7 @@ const useChatHistory = () => {
       messages.value = []
     }
     else {
-      // 加载历史记录
       const historyData = await loadChatHistory(targetId)
-
       if (historyData && historyData.length > 0) {
         // 有历史记录，转换格式并显示
         const result: any[] = []
@@ -265,6 +270,7 @@ const useChatHistory = () => {
         router.replace({
           params: { id: targetId },
         })
+        isNew.value = false
       }
       else {
         // 没有历史记录但不是新会话
@@ -377,10 +383,50 @@ const useChatRegenerate = () => {
 
 const { onRegenerate } = useChatRegenerate()
 
+const useCoach = () => {
+  const coachList = ref([
+    {
+      value: 1,
+      label: 'How to tell my family that l\'m coming out?',
+      icon: '',
+    },
+    {
+      value: 2,
+      label: 'How to deal with others\' strange looks and doubts?',
+      icon: '',
+    },
+    {
+      value: 3,
+      label: 'How to help parents accept your sexual orientation?',
+      icon: '',
+    },
+    {
+      value: 4,
+      label: 'How to express love to the same-sex person you like?',
+      icon: '',
+    },
+  ])
+  const coachScene = ref(1)
+
+  const setCoachScene = (scene: number) => {
+    setChatTypeToCoach()
+    coachScene.value = scene
+  }
+
+  return {
+    coachList,
+    coachScene,
+    setCoachScene,
+  }
+}
+
+const { coachList, coachScene, setCoachScene } = useCoach()
+
+type ChatType = 'bot' | 'coach'
 // 聊天类型
 const useChatType = () => {
-  const chatType = ref('bot')
-  const setChatType = (type: string) => (chatType.value = type)
+  const chatType = ref<ChatType>('bot')
+  const setChatType = (type: ChatType) => (chatType.value = type)
   const setChatTypeToBot = () => setChatType('bot')
   const setChatTypeToCoach = () => setChatType('coach')
   return {
@@ -390,7 +436,11 @@ const useChatType = () => {
   }
 }
 
-const { chatType, setChatTypeToBot, setChatTypeToCoach } = useChatType()
+const {
+  chatType,
+  setChatTypeToBot,
+  setChatTypeToCoach,
+} = useChatType()
 
 // 聊天功能
 const useChat = () => {
@@ -525,7 +575,9 @@ const useChat = () => {
 
     api
       .sendMessageStream({
+        type: chatType.value,
         round: Number(currentConversationId.value),
+        scene: coachScene.value,
         prompt: content,
         ctrl: abortController.value,
         onMessage,
@@ -540,7 +592,7 @@ const useChat = () => {
         }
       })
     if (conversationRound.value === 1) {
-      unshiftNewConversationTheme(currentConversationId.value)
+      unshiftNewConversationTheme(currentConversationId.value, chatType.value)
     }
     messages.value.push(aiMsg)
     inputMessage.value = ''
@@ -615,6 +667,8 @@ const useChatConversationsTheme = () => {
   const replaceConversationObj = (obj: any) => {
     const current = conversations.value.find(
       (item: any) => item.conversationId === obj.conversationId,
+    ) || conversationsCoach.value.find(
+      (item: any) => item.conversationId === obj.conversationId,
     )
     if (current) {
       current.theme = obj.theme
@@ -649,15 +703,21 @@ const useChatConversationsTheme = () => {
     }
   }
 
-  const unshiftNewConversationTheme = async (conversationId: string) => {
+  const unshiftNewConversationTheme = async (conversationId: string, type: ChatType) => {
     const now = Date.now()
-    conversations.value.unshift({
+    const obj = {
       id: now,
       theme: '新的对话',
       userId: '',
       conversationId,
       createTime: now,
-    })
+    }
+    if (type === 'bot') {
+      conversations.value.unshift(obj)
+    }
+    else if (type === 'coach') {
+      conversationsCoach.value.unshift(obj)
+    }
   }
 
   return {
@@ -757,26 +817,34 @@ const {
   scrollToBottom,
   handleScroll,
 } = useScroll()
+
+const isCollapsed = ref(false)
 </script>
 
 <template>
   <NuxtLayout
+    v-model="isCollapsed"
     nav-bar-logo="none"
     bg-color="white"
     name="chat-text"
     nav-bar-width="100%"
     :route-list="homeRouteList"
+    :is-new="isNew"
   >
-    <template #conversations="{ isCollapsed }">
+    <template #conversations>
       <AiChatConversations
-        :is-collapsed="isCollapsed"
+        v-model:active-tab="chatType"
+        v-model:is-collapsed="isCollapsed"
+        :is-new="isNew"
         :conversation-id="currentConversationId"
         :conversations="conversations"
+        :conversations-coach="conversationsCoach"
         :create-scroll-listener="createScrollListener"
+        :create-scroll-listener-coach="createScrollListenerCoach"
       />
     </template>
     <template #content>
-      <AiChatHello v-if="isNew" />
+      <AiChatHello v-if="isNew && messages.length === 0" :coach-list="coachList" @handle-select="setCoachScene" @handle-send="sendMessage" />
       <UiCard
         v-else
         border-color="conic-gradient(
@@ -802,7 +870,7 @@ const {
               rotating-height="1000%"
               rotating-width="1000%"
             >
-              <AiChatInput class="w-[900px]" />
+              <AiChatInput v-model="inputMessage" class="w-[900px]" :coach-list="coachList" @handle-select="setCoachScene" @handle-send="sendMessage" />
             </UiCard>
           </div>
         </div>

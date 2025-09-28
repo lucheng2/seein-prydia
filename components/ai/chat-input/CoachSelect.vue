@@ -1,4 +1,16 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+interface Props {
+  coachList?: any[]
+}
+
+const props = defineProps<Props>()
+
+const emits = defineEmits(['handleSelect'])
+
+const handleSelect = (val: number) => {
+  emits('handleSelect', val)
+}
+</script>
 
 <template>
   <div class="coach-select">
@@ -31,47 +43,18 @@
               <div text="18px #fff" font="500">AI Coach</div>
               <div class="max-h-[260px] w-full overflow-y-auto">
                 <div
+                  v-for="coach in coachList"
+                  :key="coach.value"
                   flex="~ justify-start items-center w-full"
                   class="mt-[20px] cursor-pointer"
+                  @click="handleSelect(coach.value)"
                 >
                   <img
+                    :src="coach.icon"
                     class="mr-[20px] h-[40px] w-[40px] flex-shrink-0 rounded-[6px]"
                   />
                   <div text="16px">
-                    How to tell my family that l'm coming out?
-                  </div>
-                </div>
-                <div
-                  flex="~ justify-start items-center"
-                  class="mt-[20px] cursor-pointer"
-                >
-                  <img
-                    class="mr-[20px] h-[40px] w-[40px] flex-shrink-0 rounded-[6px]"
-                  />
-                  <div text="16px">
-                    How to deal with others' strange looks and doubts?
-                  </div>
-                </div>
-                <div
-                  flex="~ justify-start items-center"
-                  class="mt-[20px] cursor-pointer"
-                >
-                  <img
-                    class="mr-[20px] h-[40px] w-[40px] flex-shrink-0 rounded-[6px]"
-                  />
-                  <div text="16px">
-                    How to help parents accept your sexual orientation?
-                  </div>
-                </div>
-                <div
-                  flex="~ justify-start items-center"
-                  class="mt-[20px] cursor-pointer"
-                >
-                  <img
-                    class="mr-[20px] h-[40px] w-[40px] flex-shrink-0 rounded-[6px]"
-                  />
-                  <div text="16px">
-                    How to express love to the same-sex person you like?
+                    {{ coach.label }}
                   </div>
                 </div>
               </div>

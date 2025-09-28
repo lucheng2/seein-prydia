@@ -5,21 +5,29 @@ import expandIcon from '@/assets/images/icon/expand.png'
 import plusIcon from '@/assets/images/icon/plus.png'
 
 interface Props {
+  isNew?: boolean
   isAbsolute?: boolean
   logo?: string
   routeList?: any[]
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  isNew: true,
   isAbsolute: false,
   routeList: () => [],
 })
 
-const isCollapsed = ref(true)
+const isCollapsed = defineModel<boolean>('isCollapsed')
 
 // 切换侧边栏收起状态
 const toggleSidebar = () => {
   isCollapsed.value = !isCollapsed.value
+}
+
+const handleNew = async () => {
+  if (props.isNew) return
+  isCollapsed.value = true
+  navigateTo('/ai/chat/new?new=true')
 }
 
 onMounted(() => {})
@@ -43,7 +51,7 @@ onMounted(() => {})
               />
             </div>
           </UiCard>
-          <UiCard v-if="isCollapsed" class="ml-[20px] cursor-pointer">
+          <UiCard v-if="isCollapsed" class="ml-[20px] cursor-pointer" @click="handleNew">
             <div class="h-[40px] w-[40px]" flex="~ items-center justify-center">
               <img class="h-[16px] w-[16px]" :src="plusIcon" />
             </div>

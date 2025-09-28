@@ -46,8 +46,7 @@ const _borderWidth = computed(() => {
 
 <template>
   <div class="card">
-    <div class="gradient-overlay"></div>
-    <div class="z-9 h-full w-full">
+    <div class="relative z-9 h-full w-full">
       <slot />
     </div>
   </div>

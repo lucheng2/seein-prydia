@@ -4,6 +4,7 @@ import { fetchEventSource } from '@microsoft/fetch-event-source'
 interface IChatMessage {
   type?: 'bot' | 'coach'
   round?: number
+  scene?: number
   messageId?: string
   prompt?: string
   ctrl: AbortController
@@ -16,6 +17,7 @@ interface IChatMessage {
 export const sendMessageStream = async ({
   type,
   round,
+  scene,
   prompt,
   ctrl,
   onMessage,
@@ -40,6 +42,7 @@ export const sendMessageStream = async ({
     body: JSON.stringify({
       round,
       prompt,
+      scene: type === 'coach' ? scene : undefined,
     }),
     onmessage: onMessage,
 
