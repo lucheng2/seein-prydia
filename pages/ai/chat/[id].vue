@@ -4,10 +4,17 @@ import coachIcon1 from '@/assets/images/coach/1.png'
 import coachIcon2 from '@/assets/images/coach/2.png'
 import coachIcon3 from '@/assets/images/coach/3.png'
 import coachIcon4 from '@/assets/images/coach/4.png'
-import { homeRouteList } from '@/constants/home'
+import { useHomeRouteList } from '@/constants/home'
 
 defineOptions({
   name: 'AIChat',
+})
+
+const homeRouteList = useHomeRouteList({
+  Knowledge: () => {
+    isCollapsed.value = isCollapsedknowledge.value
+    isCollapsedknowledge.value = !isCollapsedknowledge.value
+  },
 })
 
 useHead({
@@ -820,13 +827,14 @@ const {
 } = useScroll()
 
 const isCollapsed = ref(false)
-
+const isCollapsedknowledge = ref(true)
 const bgRef = ref()
 </script>
 
 <template>
   <NuxtLayout
-    v-model="isCollapsed"
+    v-model:is-collapsed="isCollapsed"
+    v-model:is-collapsedknowledge="isCollapsedknowledge"
     nav-bar-logo="none"
     bg-color="white"
     name="chat-text"
@@ -896,6 +904,9 @@ const bgRef = ref()
           </div>
         </div>
       </UiCard>
+    </template>
+    <template #knowledge>
+      <KnowledgeContainer style="height: calc(100vh - 94px - 24px);" />
     </template>
     <template #bg>
       <UiDynamicsBg ref="bgRef" />
@@ -975,6 +986,7 @@ const bgRef = ref()
 
 .chat-content {
   height: calc(100vh - 94px - 24px);
+  padding: 0 24px;
 }
 
 .shadow-box {

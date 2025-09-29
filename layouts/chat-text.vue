@@ -19,6 +19,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const isCollapsed = defineModel<boolean>('isCollapsed')
+const isCollapsedknowledge = defineModel<boolean>('isCollapsedknowledge')
 
 // 切换侧边栏收起状态
 const toggleSidebar = () => {
@@ -30,8 +31,6 @@ const handleNew = async () => {
   isCollapsed.value = true
   navigateTo('/ai/chat/new?new=true')
 }
-
-const isCollapsedknowledge = ref(false)
 
 onMounted(() => {})
 </script>
@@ -80,6 +79,7 @@ onMounted(() => {})
         :class="{
           'sidebar-collapsed': isCollapsed,
           'knowledge-collapsed': isCollapsedknowledge,
+          'knowledge-collapsed-show': !isCollapsedknowledge,
         }"
       >
         <slot name="content" />
@@ -145,7 +145,7 @@ onMounted(() => {})
 
 .knowledge-container {
   position: relative;
-  width: 724px;
+  width: 764px;
   flex-shrink: 0;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 10;
@@ -165,7 +165,10 @@ onMounted(() => {})
   }
 
   &.knowledge-collapsed {
-    margin-right: calc(-724px); /* 288px - 24px = 264px */
+    margin-right: calc(-764px - 24px); /* 288px - 24px = 264px */
+  }
+  &.knowledge-collapsed-show {
+    margin-right: 24px;
   }
 }
 </style>

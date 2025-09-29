@@ -73,11 +73,6 @@ function scrollToCurrentConversation(conversationId: string) {
   }
 }
 
-function toggleCollapse() {
-  isCollapsed.value = !isCollapsed.value
-  localStorage.setItem('isCollapsed', String(isCollapsed.value))
-}
-
 const handleSelect = async (conversation) => {
   if (isMobile.value) isCollapsed.value = true
   navigateTo(`/ai/chat/${conversation.conversationId}`)
