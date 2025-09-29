@@ -124,8 +124,7 @@ onUnmounted(() => {
     margin: 0 auto;
 
     .knowledge-sidebar {
-        width: 400px;
-        min-width: 320px;
+        width: 320px;
         max-width: 480px;
         background: #1E1F25;
         border-right: 1px solid var(--el-border-color-light);
@@ -177,8 +176,7 @@ onUnmounted(() => {
 @media (max-width: 1200px) {
     .knowledge-desktop {
         .knowledge-sidebar {
-            width: 350px;
-            min-width: 300px;
+            width: 250px;
         }
     }
 }
@@ -186,8 +184,7 @@ onUnmounted(() => {
 @media (max-width: 992px) {
     .knowledge-desktop {
         .knowledge-sidebar {
-            width: 320px;
-            min-width: 280px;
+            width: 220px;
         }
     }
 }
