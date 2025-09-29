@@ -92,9 +92,6 @@ importers:
       sass:
         specifier: 1.79.0
         version: 1.79.0
-      snapdom:
-        specifier: ^0.1.2
-        version: 0.1.2
       three:
         specifier: ^0.180.0
         version: 0.180.0
@@ -5456,9 +5453,6 @@ packages:
 
   smob@1.5.0:
     resolution: {integrity: sha512-g6T+p7QO8npa+/hNx9ohv1E5pVCmWrVCUzUXJyLdMmftX6ER0oiWY/w9knEonLpnOp6b6FenKnMfR8gqwWdwig==}
-
-  snapdom@0.1.2:
-    resolution: {integrity: sha512-N9cvtICohWdAByQoF972u5BsSUhhEWPTvK11SXAt6mMHjfltXtEBy58ucsag/LF70JXEg7WvaaKH11qq1w6+GA==}
 
   snapdragon-node@2.1.1:
     resolution: {integrity: sha512-O27l4xaMYt/RSQ5TR3vpWCAB5Kb/czIcqUFOM/C4fYcLnbZUc1PkjTAMjof2pBWaSTwOUd6qUHcFGVGj7aIwnw==}
@@ -12929,8 +12923,6 @@ snapshots:
     optional: true
 
   smob@1.5.0: {}
-
-  snapdom@0.1.2: {}
 
   snapdragon-node@2.1.1:
     dependencies:

@@ -50,8 +50,7 @@ defineExpose({
 </script>
 
 <template>
-  <div class="overflow-auto">
-    <div class="seein-chat-message w-full flex flex-col items-center">
+  <div class="seein-chat-message w-full flex flex-col items-center">
       <template v-for="item in messageList" :key="item.id">
         <component
           v-bind="item.attrs"
@@ -62,7 +61,6 @@ defineExpose({
         />
       </template>
     </div>
-  </div>
 </template>
 
 <style lang="scss" scoped>

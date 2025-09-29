@@ -9,6 +9,7 @@ interface Props {
   isAbsolute?: boolean
   logo?: string
   routeList?: any[]
+  bgRef?: any
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -30,11 +31,17 @@ const handleNew = async () => {
   navigateTo('/ai/chat/new?new=true')
 }
 
+const isCollapsedknowledge = ref(false)
+
 onMounted(() => {})
 </script>
 
 <template>
-  <div class="seein-default-layout">
+  <div
+    class="seein-default-layout"
+    @mousemove="bgRef.handleMouseMove"
+    @mouseleave="bgRef.handleMouseLeave"
+  >
     <LayoutNavBar
       class="z-109"
       :logo="logo"
@@ -51,7 +58,11 @@ onMounted(() => {})
               />
             </div>
           </UiCard>
-          <UiCard v-if="isCollapsed" class="ml-[20px] cursor-pointer" @click="handleNew">
+          <UiCard
+            v-if="isCollapsed"
+            class="ml-[20px] cursor-pointer"
+            @click="handleNew"
+          >
             <div class="h-[40px] w-[40px]" flex="~ items-center justify-center">
               <img class="h-[16px] w-[16px]" :src="plusIcon" />
             </div>
@@ -59,15 +70,29 @@ onMounted(() => {})
         </div>
       </template>
     </LayoutNavBar>
-    <div class="seein-default-layout__content relative z-2">
+    <div class="seein-default-layout__content relative z-99">
       <div class="sidebar-container" :class="{ collapsed: isCollapsed }">
         <slot name="conversations" :is-collapsed="isCollapsed" />
       </div>
 
-      <div class="content-area" :class="{ 'sidebar-collapsed': isCollapsed }">
+      <div
+        class="content-area"
+        :class="{
+          'sidebar-collapsed': isCollapsed,
+          'knowledge-collapsed': isCollapsedknowledge,
+        }"
+      >
         <slot name="content" />
       </div>
+
+      <div
+        class="knowledge-container"
+        :class="{ collapsed: isCollapsedknowledge }"
+      >
+        <slot name="knowledge" :is-collapsed="isCollapsedknowledge" />
+      </div>
     </div>
+    <slot name="bg" />
   </div>
 </template>
 
@@ -115,36 +140,32 @@ onMounted(() => {})
     height: calc(100vh - 94px - 24px);
     display: flex;
     flex-direction: column;
+  }
+}
 
-    .active-tab {
-      color: #fff;
-      &::after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 24px;
-        height: 2px;
-        background: linear-gradient(
-          90deg,
-          #24e243 0%,
-          #ffd12a 30%,
-          #ee3942 62%,
-          #703edb 100%
-        );
-      }
-    }
+.knowledge-container {
+  position: relative;
+  width: 724px;
+  flex-shrink: 0;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+
+  &.collapsed {
+    transform: translateX(calc(100% + 40px));
   }
 }
 
 .content-area {
   flex: 1;
   margin-left: 24px;
-  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: margin 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   &.sidebar-collapsed {
     margin-left: calc(-288px); /* 288px - 24px = 264px */
+  }
+
+  &.knowledge-collapsed {
+    margin-right: calc(-724px); /* 288px - 24px = 264px */
   }
 }
 </style>

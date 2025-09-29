@@ -11,7 +11,7 @@ const handleSend = () => {
   emits('handleSend', textVal.value)
   textVal.value = ''
 }
-const handleSelect = (val: number) => {
+const handleSelect = (val: any) => {
   emits('handleSelect', val)
 }
 </script>
@@ -36,7 +36,7 @@ const handleSelect = (val: number) => {
         v-for="coach in coachList"
         :key="coach.value"
         class="w-[444px] cursor-pointer"
-        @click="handleSelect(coach.value)"
+        @click="handleSelect(coach)"
       >
         <div p="20px 16px" flex="~ items-center">
           <img

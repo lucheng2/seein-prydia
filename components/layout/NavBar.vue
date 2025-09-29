@@ -225,6 +225,7 @@ const { updateNavbarStyles } = useGlass()
                       class="seein-nav__links-left--item z-109"
                       :class="{ active: getActive(item) }"
                       :to="item.path"
+                      @click="item.onClick"
                     >
                       <UiTextLink :content="item.name" />
                     </NuxtLink>
@@ -354,8 +355,8 @@ const { updateNavbarStyles } = useGlass()
     justify-content: center;
     padding-right: 20px;
     img {
-      width: 100px;
-      height: 60px;
+      width: 103px;
+      height: 32px;
       object-fit: cover;
     }
   }

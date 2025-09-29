@@ -7,7 +7,7 @@ const props = defineProps<Props>()
 
 const emits = defineEmits(['handleSelect'])
 
-const handleSelect = (val: number) => {
+const handleSelect = (val: any) => {
   emits('handleSelect', val)
 }
 </script>
@@ -47,7 +47,7 @@ const handleSelect = (val: number) => {
                   :key="coach.value"
                   flex="~ justify-start items-center w-full"
                   class="mt-[20px] cursor-pointer"
-                  @click="handleSelect(coach.value)"
+                  @click="handleSelect(coach)"
                 >
                   <img
                     :src="coach.icon"

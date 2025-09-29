@@ -17,7 +17,7 @@ const modelValue = defineModel<string>('modelValue')
 const handleSend = () => {
   emits('handleSend', modelValue.value)
 }
-const handleSelect = (val: number) => {
+const handleSelect = (val: any) => {
   emits('handleSelect', val)
 }
 

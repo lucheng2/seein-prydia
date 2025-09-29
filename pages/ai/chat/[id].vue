@@ -1,7 +1,10 @@
 <script lang="ts" setup>
 import * as api from '@/apis'
+import coachIcon1 from '@/assets/images/coach/1.png'
+import coachIcon2 from '@/assets/images/coach/2.png'
+import coachIcon3 from '@/assets/images/coach/3.png'
+import coachIcon4 from '@/assets/images/coach/4.png'
 import { homeRouteList } from '@/constants/home'
-import { openApplyForTestModal } from '~/components/modal/apply-for-test/open'
 
 defineOptions({
   name: 'AIChat',
@@ -75,8 +78,6 @@ const useChatConversations = (type: 'bot' | 'coach') => {
 
   // 计算属性：当前可用的对话列表
   const conversations = computed(() => {
-    console.log(allConversations.value)
-
     return allConversations.value
   })
 
@@ -187,11 +188,8 @@ const useChatConversations = (type: 'bot' | 'coach') => {
   }
 }
 
-const {
-  conversations,
-  isLoadingMore,
-  createScrollListener,
-} = useChatConversations('bot')
+const { conversations, isLoadingMore, createScrollListener }
+  = useChatConversations('bot')
 
 const {
   conversations: conversationsCoach,
@@ -388,29 +386,33 @@ const useCoach = () => {
     {
       value: 1,
       label: 'How to tell my family that l\'m coming out?',
-      icon: '',
+      icon: coachIcon1,
     },
     {
       value: 2,
       label: 'How to deal with others\' strange looks and doubts?',
-      icon: '',
+      icon: coachIcon2,
     },
     {
       value: 3,
       label: 'How to help parents accept your sexual orientation?',
-      icon: '',
+      icon: coachIcon3,
     },
     {
       value: 4,
       label: 'How to express love to the same-sex person you like?',
-      icon: '',
+      icon: coachIcon4,
     },
   ])
   const coachScene = ref(1)
 
-  const setCoachScene = (scene: number) => {
+  const setCoachScene = (coach: any) => {
+    // setChatTypeToCoach()
+    // coachScene.value = scene
+    console.log(coach)
     setChatTypeToCoach()
-    coachScene.value = scene
+    coachScene.value = coach.value
+    sendMessage(coach.label)
   }
 
   return {
@@ -436,11 +438,7 @@ const useChatType = () => {
   }
 }
 
-const {
-  chatType,
-  setChatTypeToBot,
-  setChatTypeToCoach,
-} = useChatType()
+const { chatType, setChatTypeToBot, setChatTypeToCoach } = useChatType()
 
 // 聊天功能
 const useChat = () => {
@@ -665,11 +663,13 @@ const useChatConversationsTheme = () => {
 
   // 替换对话obj
   const replaceConversationObj = (obj: any) => {
-    const current = conversations.value.find(
-      (item: any) => item.conversationId === obj.conversationId,
-    ) || conversationsCoach.value.find(
-      (item: any) => item.conversationId === obj.conversationId,
-    )
+    const current
+      = conversations.value.find(
+        (item: any) => item.conversationId === obj.conversationId,
+      )
+      || conversationsCoach.value.find(
+        (item: any) => item.conversationId === obj.conversationId,
+      )
     if (current) {
       current.theme = obj.theme
       current.userId = obj.userId
@@ -703,7 +703,10 @@ const useChatConversationsTheme = () => {
     }
   }
 
-  const unshiftNewConversationTheme = async (conversationId: string, type: ChatType) => {
+  const unshiftNewConversationTheme = async (
+    conversationId: string,
+    type: ChatType,
+  ) => {
     const now = Date.now()
     const obj = {
       id: now,
@@ -745,7 +748,7 @@ const useScroll = () => {
 
   const isUserScrolling = computed(() => {
     const container = messagesContainerRef.value
-    const scrollbar = messagesScrollbarRef.value?.wrapRef
+    const scrollbar = messagesScrollbarRef.value
     if (container && scrollbar) {
       const { offsetHeight } = container
       return (
@@ -761,13 +764,13 @@ const useScroll = () => {
     if (timer2) clearTimeout(timer2)
   }
 
-  const handleScroll = ({ scrollTop: top }) => {
+  const handleScroll = (e) => {
     isScrolling.value = true
     clearTimer()
     timer = setTimeout(() => {
       isScrolling.value = false
     }, 100)
-    scrollTop.value = top
+    scrollTop.value = e.target.scrollTop
   }
 
   const scrollToBottom = (force = false) => {
@@ -775,9 +778,7 @@ const useScroll = () => {
       nextTick(() => {
         const container = messagesContainerRef.value
         if (force || (container && !isUserScrolling.value)) {
-          messagesScrollbarRef.value?.setScrollTop(
-            container.offsetHeight + 100,
-          )
+          messagesScrollbarRef.value.scrollTop = container.scrollHeight + 100
         }
       })
     }, 100)
@@ -819,6 +820,8 @@ const {
 } = useScroll()
 
 const isCollapsed = ref(false)
+
+const bgRef = ref()
 </script>
 
 <template>
@@ -830,6 +833,7 @@ const isCollapsed = ref(false)
     nav-bar-width="100%"
     :route-list="homeRouteList"
     :is-new="isNew"
+    :bg-ref="bgRef"
   >
     <template #conversations>
       <AiChatConversations
@@ -844,7 +848,12 @@ const isCollapsed = ref(false)
       />
     </template>
     <template #content>
-      <AiChatHello v-if="isNew && messages.length === 0" :coach-list="coachList" @handle-select="setCoachScene" @handle-send="sendMessage" />
+      <AiChatHello
+        v-if="isNew && messages.length === 0"
+        :coach-list="coachList"
+        @handle-select="setCoachScene"
+        @handle-send="sendMessage"
+      />
       <UiCard
         v-else
         border-color="conic-gradient(
@@ -858,23 +867,38 @@ const isCollapsed = ref(false)
         rotating-width="100vw"
       >
         <div class="chat-content" flex="~ col justify-center items-center">
-          <AiChatMessage
-            ref="aiChatMessageRef"
+          <div
+            ref="messagesScrollbarRef"
             flex="~ 1"
-            class="my-[20px] w-[900px]"
-            :message-list="messages"
-          />
-          <div>
+            class="my-[20px] w-[900px] overflow-y-auto"
+            @scroll="handleScroll"
+          >
+            <div ref="messagesContainerRef" class="w-full">
+              <AiChatMessage ref="aiChatMessageRef" :message-list="messages" />
+            </div>
+          </div>
+
+          <div class="shadow-box">
             <UiCard
               class="mb-[12px]"
-              rotating-height="1000%"
-              rotating-width="1000%"
+              rotating-height="100%"
+              rotating-width="100%"
+              border-color="linear-gradient(136deg, rgba(112, 62, 219, 1), rgba(38, 0, 230, 1), rgba(255, 209, 42, 1))"
             >
-              <AiChatInput v-model="inputMessage" class="w-[900px]" :coach-list="coachList" @handle-select="setCoachScene" @handle-send="sendMessage" />
+              <AiChatInput
+                v-model="inputMessage"
+                class="w-[900px]"
+                :coach-list="coachList"
+                @handle-select="setCoachScene"
+                @handle-send="sendMessage"
+              />
             </UiCard>
           </div>
         </div>
       </UiCard>
+    </template>
+    <template #bg>
+      <UiDynamicsBg ref="bgRef" />
     </template>
   </NuxtLayout>
 </template>
@@ -951,5 +975,20 @@ const isCollapsed = ref(false)
 
 .chat-content {
   height: calc(100vh - 94px - 24px);
+}
+
+.shadow-box {
+  position: relative;
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 75%;
+    height: 20%;
+    background: linear-gradient(179deg, #703EDB 0%, #703EDB 63%, #703EDB 100%);
+    filter: blur(120px);
+  }
 }
 </style>

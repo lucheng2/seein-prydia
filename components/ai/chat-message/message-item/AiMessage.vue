@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import aiAvatar from '@/assets/images/ai-avatar.png'
 import { config, MdPreview } from 'md-editor-v3'
 
 import DisLike from './DisLike.vue'
@@ -121,33 +122,32 @@ onUnmounted(() => {
   <div v-if="!loading" class="w-full">
     <div class="seein-ai-message-item">
       <div
-        class="mr-[12px] h-[36px] w-[36px] flex-shrink-0 self-start rounded-full bg-[#fff]"
+        class="mr-[12px] h-[36px] w-[36px] flex-shrink-0 self-start rounded-full"
       >
-        <img />
+        <img class="h-full w-full" :src="aiAvatar" />
       </div>
       <!-- <div :id="`markdown-content_${message.id}`" class="seein-ai-message-item__content"></div> -->
       <div>
         <div class="seein-ai-message-item__content max-w-[700px]">
-        <MdPreview
-          v-model="text"
-          class="markdown-content"
-          :editor-id="editorId"
-          :auto-fold-threshold="AutoFoldThreshold"
+          <MdPreview
+            v-model="text"
+            class="markdown-content"
+            :editor-id="editorId"
+            :auto-fold-threshold="AutoFoldThreshold"
+          />
+        </div>
+        <DisLike
+          :show-regenerate="showRegenerate"
+          :show-like="showLike"
+          :message-id="message.id"
+          @regenerate="handleRegenerate"
         />
       </div>
-      <DisLike
-      :show-regenerate="showRegenerate"
-      :show-like="showLike"
-      :message-id="message.id"
-      @regenerate="handleRegenerate"
-    />
-      </div>
     </div>
-</div>
-
+  </div>
   <div
     v-else
-    class="seein-ai-message-loading h-[52px] w-full flex items-center justify-start gap-1 md:w-[900px]"
+    class="seein-ai-message-loading h-[52px] w-full flex items-center justify-start"
   >
     <UiLoadingSpinner />
   </div>

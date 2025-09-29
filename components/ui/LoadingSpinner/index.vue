@@ -15,6 +15,7 @@
   background: #e0e0e0;
   margin: 0 4px;
 }
+
 /* 跳动加载动画 */
 .bouncing-loader {
   display: flex;
