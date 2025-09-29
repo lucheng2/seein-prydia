@@ -28,8 +28,8 @@ export const modal = (
 ) => {
   const defaultOptions: ModalOptions = {
     type: 'warning',
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
+    confirmButtonText: 'Ok',
+    cancelButtonText: 'Cancel',
     closeOnClickModal: false,
     closeOnPressEscape: false,
     showClose: true,

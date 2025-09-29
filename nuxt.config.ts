@@ -47,6 +47,7 @@ export default defineNuxtConfig({
     '@unocss/reset/sanitize/assets.css',
     '~/assets/styles/element/main.scss',
     '~/assets/styles/index.scss',
+    '~/assets/fonts/index.scss',
   ],
   vite: {
     plugins: [

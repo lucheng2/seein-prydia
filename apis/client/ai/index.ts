@@ -132,3 +132,8 @@ export const likeMessage = (params: any) => {
 export const generateTopic = (params?: any) => {
   return request.get('/chat-api/prydia_chat/initChatConversationByConversationId', params)
 }
+
+/** 获取夸夸卡 */
+export const getFlatteryCard = (params?: any) => {
+  return request.post(`/chat-api/prydia_chat/kuaKuaCard?round=${params.round}`, params)
+}

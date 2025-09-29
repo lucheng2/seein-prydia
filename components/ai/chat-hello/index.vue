@@ -36,6 +36,9 @@ const handleSelect = (val: any) => {
         v-for="coach in coachList"
         :key="coach.value"
         class="w-[444px] cursor-pointer"
+        border-color="linear-gradient(135deg, rgba(112, 62, 219, 1), rgba(255, 209, 42, 1))"
+        rotating-height="100%"
+        rotating-width="100%"
         @click="handleSelect(coach)"
       >
         <div p="20px 16px" flex="~ items-center">

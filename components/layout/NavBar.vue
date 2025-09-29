@@ -73,15 +73,15 @@ const handleSelect = (name: string) => {
 }
 
 const handleLogout = () => {
-  modal('确认退出？', '', {
-    confirmButtonText: '确认退出',
+  modal('Confirm logout？', '', {
+    confirmButtonText: 'Ok',
     autoClose: true,
   }).then(async ({ loadingConfirm, closeModal }) => {
     loadingConfirm(true)
     userStore
       .logout()
       .then(() => {
-        message('退出登录成功', { type: 'success' })
+        message('Logout success', { type: 'success' })
         closeModal()
       })
       .finally(() => {

@@ -2,6 +2,7 @@
 import ComponentsMap from './message-item/ComponentsMap'
 
 interface Props {
+  round: string | number
   messageList: any[]
 }
 const props = withDefaults(defineProps<Props>(), {
@@ -57,6 +58,7 @@ defineExpose({
           :is="ComponentsMap[item.sender as keyof typeof ComponentsMap]"
           :ref="(el: any) => handleSetRefMap(el, item)"
           :message="item"
+          :round="round"
           @on="emit"
         />
       </template>

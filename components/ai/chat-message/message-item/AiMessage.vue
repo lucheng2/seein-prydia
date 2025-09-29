@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import * as api from '@/apis'
 import aiAvatar from '@/assets/images/ai-avatar.png'
 import { config, MdPreview } from 'md-editor-v3'
 
@@ -7,19 +8,21 @@ import 'md-editor-v3/lib/style.css'
 
 interface Props {
   message: any
+  round: string | number
 }
 
 const props = withDefaults(defineProps<Props>(), {
   message: () => ({}),
 })
 
-const emits = defineEmits(['send', 'scrollToBottom', 'regenerate'])
+const emits = defineEmits(['send', 'scrollToBottom', 'regenerate', 'endCoach'])
 const AutoFoldThreshold = Number.MAX_SAFE_INTEGER
 const editorId = computed(() => `markdown-content_${props.message.id}`)
 const loading = ref(true)
 
 const text = ref('')
 const isError = computed(() => text.value.includes('服务器繁忙，请稍后再试'))
+
 const showLike = computed(
   () =>
     props.message?.state === 'end'
@@ -56,11 +59,21 @@ const handleRegenerate = () => {
   emits('regenerate', props.message)
 }
 
+// 异步结束
+let timer = null
+const asyncEnd = () => {
+  clearTimeout(timer)
+  timer = setTimeout(() => {
+    isRendering.value = false
+    isTextComplete.value = true // 标记文本渲染完成
+    getKuakuaCardData()
+  }, 500)
+}
+
 // 处理队列中的文本
 const processQueue = () => {
   if (textQueue.value.length === 0) {
-    isRendering.value = false
-    isTextComplete.value = true // 标记文本渲染完成
+    asyncEnd()
     return
   }
 
@@ -116,6 +129,29 @@ onUnmounted(() => {
     renderTimer = null
   }
 })
+
+const useKuakuaCard = () => {
+  const isKuakuaCard = computed(() => text.value.includes('本次联系已结束'))
+  const kuakuaCardData = ref()
+  watch(() => isKuakuaCard.value, (newVal) => {
+    if (newVal) {
+      emits('endCoach')
+      getKuakuaCardData()
+    }
+  })
+
+  const getKuakuaCardData = async () => {
+    await api.getFlatteryCard({ round: props.round })
+  }
+
+  return {
+    isKuakuaCard,
+    kuakuaCardData,
+    getKuakuaCardData,
+  }
+}
+
+const { isKuakuaCard, kuakuaCardData, getKuakuaCardData } = useKuakuaCard()
 </script>
 
 <template>
@@ -135,6 +171,12 @@ onUnmounted(() => {
             :editor-id="editorId"
             :auto-fold-threshold="AutoFoldThreshold"
           />
+        </div>
+        <div v-if="isKuakuaCard && kuakuaCardData" class="mt-[4px] w-[500px] rounded-[12px] bg-[#2C2933]">
+          <img :src="aiAvatar" class="h-[140px] w-[500px]" />
+          <div class="px-[20px] py-[10px]">
+            {{ kuakuaCardData }}
+          </div>
         </div>
         <DisLike
           :show-regenerate="showRegenerate"

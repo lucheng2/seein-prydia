@@ -59,7 +59,7 @@ defineExpose({
     <el-dialog
       v-bind="$attrs"
       v-model="showModal"
-      class="w-[80%] md:w-[27%]"
+      size="unset"
       :show-close="false"
       :z-index="2000"
     >
@@ -122,6 +122,8 @@ defineExpose({
     left: 50%;
     transform: translate(-50%, -50%);
     margin: 0;
+    //混入unocss
+    @apply w-[80%] md:w-[27%];
   }
 
   :deep(.el-dialog__header) {

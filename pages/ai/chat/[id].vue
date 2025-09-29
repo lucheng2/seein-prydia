@@ -115,7 +115,6 @@ const useChatConversations = (type: 'bot' | 'coach') => {
 
   // 滚动到底部检测函数
   const checkScrollToBottom = (scrollElement: HTMLElement, threshold = 100) => {
-    if (chatType.value !== type) return
     const { scrollTop, scrollHeight, clientHeight } = scrollElement
     const distanceToBottom = scrollHeight - scrollTop - clientHeight
 
@@ -131,6 +130,7 @@ const useChatConversations = (type: 'bot' | 'coach') => {
     threshold = 100,
   ) => {
     const handleScroll = () => {
+      if (type !== activeTab.value) return
       checkScrollToBottom(scrollElement, threshold)
     }
 
@@ -218,8 +218,9 @@ const useChatHistory = () => {
     if (!conversationId) {
       return []
     }
+
     // 检查缓存
-    if (conversationCache.has(conversationId)) {
+    if (conversationCache.has(conversationId) && conversationCache.get(conversationId)) {
       return conversationCache.get(conversationId)
     }
 
@@ -227,7 +228,7 @@ const useChatHistory = () => {
     try {
       const data = await api.getChatRecord(conversationId)
       // 缓存结果
-      const result = data || []
+      const result = data
       conversationCache.set(conversationId, result)
       return result
     }
@@ -250,6 +251,8 @@ const useChatHistory = () => {
     else {
       const historyData = await loadChatHistory(targetId)
       if (historyData && historyData.length > 0) {
+        chatType.value = historyData[0]?.prydiaChatType === 'CHAT_BOT' ? 'bot' : 'coach'
+        activeTab.value = chatType.value
         // 有历史记录，转换格式并显示
         const result: any[] = []
         historyData.forEach((item: any) => {
@@ -434,18 +437,20 @@ const { coachList, coachScene, setCoachScene } = useCoach()
 type ChatType = 'bot' | 'coach'
 // 聊天类型
 const useChatType = () => {
+  const activeTab = ref<ChatType>('bot')
   const chatType = ref<ChatType>('bot')
   const setChatType = (type: ChatType) => (chatType.value = type)
   const setChatTypeToBot = () => setChatType('bot')
   const setChatTypeToCoach = () => setChatType('coach')
   return {
+    activeTab,
     chatType,
     setChatTypeToBot,
     setChatTypeToCoach,
   }
 }
 
-const { chatType, setChatTypeToBot, setChatTypeToCoach } = useChatType()
+const { chatType, activeTab, setChatTypeToBot, setChatTypeToCoach } = useChatType()
 
 // 聊天功能
 const useChat = () => {
@@ -717,7 +722,7 @@ const useChatConversationsTheme = () => {
     const now = Date.now()
     const obj = {
       id: now,
-      theme: '新的对话',
+      theme: 'New Conversation',
       userId: '',
       conversationId,
       createTime: now,
@@ -827,6 +832,11 @@ const {
 } = useScroll()
 
 const isCollapsed = ref(false)
+watch(isCollapsed, (val) => {
+  if (!isCollapsed.value) {
+    isCollapsedknowledge.value = true
+  }
+})
 const isCollapsedknowledge = ref(true)
 const bgRef = ref()
 </script>
@@ -845,8 +855,9 @@ const bgRef = ref()
   >
     <template #conversations>
       <AiChatConversations
-        v-model:active-tab="chatType"
+        v-model:active-tab="activeTab"
         v-model:is-collapsed="isCollapsed"
+        style="height: calc(100vh - 94px - 24px);"
         :is-new="isNew"
         :conversation-id="currentConversationId"
         :conversations="conversations"
@@ -882,7 +893,7 @@ const bgRef = ref()
             @scroll="handleScroll"
           >
             <div ref="messagesContainerRef" class="w-full">
-              <AiChatMessage ref="aiChatMessageRef" :message-list="messages" />
+              <AiChatMessage ref="aiChatMessageRef" :round="conversationRound" :message-list="messages" />
             </div>
           </div>
 

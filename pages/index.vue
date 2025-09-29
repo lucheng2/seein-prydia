@@ -173,6 +173,7 @@ const useRegister = () => {
       await api.getCaptcha({
         email: registerForm.value.email,
       })
+      message('Success send code!', { type: 'success' })
     }
     catch (error) {
       throw new Error(error)
@@ -224,9 +225,9 @@ const useRegister = () => {
         captcha: registerForm.value.captcha,
         password: registerForm.value.password,
       })
-      loginByToken(token)
+      await loginByToken(token)
       navigateTo('/ai/chat/new?new=true')
-      message('success register!', { type: 'success' })
+      message('Success register!', { type: 'success' })
     }
     catch (error) {
       throw new Error(error)
@@ -266,7 +267,7 @@ const useBg = () => {
     const el = revealImgRef.value
     if (el) {
       el.style.setProperty('--mx', `${x}px`)
-      el.style.setProperty('--my', `${y + rect.height * 0.5}px`)
+      el.style.setProperty('--my', `${y}px`)
     }
   }
 
@@ -345,6 +346,7 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                     :rules="loginForm0Rules"
                     :model="loginForm"
                     class="mt-[35px]"
+                    @submit.prevent
                   >
                     <el-form-item prop="email">
                       <div
@@ -378,6 +380,7 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                           class="h-[24px] flex-1 pr-[20px]"
                           placeholder="Enter the password"
                           type="password"
+                          @keyup.enter="handleLogin(loginForm0)"
                         />
                       </div>
                     </el-form-item>
@@ -421,6 +424,7 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                     :rules="loginForm1Rules"
                     :model="registerForm"
                     class="mt-[35px]"
+                    @submit.prevent
                   >
                     <el-form-item prop="email">
                       <div
@@ -436,6 +440,7 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                           text="#fff 16px"
                           class="h-[24px] flex-1 pr-[20px]"
                           placeholder="Enter email address"
+                          @keyup.enter="handleSendCode(loginForm1)"
                         />
                       </div>
                     </el-form-item>
@@ -467,6 +472,7 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                     :rules="loginForm2Rules"
                     :model="registerForm"
                     class="mt-[35px]"
+                    @submit.prevent
                   >
                     <el-form-item prop="email">
                       <div
@@ -500,6 +506,7 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                           text="#fff 16px"
                           class="h-[24px] flex-1 pr-[20px]"
                           placeholder="Enter Verification Code"
+                          @keyup.enter="handleVerifyCode(loginForm2)"
                         />
                       </div>
                     </el-form-item>
@@ -530,6 +537,7 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                     ref="loginForm3"
                     :rules="loginForm3Rules"
                     class="mt-[35px]"
+                    @submit.prevent
                   >
                     <el-form-item prop="email">
                       <div
@@ -581,6 +589,7 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                           text="#fff 16px"
                           class="h-[24px] flex-1 pr-[20px]"
                           placeholder="Enter your password"
+                          type="password"
                         />
                       </div>
                     </el-form-item>
@@ -598,6 +607,7 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                           text="#fff 16px"
                           class="h-[24px] flex-1 pr-[20px]"
                           placeholder="Enter your password again"
+                          type="password"
                         />
                       </div>
                     </el-form-item>
@@ -645,7 +655,6 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
             style="
               position: absolute;
               width: 100%;
-              top: -50%;
               z-index: 5;
               mix-blend-mode: lighten;
               opacity: 1;

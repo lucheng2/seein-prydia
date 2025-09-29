@@ -2,11 +2,6 @@
 import type { Article } from '~/components/knowledge'
 // import * as api from '~/apis' // API to be used when implemented
 
-// Page settings
-useHead({
-  title: 'Knowledge Base - Articles & Learning',
-})
-
 // Data type definitions have been extracted to ~/components/knowledge/types.ts
 
 // Reactive state

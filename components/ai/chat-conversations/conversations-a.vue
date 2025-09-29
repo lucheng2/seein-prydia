@@ -69,7 +69,8 @@ function scrollToCurrentConversation(conversationId: string) {
 
   if (targetElement) {
     // 滚动到目标元素，使其在容器顶部显示,不要使用scrollIntoView，因为它是平滑滚动，而这里需要立即滚动到顶部
-    targetElement.scrollIntoView({ behavior: 'auto', block: 'start' })
+    // 并且滚动距离顶部有20px
+    targetElement.scrollIntoView({ behavior: 'auto', block: 'center' })
   }
 }
 
@@ -123,7 +124,7 @@ const handleTab = (tab: string) => {
     rotating-height="100%"
     rotating-width="100%"
   >
-    <div class="sidebar">
+    <div class="sidebar h-full flex flex-col overflow-hidden">
       <div flex="~ items-center justify-between" p="24px 22px 20px 24px">
         <div text="white 18px">History Chat</div>
         <UiCard>
@@ -163,15 +164,14 @@ const handleTab = (tab: string) => {
           Topic with coach
         </div>
       </div>
-
       <div
         ref="conversationListRef"
-        class="mb-[10px] mr-[1px] flex-1 overflow-y-auto px-[14px]"
+        class="mb-[10px] mr-[1px] flex-1 overflow-auto px-[14px]"
       >
         <template v-if="activeTab === 'bot'">
           <div v-for="item in conversationsGrouped" :key="item.title">
             <div
-              class="theme-text sticky top-0 z-99 w-full self-start rounded-lg bg-[#1E1F25] pb-[4px] pl-[10px] pt-[10px] text-[14px] text-[#5E5E5E]"
+              class="theme-text sticky top-0 z-99 w-full self-start bg-[#1E1F25] pb-[4px] pl-[10px] pt-[10px] text-[14px] text-[#5E5E5E]"
             >
               {{ item.title }}
             </div>
@@ -198,7 +198,7 @@ const handleTab = (tab: string) => {
         <template v-else>
           <div v-for="item in conversationsGroupedCoach" :key="item.title">
             <div
-              class="theme-text sticky top-0 z-99 w-full self-start rounded-lg bg-[#1E1F25] pb-[4px] pl-[10px] pt-[10px] text-[14px] text-[#5E5E5E]"
+              class="theme-text sticky top-0 z-99 w-full self-start bg-[#1E1F25] pb-[4px] pl-[10px] pt-[10px] text-[14px] text-[#5E5E5E]"
             >
               {{ item.title }}
             </div>
@@ -223,7 +223,6 @@ const handleTab = (tab: string) => {
           </div>
         </template>
       </div>
-      <slot name="sidebar" />
     </div>
   </UiCard>
 </template>

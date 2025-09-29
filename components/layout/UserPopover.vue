@@ -5,9 +5,13 @@ const emits = defineEmits(['setting', 'contact', 'logout'])
 
 const { userInfo } = storeToRefs(useUserStore())
 
-const nickname = computed(
-  () => userInfo.value?.nickname || `用户${userInfo.value?.phone}`,
-)
+const email = computed(() => {
+  if (!userInfo.value?.email) return ''
+  const emailArr = userInfo.value?.email.split('@')
+  return `${emailArr[0].slice(0, 3)}***@${emailArr[1]}`
+})
+
+const nickname = computed(() => userInfo.value?.nickname || `${email.value}`)
 </script>
 
 <template>

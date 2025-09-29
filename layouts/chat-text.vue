@@ -145,8 +145,7 @@ onMounted(() => {})
 
 .knowledge-container {
   position: relative;
-  width: 764px;
-  flex-shrink: 0;
+  width: calc(50vw);
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 10;
 
@@ -165,8 +164,9 @@ onMounted(() => {})
   }
 
   &.knowledge-collapsed {
-    margin-right: calc(-764px - 24px); /* 288px - 24px = 264px */
+    margin-right: calc(-50vw); /* 288px - 24px = 264px */
   }
+
   &.knowledge-collapsed-show {
     margin-right: 24px;
   }

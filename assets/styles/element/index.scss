@@ -5,7 +5,7 @@ $-colors: (
   "white": #ffffff,
   "black": #000000,
   "primary": (
-    "base": #00b755
+    "base": #6633EE
   ),
   "success": (
     "base": #67c23a
@@ -28,6 +28,10 @@ $-border-radius: (
   "base": 8px,
 );
 
+$bg-color: (
+  '': #312F36,
+);
+
 
 @forward "element-plus/theme-chalk/src/mixins/config.scss" with (
   $namespace: "el"
@@ -35,7 +39,8 @@ $-border-radius: (
 
 @forward "element-plus/theme-chalk/src/common/var.scss" with (
   $colors: $-colors,
-  $border-radius: $-border-radius
+  $border-radius: $-border-radius,
+  $bg-color: $bg-color
 );
 
 @use "./dark.scss";

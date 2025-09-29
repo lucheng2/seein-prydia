@@ -24,7 +24,7 @@
 /* 克隆并自定义 ElMessage 样式，不会影响 ElMessage 原本样式，在 src/utils/message.ts 中调用自定义样式 ElMessage 方法即可，暗黑模式在 src/style/dark.scss 文件进行了适配 */
 .pure-message {
   padding: 10px 13px !important;
-  background: #fff !important;
+  background: #312F36 !important;
   border-width: 0 !important;
   box-shadow:
     0 3px 6px -4px #0000001f,
@@ -37,7 +37,7 @@
   }
 
   & .el-message__content {
-    color: #000000d9 !important;
+    color: #fff !important;
     pointer-events: all !important;
     background-image: initial !important;
   }
