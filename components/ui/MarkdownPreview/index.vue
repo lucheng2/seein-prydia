@@ -41,9 +41,6 @@ const { markdown } = useMarkdown()
 
 .seein-markdown{
     padding: 16px 32px;
-    border: var(--apm-border);
-    border-radius: var(--apm-border-radius);
     overflow-y: auto;
-    background-color: #fff;
 }
 </style>

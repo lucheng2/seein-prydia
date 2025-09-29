@@ -2,7 +2,7 @@ import { server } from '@/apis/utils/http'
 
 /** 获取知识库文章列表 */
 export const getKnowledgeList = (params?: any) => {
-    return server.get('/chat-api/knowledge/articles', params)
+    return server.post('/chat-api/prydiaArticle/findAll', params)
 }
 
 /** 根据ID获取知识库文章详情 */
