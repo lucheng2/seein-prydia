@@ -92,7 +92,7 @@ const formatTime = (time?: string) => {
     &__header {
         padding: 24px 32px 16px;
         border-bottom: 1px solid var(--el-border-color-light);
-        background: var(--el-bg-color);
+        background: #1E1F25;
 
         .back-btn {
             margin-bottom: 16px;
@@ -117,7 +117,7 @@ const formatTime = (time?: string) => {
         margin: 0 0 12px 0;
         font-size: 28px;
         font-weight: 600;
-        color: var(--el-text-color-primary);
+        color: #fff;
         line-height: 1.3;
     }
 
@@ -128,7 +128,7 @@ const formatTime = (time?: string) => {
 
         .time {
             font-size: 14px;
-            color: var(--el-text-color-regular);
+            color: #9E94A5;
         }
     }
 }
@@ -136,7 +136,7 @@ const formatTime = (time?: string) => {
 .loading-state {
     padding: 80px 20px;
     text-align: center;
-    color: var(--el-text-color-regular);
+    color: #9E94A5;
 
     .loading-icon {
         font-size: 32px;
@@ -145,86 +145,6 @@ const formatTime = (time?: string) => {
 }
 
 .article-content {
-    :deep(.seein-markdown) {
-        padding: 32px;
-        border: none;
-        border-radius: 0;
-        background: transparent;
-
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-            margin-top: 32px;
-            margin-bottom: 16px;
-
-            &:first-child {
-                margin-top: 0;
-            }
-        }
-
-        p {
-            margin-bottom: 16px;
-            line-height: 1.7;
-            color: var(--el-text-color-primary);
-        }
-
-        code {
-            background: var(--el-fill-color);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.9em;
-        }
-
-        pre {
-            background: var(--el-fill-color-light);
-            padding: 16px;
-            border-radius: 8px;
-            overflow-x: auto;
-            margin: 16px 0;
-        }
-
-        blockquote {
-            border-left: 4px solid var(--el-color-primary);
-            padding-left: 16px;
-            margin: 16px 0;
-            color: var(--el-text-color-regular);
-            background: var(--el-fill-color-blank);
-            padding: 16px;
-            border-radius: 0 8px 8px 0;
-        }
-
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin: 16px 0;
-
-            th,
-            td {
-                border: 1px solid var(--el-border-color);
-                padding: 8px 12px;
-                text-align: left;
-            }
-
-            th {
-                background: var(--el-fill-color-light);
-                font-weight: 600;
-            }
-        }
-
-        ul,
-        ol {
-            padding-left: 24px;
-            margin: 16px 0;
-
-            li {
-                margin: 8px 0;
-                line-height: 1.6;
-            }
-        }
-    }
 }
 
 .empty-state {
@@ -235,17 +155,18 @@ const formatTime = (time?: string) => {
         font-size: 72px;
         margin-bottom: 24px;
         opacity: 0.6;
+        color: #fff;
     }
 
     .empty-title {
         font-size: 20px;
         font-weight: 500;
-        color: var(--el-text-color-primary);
+        color: #fff;
         margin-bottom: 8px;
     }
 
     .empty-subtitle {
-        color: var(--el-text-color-regular);
+        color: #9E94A5;
         line-height: 1.5;
     }
 }
@@ -271,29 +192,6 @@ const formatTime = (time?: string) => {
     }
 
     .article-content {
-        :deep(.seein-markdown) {
-            padding: 20px 16px;
-
-            h1,
-            h2,
-            h3,
-            h4,
-            h5,
-            h6 {
-                margin-top: 24px;
-                margin-bottom: 12px;
-            }
-
-            p {
-                margin-bottom: 12px;
-                line-height: 1.6;
-            }
-
-            pre {
-                padding: 12px;
-                font-size: 14px;
-            }
-        }
     }
 
     .empty-state {

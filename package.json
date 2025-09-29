@@ -50,7 +50,8 @@
     "sass": "1.79.0",
     "three": "^0.180.0",
     "vue": "latest",
-    "vue-router": "latest"
+    "vue-router": "latest",
+    "wordcloud": "^1.2.3"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^3.8.0",

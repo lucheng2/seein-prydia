@@ -67,13 +67,13 @@ watch(() => arrivedState.bottom, (isBottom) => {
 
     &__header {
         padding: 24px 20px 16px;
-        border-bottom: 1px solid var(--el-border-color-light);
+        border-bottom: 1px solid var(--el-border-color-dark);
 
         .title {
             margin: 0 0 8px 0;
             font-size: 20px;
             font-weight: 600;
-            color: var(--el-text-color-primary);
+            color: #fff;
         }
 
         .subtitle {
@@ -92,23 +92,23 @@ watch(() => arrivedState.bottom, (isBottom) => {
 
 .article-item {
     padding: 16px 20px;
-    border-bottom: 1px solid var(--el-border-color-lighter);
+    // border-bottom: 1px solid var(--el-border-color-darker);
     cursor: pointer;
     transition: all 0.2s ease;
 
     &:hover {
-        background-color: var(--el-fill-color-light);
+        // background-color: #E6E8EB;
     }
 
     &.active {
-        background-color: var(--el-color-primary-light-9);
-        border-left: 4px solid var(--el-color-primary);
+        background-color: var(--el-color-primary-dark-9);
+        border-left: 4px solid #9E94A5;
     }
 
     &__title {
         font-size: 16px;
         font-weight: 500;
-        color: var(--el-text-color-primary);
+        color: #E6E8EB;
         margin-bottom: 8px;
         line-height: 1.4;
 
@@ -122,7 +122,7 @@ watch(() => arrivedState.bottom, (isBottom) => {
 
     &__summary {
         font-size: 14px;
-        color: var(--el-text-color-regular);
+        color: #9E94A5;
         margin-bottom: 8px;
         line-height: 1.4;
 

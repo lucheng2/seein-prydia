@@ -16,7 +16,14 @@
         </div>
 
         <!-- 词云内容 -->
-        <div v-else-if="wordData.length > 0" class="wordcloud-content">
+        <div v-else-if="rawData.length > 0" class="wordcloud-content">
+            <div class="wordcloud-canvas-wrapper">
+                <UiWordCloud
+                    ref="wordCloudRef"
+                    :list="rawData"
+                />
+            </div>
+
             <!-- 操作按钮组 -->
             <div class="wordcloud-actions">
                 <button
@@ -26,7 +33,7 @@
                     title="复制图片"
                 >
                     <span class="action-icon">📋</span>
-                    <span class="action-text">{{ copying ? '复制中...' : '复制' }}</span>
+                    <span class="action-text">{{ copying ? '复制中...' : 'copy' }}</span>
                 </button>
                 <button
                     class="action-button download-button"
@@ -35,17 +42,9 @@
                     title="下载图片"
                 >
                     <span class="action-icon">💾</span>
-                    <span class="action-text">{{ downloading ? '下载中...' : '下载' }}</span>
+                    <span class="action-text">{{ downloading ? '下载中...' : 'save' }}</span>
                 </button>
             </div>
-
-            <UiWordCloud
-                ref="wordCloudRef"
-                :words="wordData"
-                :options="cloudOptions"
-                @click="onWordClick"
-                @ready="onReady"
-            />
         </div>
 
         <!-- 空状态 -->
@@ -57,9 +56,16 @@
 </template>
 
 <script setup lang="ts">
-import type { WordCloudItem, WordCloudResponse } from '~/components/ui/WordCloud/types'
+import type { WordCloudItem } from '~/components/ui/WordCloud/types'
 import { getWordCloudData } from '~/apis/server'
-import type { WordData } from '~/components/ui/WordCloud/index.vue'
+
+interface Props {
+    recentDays: number
+}
+
+const props = withDefaults(defineProps<Props>(), {
+    recentDays: 7
+})
 
 // 响应式状态
 const loading = ref(false)
@@ -67,40 +73,51 @@ const error = ref('')
 const copying = ref(false)
 const downloading = ref(false)
 const rawData = ref<WordCloudItem[]>([
-    { text: 'Vue', weight: 100 },
-    { text: 'TypeScript', weight: 80 },
-    { text: '组件', weight: 70 },
-    { text: '响应式', weight: 60 },
+    { weight: 26, text: 'Web Technologies' },
+    { weight: 20, text: 'HTML' },
+    { weight: 20, text: '<canvas>' },
+    { weight: 15, text: 'CSS' },
+    { weight: 15, text: 'JavaScript' },
+    { weight: 12, text: 'Document Object Model' },
+    { weight: 12, text: '<audio>' },
+    { weight: 12, text: '<video>' },
+    { weight: 12, text: 'Web Workers' },
+    { weight: 12, text: 'XMLHttpRequest' },
+    { weight: 12, text: 'SVG' },
+    { weight: 9, text: 'JSON.parse()' },
+    { weight: 9, text: 'Geolocation' },
+    { weight: 9, text: 'data attribute' },
+    { weight: 9, text: 'transform' },
+    { weight: 9, text: 'transition' },
+    { weight: 9, text: 'animation' },
+    { weight: 7, text: 'setTimeout' },
+    { weight: 7, text: '@font-face' },
+    { weight: 7, text: 'Typed Arrays' },
+    { weight: 7, text: 'FileReader API' },
+    { weight: 7, text: 'FormData' },
+    { weight: 7, text: 'IndexedDB' },
+    { weight: 7, text: 'getUserMedia()' },
+    { weight: 7, text: 'postMassage()' },
+    { weight: 7, text: 'CORS' },
+    { weight: 6, text: 'strict mode' },
+    { weight: 6, text: 'calc()' },
+    { weight: 6, text: 'supports()' },
+    { weight: 6, text: 'media queries' },
+    { weight: 6, text: 'full screen' },
+    { weight: 6, text: 'notification' },
+    { weight: 6, text: 'orientation' },
+    { weight: 6, text: 'requestAnimationFrame' },
+    { weight: 5, text: 'border-radius' },
+    { weight: 5, text: 'box-sizing' },
+    { weight: 5, text: 'rgba()' },
+    { weight: 5, text: 'text-shadow' },
+    { weight: 5, text: 'box-shadow' },
+    { weight: 5, text: 'flexbox' },
+    { weight: 5, text: 'viewpoint' },
 ])
 
 // 词云组件引用
 const wordCloudRef = ref()
-
-// 转换数据格式为词云组件需要的格式
-const wordData = computed<WordData[]>(() => {
-    return rawData.value.map(item => [item.text, item.weight])
-})
-
-// 词云配置选项
-const cloudOptions = computed(() => ({
-    minFontSize: 14,
-    maxFontSize: 48,
-    fontFamily: '微软雅黑, Microsoft YaHei, sans-serif',
-    rotateType: 'cross' as const,
-    useCanvas: false,
-    space: 2,
-    colorList: [
-        '#1890ff',
-        '#52c41a',
-        '#fa541c',
-        '#722ed1',
-        '#13c2c2',
-        '#eb2f96',
-        '#f5222d',
-        '#faad14'
-    ],
-    transition: 'all 0.3s ease',
-}))
 
 // 获取词云数据
 const fetchWordCloudData = async () => {
@@ -108,30 +125,19 @@ const fetchWordCloudData = async () => {
     error.value = ''
 
     try {
-        const response = await getWordCloudData()
+        const response = await getWordCloudData({
+            recentDays: props.recentDays
+        })
 
-        if (response.success && response.data) {
-            rawData.value = response.data || [{text: 'Vue', weight: 100}]
-        } else {
-            error.value = response.message || '获取词云数据失败'
-        }
+        console.log('res', response)
+
+        rawData.value = response.wordItems || []
     } catch (err: any) {
         error.value = err?.message || '网络请求失败，请稍后重试'
         console.error('获取词云数据失败:', err)
     } finally {
         loading.value = false
     }
-}
-
-// 词项点击事件
-const onWordClick = (item: any) => {
-    console.log('点击了词项:', item.text, '权重:', item.weight)
-    // 这里可以添加更多交互逻辑，比如跳转到搜索结果页面
-}
-
-// 词云渲染完成事件
-const onReady = (list: any[]) => {
-    console.log('词云渲染完成，共', list.length, '个词项')
 }
 
 // 复制图片到剪贴板
@@ -174,7 +180,7 @@ const handleDownloadImage = async () => {
 
 // 组件挂载时自动获取数据（适用于弹窗展开场景）
 onMounted(() => {
-    // fetchWordCloudData()
+    fetchWordCloudData()
 })
 </script>
 
@@ -182,8 +188,6 @@ onMounted(() => {
 .wordcloud-container {
     width: 100%;
     height: 100%;
-    width: 400px;
-    height: 400px;
     position: relative;
     display: flex;
     align-items: center;
@@ -257,66 +261,73 @@ onMounted(() => {
     width: 100%;
     height: 100%;
     min-height: 300px;
+    display: flex;
+    flex-direction: column;
     position: relative;
+}
+
+/* 词云画布包装器 */
+.wordcloud-canvas-wrapper {
+    flex: 1;
+    width: 100%;
+    background: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 16px;
 }
 
 /* 操作按钮组样式 */
 .wordcloud-actions {
-    position: absolute;
-    top: 12px;
-    right: 12px;
     display: flex;
-    gap: 8px;
+    justify-content: center;
+    gap: 12px;
+    padding: 0;
     z-index: 100;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 8px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(10px);
 }
 
 .action-button {
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 8px 12px;
-    background: #fff;
-    border: 1px solid #e1e4e8;
-    border-radius: 6px;
+    gap: 8px;
+    padding: 12px 24px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 500;
     transition: all 0.2s ease;
-    color: #24292e;
-    min-width: 80px;
+    color: #333;
+    min-width: 100px;
     justify-content: center;
+    backdrop-filter: blur(10px);
 }
 
 .action-button:hover:not(:disabled) {
-    background: #f6f8fa;
-    border-color: #d0d7de;
+    background: rgba(255, 255, 255, 1);
+    border-color: rgba(0, 0, 0, 0.15);
     transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .action-button:active:not(:disabled) {
     transform: translateY(0);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .action-button:disabled {
     opacity: 0.6;
     cursor: not-allowed;
-    background: #f6f8fa;
+    background: rgba(255, 255, 255, 0.7);
 }
 
 .copy-button:hover:not(:disabled) {
-    border-color: #1890ff;
+    border-color: rgba(24, 144, 255, 0.3);
     color: #1890ff;
 }
 
 .download-button:hover:not(:disabled) {
-    border-color: #52c41a;
+    border-color: rgba(82, 196, 26, 0.3);
     color: #52c41a;
 }
 
