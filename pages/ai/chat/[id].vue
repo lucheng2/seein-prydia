@@ -800,7 +800,9 @@ const useScroll = () => {
       nextTick(() => {
         const container = messagesContainerRef.value
         if (force || (container && !isUserScrolling.value)) {
-          messagesScrollbarRef.value.scrollTop = container.scrollHeight + 100
+          if (messagesScrollbarRef.value) {
+            messagesScrollbarRef.value.scrollTop = container?.scrollHeight + 100
+          }
         }
       })
     }, 100)

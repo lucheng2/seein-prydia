@@ -116,7 +116,7 @@ const useLogin = () => {
         email: loginForm.value.email,
         password: loginForm.value.password,
       })
-      navigateTo('/ai/chat/new?new=true')
+      window.location.href = '/ai/chat/new?new=true'
     }
     catch (error) {
       throw new Error(error)
@@ -226,8 +226,10 @@ const useRegister = () => {
         password: registerForm.value.password,
       })
       await loginByToken(token)
-      navigateTo('/ai/chat/new?new=true')
       message('Success register!', { type: 'success' })
+      setTimeout(() => {
+        window.location.href = '/ai/chat/new?new=true'
+      }, 1000)
     }
     catch (error) {
       throw new Error(error)

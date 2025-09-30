@@ -11,11 +11,7 @@ const email = computed(() => {
   return `${emailArr[0].slice(0, 3)}***@${emailArr[1]}`
 })
 
-const nickname = computed(() => {
-  console.log(userInfo.value)
-
-  return userInfo.value?.nickname || `${email.value}`
-})
+const nickname = computed(() => userInfo.value?.nickname || `${email.value}`)
 </script>
 
 <template>
