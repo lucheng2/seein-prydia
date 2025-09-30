@@ -108,7 +108,7 @@ const sendDisabled = computed(() => {
     left: 50%;
     transform: translateX(-50%);
     height: 2px;
-    background: $brand-1;
+    background: linear-gradient( 134deg, #703EDB 0%, #EE3942 59%, #FFD12A 100%);
     width: 0;
     animation: nofocus-animation 0.2s ease-in-out;
   }

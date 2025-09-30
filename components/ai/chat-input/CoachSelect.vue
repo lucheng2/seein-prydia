@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { openWordcloudModal } from '~/components/modal/wordcloud/open'
+
 interface Props {
   coachList?: any[]
 }
@@ -6,15 +8,22 @@ interface Props {
 const props = defineProps<Props>()
 
 const emits = defineEmits(['handleSelect'])
-
+const visible = ref(false)
 const handleSelect = (val: any) => {
   emits('handleSelect', val)
+  visible.value = false
+}
+
+const handleWordcloud = () => {
+  openWordcloudModal()
+  visible.value = false
 }
 </script>
 
 <template>
   <div class="coach-select">
     <el-popover
+    v-model:visible="visible"
       placement="top-start"
       effect="dark"
       trigger="click"
@@ -66,6 +75,7 @@ const handleSelect = (val: any) => {
                 <div
                   flex="~ justify-start items-center w-full"
                   class="mt-[20px] cursor-pointer"
+                  @click="handleWordcloud"
                 >
                   <img
                     class="mr-[12px] h-[24px] w-[24px] flex-shrink-0"

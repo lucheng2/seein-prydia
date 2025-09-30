@@ -36,6 +36,7 @@
     "crypto-js": "^4.2.0",
     "dayjs-nuxt": "^2.1.11",
     "dompurify": "^3.2.7",
+    "echarts": "^6.0.0",
     "element-plus": "^2.9.7",
     "gsap": "^3.13.0",
     "hls.js": "^1.6.2",
@@ -50,6 +51,7 @@
     "sass": "1.79.0",
     "three": "^0.180.0",
     "vue": "latest",
+    "vue-echarts": "^8.0.0",
     "vue-router": "latest",
     "wordcloud": "^1.2.3"
   },

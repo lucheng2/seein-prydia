@@ -240,7 +240,7 @@ const { updateNavbarStyles } = useGlass()
                   :z-index="100"
                   trigger="hover"
                   placement="bottom-end"
-                  popper-style="z-index: 188;padding: 4px;width: auto;border: 1px solid #C8D9CC;border-radius: 12px;"
+                  popper-style="z-index: 188;padding: 4px;width: auto;border-radius: 12px;"
                 >
                   <template #reference>
                     <div class="z-99 cursor-pointer">

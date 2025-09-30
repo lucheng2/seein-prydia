@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import * as api from '@/apis'
+import copyIcon from '@/assets/images/ai/copy.png'
 import dislikeActiveIcon from '@/assets/images/ai/icon-dislike-active.png'
 import dislikeIcon from '@/assets/images/ai/icon-dislike.png'
 import likeActiveIcon from '@/assets/images/ai/icon-like-active.png'
@@ -7,7 +8,7 @@ import likeIcon from '@/assets/images/ai/icon-like.png'
 import regenerateIcon from '@/assets/images/ai/regenerate.png'
 
 const props = defineProps<Props>()
-const emits = defineEmits(['regenerate'])
+const emits = defineEmits(['regenerate', 'copy'])
 interface Props {
   messageId: string
   showLike: boolean
@@ -51,6 +52,11 @@ const handleDislike = () => {
 const handleRegenerate = () => {
   emits('regenerate')
 }
+
+const handleCopy = () => {
+  emits('copy')
+}
+
 const submitDislike = () => {
   if (!activeVal.value.length)
     return message('请选择差评原因', { type: 'warning' })
@@ -105,6 +111,16 @@ const submit = async (params: any) => {
         />
       </div>
     </template>
+    <div
+      v-if="showRegenerate"
+      class="flex cursor-pointer items-center rounded-[6px] p-[2px] hover:bg-gray-700"
+      @click="handleCopy"
+    >
+      <img
+        class="h-[20px] w-[20px] text-[#858585]"
+        :src="copyIcon"
+      />
+    </div>
     <div
       v-if="showRegenerate"
       class="flex cursor-pointer items-center rounded-[6px] p-[2px] hover:bg-gray-700"

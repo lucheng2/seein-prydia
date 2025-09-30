@@ -11,13 +11,17 @@ const email = computed(() => {
   return `${emailArr[0].slice(0, 3)}***@${emailArr[1]}`
 })
 
-const nickname = computed(() => userInfo.value?.nickname || `${email.value}`)
+const nickname = computed(() => {
+  console.log(userInfo.value)
+
+  return userInfo.value?.nickname || `${email.value}`
+})
 </script>
 
 <template>
   <div class="flex flex-col">
-    <div class="px-[12px] py-[8px]" text="#141414 14px">{{ nickname }}</div>
-    <NuxtLink
+    <div class="px-[12px] py-[8px]" text="#fff 14px">{{ nickname }}</div>
+    <!-- <NuxtLink
       class="cursor-pointer px-[12px] py-[8px] text-[14px] text-[#141414] transition-all"
       rounded="6px"
       hover:bg="#F5F7FA"
@@ -35,11 +39,11 @@ const nickname = computed(() => userInfo.value?.nickname || `${email.value}`)
       @click="emits('contact')"
     >
       <UiIcon icon="telegram-alt" width="16" class="mr-[12px]" />联系我们
-    </NuxtLink>
+    </NuxtLink> -->
     <NuxtLink
-      class="cursor-pointer px-[12px] py-[8px] text-[14px] text-[#141414] transition-all"
+      class="cursor-pointer px-[12px] py-[8px] text-[14px] text-[#fff] transition-all"
       rounded="6px"
-      hover:bg="#F5F7FA"
+      hover:bg="gray-600"
       flex="~ items-center"
       @click="emits('logout')"
     >
@@ -47,7 +51,7 @@ const nickname = computed(() => userInfo.value?.nickname || `${email.value}`)
         icon="logout-rounded"
         width="16"
         class="mr-[12px]"
-      />退出登录
+      />Logout
     </NuxtLink>
   </div>
 </template>

@@ -4,7 +4,7 @@ import * as api from '~/apis'
 
 // Page settings
 useHead({
-    title: 'Knowledge Base - Articles & Learning',
+  title: 'Knowledge Base - Articles & Learning',
 })
 
 // Data type definitions have been extracted to ~/components/knowledge/types.ts
@@ -18,63 +18,67 @@ const showMobileDetail = ref(false)
 
 // Knowledge base functionality Hook
 const useKnowledgeBase = () => {
-    // Load articles list
-  const loadArticles = async () => {
-        try {
-            loading.value = true
+  // Fetch articles
+  const {
+    data,
+    pending,
+    execute: loadArticles,
+  } = useAsyncData(
+    `chat-knowledge`,
+    () => {
+      return api.getKnowledgeList()
+    },
+    { lazy: true },
+  )
 
-            // Get all articles at once
-            const response = await api.getKnowledgeList()
-            articles.value = response
-        }
-        catch (error) {
-            ElMessage.error('Failed to load articles, please try again later')
-        }
-        finally {
-            loading.value = false
-        }
-    }
+  // Watch for changes and update state
+  watchEffect(() => {
+    articles.value = data.value || []
+    loading.value = pending.value
+  })
 
-    return {
-        loadArticles,
-    }
+  return {
+    loadArticles,
+  }
 }
 
 const { loadArticles } = useKnowledgeBase()
 
 // 事件处理
 const handleSelectArticle = (article: Article) => {
-    selectedArticle.value = article
-    if (isMobile.value) {
-        showMobileDetail.value = true
-    }
+  selectedArticle.value = article
+  if (isMobile.value) {
+    showMobileDetail.value = true
+  }
 }
 
 const handleMobileBack = () => {
-    showMobileDetail.value = false
+  showMobileDetail.value = false
 }
 
 // 响应式检测
 const checkMobile = () => {
-    isMobile.value = window.innerWidth < 768
+  isMobile.value = window.innerWidth < 768
 }
 
 // 生命周期
 onMounted(() => {
+  if (import.meta.client) {
     checkMobile()
     window.addEventListener('resize', checkMobile)
     loadArticles()
 
     // 默认选择第一篇文章（非移动端）
     nextTick(() => {
-        if (!isMobile.value && articles.value.length > 0) {
-            selectedArticle.value = articles.value[0]
-        }
+      if (!isMobile.value && articles.value.length > 0) {
+        selectedArticle.value = articles.value[0]
+      }
     })
+  }
 })
 
 onUnmounted(() => {
-    window.removeEventListener('resize', checkMobile)
+  window.removeEventListener('resize', checkMobile)
 })
 </script>
 
@@ -84,8 +88,10 @@ onUnmounted(() => {
         <div v-if="!isMobile" class="knowledge-desktop">
             <!-- 左侧：文章列表 -->
             <div class="knowledge-sidebar">
-                <KnowledgeArticleList :articles="articles" :selected-id="selectedArticle?.id" :loading="loading"
-                    @select="handleSelectArticle" />
+                <KnowledgeArticleList
+:articles="articles" :selected-id="selectedArticle?.id" :loading="loading"
+                    @select="handleSelectArticle"
+/>
             </div>
 
             <!-- 右侧：文章详情 -->
@@ -98,8 +104,10 @@ onUnmounted(() => {
         <div v-else class="knowledge-mobile">
             <!-- 文章列表视图 -->
             <div v-if="!showMobileDetail" class="mobile-list-view">
-                <KnowledgeArticleList :articles="articles" :selected-id="selectedArticle?.id" :loading="loading"
-                    @select="handleSelectArticle" />
+                <KnowledgeArticleList
+:articles="articles" :selected-id="selectedArticle?.id" :loading="loading"
+                    @select="handleSelectArticle"
+/>
             </div>
 
             <!-- 文章详情视图 -->

@@ -5,13 +5,17 @@ import coachIcon2 from '@/assets/images/coach/2.png'
 import coachIcon3 from '@/assets/images/coach/3.png'
 import coachIcon4 from '@/assets/images/coach/4.png'
 import { useHomeRouteList } from '@/constants/home'
+import { openMoodCorveModal } from '~/components/modal/mood-corve/open'
 
 defineOptions({
   name: 'AIChat',
 })
 
 const homeRouteList = useHomeRouteList({
-  Knowledge: () => {
+  'mood-curve': () => {
+    openMoodCorveModal()
+  },
+  'Knowledge': () => {
     isCollapsed.value = isCollapsedknowledge.value
     isCollapsedknowledge.value = !isCollapsedknowledge.value
   },
@@ -417,9 +421,15 @@ const useCoach = () => {
   const coachScene = ref(1)
 
   const setCoachScene = (coach: any) => {
-    // setChatTypeToCoach()
-    // coachScene.value = scene
-    console.log(coach)
+    const findIndex = messages.value.findIndex(item => item.sender === 'topic')
+    if (findIndex === -1) {
+      messages.value.unshift({
+        id: new Date().getTime(),
+        sender: 'topic',
+        content: coach.label,
+        icon: coach.icon,
+      })
+    }
     setChatTypeToCoach()
     coachScene.value = coach.value
     sendMessage(coach.label)
@@ -917,7 +927,7 @@ const bgRef = ref()
       </UiCard>
     </template>
     <template #knowledge>
-      <KnowledgeContainer style="height: calc(100vh - 94px - 24px);" />
+      <KnowledgeContainer />
     </template>
     <template #bg>
       <UiDynamicsBg ref="bgRef" />

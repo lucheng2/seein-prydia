@@ -66,7 +66,7 @@ const asyncEnd = () => {
   timer = setTimeout(() => {
     isRendering.value = false
     isTextComplete.value = true // 标记文本渲染完成
-    getKuakuaCardData()
+    emits('scrollToBottom')
   }, 500)
 }
 
@@ -78,6 +78,7 @@ const processQueue = () => {
   }
 
   isRendering.value = true
+  isTextComplete.value = false
   const chunk = textQueue.value.shift()!
   let index = 0
 
@@ -131,7 +132,7 @@ onUnmounted(() => {
 })
 
 const useKuakuaCard = () => {
-  const isKuakuaCard = computed(() => text.value.includes('本次联系已结束'))
+  const isKuakuaCard = computed(() => text.value.includes('本次练习已结束'))
   const kuakuaCardData = ref()
   watch(() => isKuakuaCard.value, (newVal) => {
     if (newVal) {
@@ -141,7 +142,8 @@ const useKuakuaCard = () => {
   })
 
   const getKuakuaCardData = async () => {
-    await api.getFlatteryCard({ round: props.round })
+    const data = await api.getFlatteryCard({ round: props.round })
+    kuakuaCardData.value = data
   }
 
   return {
@@ -152,6 +154,18 @@ const useKuakuaCard = () => {
 }
 
 const { isKuakuaCard, kuakuaCardData, getKuakuaCardData } = useKuakuaCard()
+
+const handleCopy = () => {
+  const textToCopy = text.value
+  navigator.clipboard.writeText(textToCopy)
+    .then(() => {
+      console.log('Text copied to clipboard')
+      message('Text copied to clipboard', { type: 'success' })
+    })
+    .catch((error) => {
+      console.error('Error copying text: ', error)
+    })
+}
 </script>
 
 <template>
@@ -172,10 +186,10 @@ const { isKuakuaCard, kuakuaCardData, getKuakuaCardData } = useKuakuaCard()
             :auto-fold-threshold="AutoFoldThreshold"
           />
         </div>
-        <div v-if="isKuakuaCard && kuakuaCardData" class="mt-[4px] w-[500px] rounded-[12px] bg-[#2C2933]">
-          <img :src="aiAvatar" class="h-[140px] w-[500px]" />
-          <div class="px-[20px] py-[10px]">
-            {{ kuakuaCardData }}
+        <div v-if="kuakuaCardData && isTextComplete" class="mt-[4px] w-[500px] rounded-[12px] bg-[#2C2933]">
+          <img :src="kuakuaCardData.imageUrl" class="h-[140px] w-[500px]" />
+          <div class="px-[20px] py-[10px] line-height-[28px]" text="#F5F7FA 16px">
+            {{ kuakuaCardData.content }}
           </div>
         </div>
         <DisLike
@@ -183,6 +197,7 @@ const { isKuakuaCard, kuakuaCardData, getKuakuaCardData } = useKuakuaCard()
           :show-like="showLike"
           :message-id="message.id"
           @regenerate="handleRegenerate"
+          @copy="handleCopy"
         />
       </div>
     </div>

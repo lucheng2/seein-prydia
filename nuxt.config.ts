@@ -20,6 +20,9 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     'pinia-plugin-persistedstate/nuxt',
   ],
+  build: {
+    transpile: [/echarts/],
+  },
   vue: {
     compilerOptions: {
       isCustomElement: tag => tag === 'iconify-icon',

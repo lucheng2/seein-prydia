@@ -14,9 +14,9 @@ export function groupByCreateTime(items: Item[]): GroupedResult[] {
 
   // 初始化分组
   const groups: Record<string, Item[]> = {
-    '今天': [],
-    '7天内': [],
-    '30天内': [],
+    'Today': [],
+    '7 days ago': [],
+    '30 days ago': [],
   }
 
   // 用于存储超过30天的按年月分组
@@ -26,20 +26,20 @@ export function groupByCreateTime(items: Item[]): GroupedResult[] {
     const diff = now - item.createTime
 
     if (diff < oneDayMs) {
-      groups['今天'].push(item)
+      groups.Today.push(item)
     }
     else if (diff < 7 * oneDayMs) {
-      groups['7天内'].push(item)
+      groups['7 days ago'].push(item)
     }
     else if (diff < 30 * oneDayMs) {
-      groups['30天内'].push(item)
+      groups['30 days ago'].push(item)
     }
     else {
       // 超过30天，按年月分组
       const date = new Date(item.createTime)
       const year = date.getFullYear()
       const month = date.getMonth() + 1
-      const groupKey = `${year}年${month}月`
+      const groupKey = `${year}-${month}`
 
       if (!olderGroups[groupKey]) {
         olderGroups[groupKey] = []
@@ -52,7 +52,7 @@ export function groupByCreateTime(items: Item[]): GroupedResult[] {
   const result: GroupedResult[] = [];
 
   // 添加固定分组
-  (['今天', '7天内', '30天内'] as const).forEach((key) => {
+  (['Today', '7 days ago', '30 days ago'] as const).forEach((key) => {
     if (groups[key].length > 0) {
       result.push({ title: key, list: groups[key] })
     }
@@ -62,8 +62,8 @@ export function groupByCreateTime(items: Item[]): GroupedResult[] {
   Object.keys(olderGroups)
     .sort((a, b) => {
       // 提取年月进行比较
-      const [aYear, aMonth] = a.split('年')
-      const [bYear, bMonth] = b.split('年')
+      const [aYear, aMonth] = a.split('-')
+      const [bYear, bMonth] = b.split('-')
       const aMonthNum = Number.parseInt(aMonth)
       const bMonthNum = Number.parseInt(bMonth)
 

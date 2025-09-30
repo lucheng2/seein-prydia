@@ -30,6 +30,11 @@ $-border-radius: (
 
 $bg-color: (
   '': #312F36,
+  "overlay": #312F36
+);
+
+$-border-color: (
+  lighter: rgba(106, 78, 167, 1),
 );
 
 
@@ -40,7 +45,8 @@ $bg-color: (
 @forward "element-plus/theme-chalk/src/common/var.scss" with (
   $colors: $-colors,
   $border-radius: $-border-radius,
-  $bg-color: $bg-color
+  $bg-color: $bg-color,
+  $border-color: $-border-color
 );
 
 @use "./dark.scss";

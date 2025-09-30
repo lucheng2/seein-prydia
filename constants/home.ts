@@ -9,11 +9,6 @@ export const homeRouteList = [
     name: 'Knowledge',
     path: '#',
   },
-  {
-    routeName: 'wordcloud',
-    name: 'wordcloud',
-    path: '/wordcloud',
-  },
 ]
 
 const setOnClick = (routeName: string, callback: () => any) => {

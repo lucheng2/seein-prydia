@@ -88,6 +88,7 @@ onMounted(() => {})
       <div
         class="knowledge-container"
         :class="{ collapsed: isCollapsedknowledge }"
+        style="height: calc(100vh - 94px - 24px);overflow-y: auto;"
       >
         <slot name="knowledge" :is-collapsed="isCollapsedknowledge" />
       </div>
@@ -144,6 +145,8 @@ onMounted(() => {})
 }
 
 .knowledge-container {
+  height: 100%;
+  overflow-y: auto;
   position: relative;
   width: calc(50vw);
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
