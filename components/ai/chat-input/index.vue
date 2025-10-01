@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { UiSvgIcon } from '#components'
+import sendIcon from '@/assets/images/ai/send.png'
 import CoachSelect from './CoachSelect.vue'
 
 interface Props {
@@ -82,6 +82,7 @@ const sendDisabled = computed(() => {
           }"
           :class="[{ 'send-button--disabled': sendDisabled }]" @click="handleSend"
         >
+          <img :src="sendIcon" />
         </div>
       </div>
     </div>

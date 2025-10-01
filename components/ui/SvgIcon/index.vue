@@ -59,7 +59,9 @@ export default defineComponent({
     // 组件挂载后设置初始颜色
     onMounted(() => {
       if (!import.meta.client) return
-      setColor(props.color)
+      nextTick(() => {
+        setColor(props.color)
+      })
     })
 
     return {

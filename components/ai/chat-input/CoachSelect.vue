@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import arrowIcon from '@/assets/svg/arrow-right.svg'
 import { openWordcloudModal } from '~/components/modal/wordcloud/open'
 
 interface Props {
@@ -23,7 +24,7 @@ const handleWordcloud = () => {
 <template>
   <div class="coach-select">
     <el-popover
-    v-model:visible="visible"
+      v-model:visible="visible"
       placement="top-start"
       effect="dark"
       trigger="click"
@@ -38,10 +39,22 @@ const handleWordcloud = () => {
       <template #reference>
         <div
           class="cursor-pointer rounded-[20px]"
-          style="background: linear-gradient( 90deg, #703EDB 0%, #EA8CFF 60%, #0C76FF 100%), #37303F;"
+          style="
+            background:
+              linear-gradient(90deg, #703edb 0%, #ea8cff 60%, #0c76ff 100%),
+              #37303f;
+          "
         >
           <div class="h-[40px] w-[134px]" flex="~ justify-center items-center">
             <div text="#E0E0E0 16px">AI Coach</div>
+            <UiIcon
+              icon="arrow-back-ios-new-rounded"
+              text="#E0E0E0"
+              class="ml-[10px] rotate-[270deg] transform transition-all duration-300 ease-in-out"
+              :class="{
+                'rotate-[90deg]': visible,
+              }"
+            />
           </div>
         </div>
       </template>
@@ -77,12 +90,8 @@ const handleWordcloud = () => {
                   class="mt-[20px] cursor-pointer"
                   @click="handleWordcloud"
                 >
-                  <img
-                    class="mr-[12px] h-[24px] w-[24px] flex-shrink-0"
-                  />
-                  <div text="16px">
-                    Word Cloud
-                  </div>
+                  <img class="mr-[12px] h-[24px] w-[24px] flex-shrink-0" />
+                  <div text="16px">Word Cloud</div>
                 </div>
               </div>
             </div>

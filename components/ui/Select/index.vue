@@ -11,6 +11,7 @@ const modelValue = defineModel('modelValue', { required: true })
 const currentItem = computed(() => {
   return props.options?.find(item => item.value === modelValue.value)
 })
+const visible = ref(false)
 const handleSelect = (item: SelectOption) => {
   if (item.value === modelValue.value) return
   modelValue.value = item.value
@@ -20,6 +21,7 @@ const handleSelect = (item: SelectOption) => {
 
 <template>
   <el-popover
+    v-model:visible="visible"
     class="box-item"
     placement="bottom-start"
     trigger="click"
@@ -33,8 +35,16 @@ const handleSelect = (item: SelectOption) => {
         rotating-height="100%"
         rotating-width="100%"
       >
-        <div flex="~ items-center justify-start" class="px-[16px] py-[6px]">
+        <div flex="~ items-center justify-between" class="px-[16px] py-[6px]">
           <div text="#E0E0E0 16px">{{ currentItem?.label || 'Pleace select' }}</div>
+          <UiIcon
+              icon="arrow-back-ios-new-rounded"
+              text="#E0E0E0"
+              class="ml-[10px] rotate-[270deg] transform transition-all duration-300 ease-in-out"
+              :class="{
+                'rotate-[90deg]': visible,
+              }"
+            />
         </div>
       </UiCard>
     </template>

@@ -1,4 +1,5 @@
 import addCommentOutlineRounded from '@iconify-icons/material-symbols/add-comment-outline-rounded'
+import arrowBackIosNewRounded from '@iconify-icons/material-symbols/arrow-back-ios-new-rounded'
 import arrowCircleUpRounded from '@iconify-icons/material-symbols/arrow-circle-up-rounded'
 import logoutRounded from '@iconify-icons/material-symbols/logout-rounded'
 import thumbDownOutlineRounded from '@iconify-icons/material-symbols/thumb-down-outline-rounded'
@@ -26,3 +27,4 @@ addIcon('thumb-up-outline-rounded', thumbUpOutlineRounded)
 addIcon('thumb-up-rounded', thumbUpRounded)
 addIcon('thumb-down-outline-rounded', thumbDownOutlineRounded)
 addIcon('thumb-down-rounded', thumbDownRounded)
+addIcon('arrow-back-ios-new-rounded', arrowBackIosNewRounded)
