@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import avatarImg from '@/assets/images/avatar.png'
+
 interface Props {
   message: any
 }
@@ -10,8 +12,8 @@ const props = withDefaults(defineProps<Props>(), {
 <template>
   <div class="seein-user-message-item">
     <div class="seein-user-message-item__content max-w-[700px]">{{ message.content }}</div>
-    <div class="ml-[12px] h-[36px] w-[36px] flex-shrink-0 self-end rounded-full bg-[#fff]">
-      <img />
+    <div class="ml-[12px] h-[36px] w-[36px] flex-shrink-0 self-end rounded-full">
+      <img :src="avatarImg" alt="avatar" />
     </div>
   </div>
 </template>

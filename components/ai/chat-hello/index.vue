@@ -18,9 +18,9 @@ const handleSelect = (val: any) => {
 
 <template>
   <div class="chat-hello-content hello pt-[12px]" flex="~ col items-center">
-    <div text="100px #FFFFFF center">SEREIN</div>
+    <div text="100px #FFFFFF center">Prydia</div>
     <div text="60px #FFFFFF center" class="mb-[40px]">
-      GENTLE RAIN FOR THE SOUL
+      Gentle rain for the soul
     </div>
     <UiCard class="mb-[12px]" rotating-height="1000%" rotating-width="1000%">
       <AiChatInput

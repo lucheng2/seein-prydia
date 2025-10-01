@@ -18,11 +18,11 @@ const activeVal = ref([])
 const otherVal = ref('')
 const likeType = ref('')
 const btnArray = ref([
-  '有害/不安全',
-  '虚假信息',
-  '没有帮助',
-  '答非所问',
-  '其他',
+  'Hazardous/Unsafe',
+  'Disinformation',
+  'No help',
+  'Answering irrelevantly',
+  'Other',
 ])
 // 是否已经提交过
 const isSubmit = ref(false)
@@ -59,7 +59,7 @@ const handleCopy = () => {
 
 const submitDislike = () => {
   if (!activeVal.value.length)
-    return message('请选择差评原因', { type: 'warning' })
+    return message('Please select the reason for the negative review', { type: 'warning' })
   submit({
     likeDislike: 'DISLIKE',
     reason: activeVal.value.join(','),
@@ -74,7 +74,7 @@ const submit = async (params: any) => {
     ...params,
   })
   isSubmit.value = true
-  message('提交成功,感谢你的反馈', { type: 'success' })
+  message('Submit successfully', { type: 'success' })
 }
 </script>
 
@@ -140,7 +140,7 @@ const submit = async (params: any) => {
       <div
         class="mb-[12px] flex justify-between text-[14px] text-[#141414] font-500"
       >
-        请告诉我点踩原因，帮助Seein优化进步（多选）：
+        Please tell us the reason (multiple choice)：
         <div class="cursor-pointer" @click="close">
           <img src="@/assets/images/icon/close.png" class="h-[14px] w-[14px]" />
         </div>
@@ -162,10 +162,10 @@ const submit = async (params: any) => {
     <div class="mt-[6px] flex">
       <div class="flex-1">
         <el-input
-          v-if="activeVal.includes('其他')"
+          v-if="activeVal.includes('Other')"
           v-model="otherVal"
           class="h-[34px]"
-          placeholder="（选填）告诉我们更多关于你的使用体验，帮助我们进行优化～"
+          placeholder="(Optional) Tell us more about your user experience and help us optimize it~"
         />
       </div>
       <el-button
@@ -173,7 +173,7 @@ const submit = async (params: any) => {
         class="ml-[20px] h-[34px]"
         @click="submitDislike"
       >
-        提交
+        Submit
       </el-button>
     </div>
   </div>
