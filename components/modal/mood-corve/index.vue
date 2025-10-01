@@ -4,8 +4,9 @@ import emoji2 from '@/assets/images/emoji/2.png'
 import emoji3 from '@/assets/images/emoji/3.png'
 import emoji4 from '@/assets/images/emoji/4.png'
 import emoji5 from '@/assets/images/emoji/5.png'
-
 import closeIcon from '@/assets/images/icon/close.png'
+
+import * as echarts from 'echarts'
 import VChart from 'vue-echarts'
 import * as api from '~/apis'
 
@@ -55,7 +56,6 @@ watchEffect(() => {
 
 watch(loading, () => {
   nextTick(() => {
-    console.log(chartRef.value)
     chartRef.value?.resize()
   })
 })
@@ -92,6 +92,7 @@ const option = computed(() => {
     xData.push(formatDate(item.createTime, 'MM-DD HH:mm'))
     yData.push(EmojiType[item.topEmotion])
   })
+
   return {
     grid: {
       top: '10%',
@@ -188,6 +189,24 @@ const option = computed(() => {
       {
         data: yData,
         type: 'line',
+        smooth: true,
+        lineStyle: {
+          width: 5,
+          color: new echarts.graphic.LinearGradient(0, 1, 0, 0, [
+            {
+              offset: 0,
+              color: '#6633EE',
+            },
+            {
+              offset: 0.5,
+              color: '#FF526B',
+            },
+            {
+              offset: 1,
+              color: '#FFD152',
+            },
+          ]),
+        },
       },
     ],
   }
@@ -243,52 +262,52 @@ const option = computed(() => {
 <style lang="scss" scoped>
 .mood-corve-modal {
   :deep(.el-dialog) {
-  @apply w-[80%] md:w-[800px];
-}
-:deep(.el-dialog__header) {
-  display: none;
-}
-.chart {
-  width: 100%;
-  height: 360px;
-}
-.mood-corve-container {
-  min-height: 400px;
-}
-/* 加载状态样式 */
-.loading-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-  padding: 40px 20px;
-}
+    @apply w-[80%] md:w-[800px];
+  }
+  :deep(.el-dialog__header) {
+    display: none;
+  }
+  .chart {
+    width: 100%;
+    height: 360px;
+  }
+  .mood-corve-container {
+    min-height: 400px;
+  }
+  /* 加载状态样式 */
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 40px 20px;
+  }
 
-.loading-text {
-  font-size: 14px;
-  color: #666;
-  font-weight: 500;
-}
+  .loading-text {
+    font-size: 14px;
+    color: #666;
+    font-weight: 500;
+  }
 
-/* 空状态样式 */
-.empty-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-  padding: 60px 20px;
-  opacity: 0.8;
-}
+  /* 空状态样式 */
+  .empty-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 60px 20px;
+    opacity: 0.8;
+  }
 
-.empty-icon {
-  font-size: 64px;
-  opacity: 0.5;
-}
+  .empty-icon {
+    font-size: 64px;
+    opacity: 0.5;
+  }
 
-.empty-text {
-  font-size: 16px;
-  color: #999;
-  font-weight: 500;
-}
+  .empty-text {
+    font-size: 16px;
+    color: #999;
+    font-weight: 500;
+  }
 }
 </style>

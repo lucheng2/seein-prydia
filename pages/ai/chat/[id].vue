@@ -396,6 +396,7 @@ const useChatRegenerate = () => {
 const { onRegenerate } = useChatRegenerate()
 
 const useCoach = () => {
+  const isCoachEnd = ref(false)
   const coachList = ref([
     {
       value: 1,
@@ -436,13 +437,14 @@ const useCoach = () => {
   }
 
   return {
+    isCoachEnd,
     coachList,
     coachScene,
     setCoachScene,
   }
 }
 
-const { coachList, coachScene, setCoachScene } = useCoach()
+const { isCoachEnd, coachList, coachScene, setCoachScene } = useCoach()
 
 type ChatType = 'bot' | 'coach'
 // 聊天类型
@@ -471,6 +473,7 @@ const useChat = () => {
   const abortController = ref()
   const inputMessage = ref('')
   const isNew = ref(route.params.id === 'new' || route.query.new === 'true')
+
   // 从历史记录模块获取消息
   const { messages, historyLoading, loadChatHistory, initializeMessages }
     = useChatHistory()
@@ -588,6 +591,10 @@ const useChat = () => {
       attrs: {
         onScrollToBottom: () => scrollToBottom(),
         onRegenerate,
+        onEndCoach: () => {
+          message('Coach end', { type: 'info' })
+          isCoachEnd.value = true
+        },
       },
     }
 
@@ -909,7 +916,7 @@ const bgRef = ref()
             </div>
           </div>
 
-          <div class="shadow-box">
+          <div v-if="chatType === 'bot' || (chatType === 'coach' && !isCoachEnd)" class="shadow-box">
             <UiCard
               class="mb-[12px]"
               rotating-height="100%"
