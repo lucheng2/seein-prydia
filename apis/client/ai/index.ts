@@ -137,3 +137,8 @@ export const generateTopic = (params?: any) => {
 export const getFlatteryCard = (params?: any) => {
   return request.post(`/chat-api/prydia_chat/kuaKuaCard?round=${params.round}`, params)
 }
+
+/** 检查coach对话是否结束 */
+export const checkCoachChatEnd = (params?: any) => {
+  return request.post('/chat-api/prydia_chat/finishCheck', params)
+}

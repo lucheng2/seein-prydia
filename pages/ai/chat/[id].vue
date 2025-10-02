@@ -510,7 +510,7 @@ const useChat = () => {
     }
     aiChatMessageRef.value
       ?.getMessageRef(currentMessageId.value)
-      ?.addText(data.content || '')
+      ?.addText(data.content || '', data.stageType === 'END')
     scrollToBottom()
   }
 
@@ -912,7 +912,7 @@ const bgRef = ref()
             @scroll="handleScroll"
           >
             <div ref="messagesContainerRef" class="w-full">
-              <AiChatMessage ref="aiChatMessageRef" :round="conversationRound" :message-list="messages" />
+              <AiChatMessage ref="aiChatMessageRef" :chat-type="chatType" :round="conversationRound" :message-list="messages" />
             </div>
           </div>
 
