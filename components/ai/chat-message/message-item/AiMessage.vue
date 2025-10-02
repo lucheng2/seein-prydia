@@ -9,6 +9,7 @@ import 'md-editor-v3/lib/style.css'
 interface Props {
   message: any
   round: string | number
+  chatType: 'bot' | 'coach'
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -21,6 +22,7 @@ const editorId = computed(() => `markdown-content_${props.message.id}`)
 const loading = ref(true)
 
 const text = ref('')
+const sseIsEnd = ref(false)
 const isError = computed(() => text.value.includes('服务器繁忙，请稍后再试'))
 
 const showLike = computed(
@@ -39,7 +41,7 @@ const showRegenerate = computed(
 )
 
 // 新增队列和渲染控制相关变量
-const textQueue = ref<string[]>([]) // 待渲染的文本队列
+const textQueue = ref<any[]>([]) // 待渲染的文本队列
 const isRendering = ref(false) // 当前是否正在渲染
 // 新增状态标记文本是否渲染完成
 const isTextComplete = ref(false)
@@ -79,7 +81,9 @@ const processQueue = () => {
 
   isRendering.value = true
   isTextComplete.value = false
-  const chunk = textQueue.value.shift()!
+  const chunkObj = textQueue.value.shift()!
+  const chunk = chunkObj.textChunk!
+  sseIsEnd.value = chunkObj.isEnd
   let index = 0
 
   const renderChunk = () => {
@@ -99,8 +103,8 @@ const processQueue = () => {
 }
 
 // 修改后的addText函数
-const addText = (textChunk: string) => {
-  textQueue.value.push(textChunk)
+const addText = (textChunk: string, isEnd = false) => {
+  textQueue.value.push({ textChunk, isEnd })
 
   if (!isRendering.value) {
     // 关闭加载状态以显示内容
@@ -132,14 +136,21 @@ onUnmounted(() => {
 })
 
 const useKuakuaCard = () => {
-  const isKuakuaCard = computed(() => text.value.includes('本次练习已结束'))
   const kuakuaCardData = ref()
-  watch(() => isKuakuaCard.value, (newVal) => {
+  watch(() => sseIsEnd.value, async (newVal) => {
     if (newVal) {
-      emits('endCoach')
-      getKuakuaCardData()
+      if (props.chatType === 'coach' && await checkCoachIsEnd()) {
+        emits('endCoach')
+        getKuakuaCardData()
+      }
     }
   })
+
+  // 检查是否结束
+  const checkCoachIsEnd = async () => {
+    const data = await api.checkCoachChatEnd({ answer: text.value })
+    return data
+  }
 
   const getKuakuaCardData = async () => {
     const data = await api.getFlatteryCard({ round: props.round })
@@ -147,13 +158,12 @@ const useKuakuaCard = () => {
   }
 
   return {
-    isKuakuaCard,
     kuakuaCardData,
     getKuakuaCardData,
   }
 }
 
-const { isKuakuaCard, kuakuaCardData, getKuakuaCardData } = useKuakuaCard()
+const { kuakuaCardData } = useKuakuaCard()
 
 const handleCopy = () => {
   const textToCopy = text.value

@@ -4,6 +4,7 @@ import ComponentsMap from './message-item/ComponentsMap'
 interface Props {
   round: string | number
   messageList: any[]
+  chatType: 'bot' | 'coach'
 }
 const props = withDefaults(defineProps<Props>(), {
   messageList: () => [],
@@ -59,6 +60,7 @@ defineExpose({
           :ref="(el: any) => handleSetRefMap(el, item)"
           :message="item"
           :round="round"
+          :chat-type="chatType"
           @on="emit"
         />
       </template>

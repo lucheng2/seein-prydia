@@ -58,8 +58,11 @@ const handleCopy = () => {
 }
 
 const submitDislike = () => {
-  if (!activeVal.value.length)
-    return message('Please select the reason for the negative review', { type: 'warning' })
+  if (!activeVal.value.length) {
+    return message('Please select the reason for the negative review', {
+      type: 'warning',
+    })
+  }
   submit({
     likeDislike: 'DISLIKE',
     reason: activeVal.value.join(','),
@@ -88,26 +91,18 @@ const submit = async (params: any) => {
         class="flex cursor-pointer items-center rounded-[6px] p-[2px] hover:bg-gray-700"
         @click="handleLike"
       >
-        <UiIcon
+        <img
           class="h-[20px] w-[20px] text-[#858585]"
-          :icon="
-            likeType === 'like'
-              ? 'thumb-up-rounded'
-              : 'thumb-up-outline-rounded'
-          "
+          :src="likeType === 'like' ? likeActiveIcon : likeIcon"
         />
       </div>
       <div
-      class="flex cursor-pointer items-center rounded-[6px] p-[2px] hover:bg-gray-700"
+        class="flex cursor-pointer items-center rounded-[6px] p-[2px] hover:bg-gray-700"
         @click="handleDislike"
       >
-        <UiIcon
+        <img
           class="h-[20px] w-[20px] text-[#858585]"
-          :icon="
-            likeType === 'dislike'
-              ? 'thumb-down-rounded'
-              : 'thumb-down-outline-rounded'
-          "
+          :src="likeType === 'dislike' ? dislikeActiveIcon : dislikeIcon"
         />
       </div>
     </template>
@@ -116,20 +111,14 @@ const submit = async (params: any) => {
       class="flex cursor-pointer items-center rounded-[6px] p-[2px] hover:bg-gray-700"
       @click="handleCopy"
     >
-      <img
-        class="h-[20px] w-[20px] text-[#858585]"
-        :src="copyIcon"
-      />
+      <img class="h-[20px] w-[20px] text-[#858585]" :src="copyIcon" />
     </div>
     <div
       v-if="showRegenerate"
       class="flex cursor-pointer items-center rounded-[6px] p-[2px] hover:bg-gray-700"
       @click="handleRegenerate"
     >
-      <UiIcon
-        class="h-[20px] w-[20px] text-[#858585]"
-        icon="refresh-3-line"
-      />
+      <img :src="regenerateIcon" class="h-[20px] w-[20px] text-[#858585]" />
     </div>
   </div>
   <div
