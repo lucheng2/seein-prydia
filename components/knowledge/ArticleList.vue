@@ -67,7 +67,6 @@ watch(() => arrivedState.bottom, (isBottom) => {
 
     &__header {
         padding: 24px 20px 16px;
-        border-bottom: 1px solid var(--el-border-color-dark);
 
         .title {
             margin: 0 0 8px 0;
@@ -92,17 +91,13 @@ watch(() => arrivedState.bottom, (isBottom) => {
 
 .article-item {
     padding: 16px 20px;
-    // border-bottom: 1px solid var(--el-border-color-darker);
     cursor: pointer;
     transition: all 0.2s ease;
-
-    &:hover {
-        // background-color: #E6E8EB;
-    }
+    opacity: 0.6;
 
     &.active {
         background-color: var(--el-color-primary-dark-9);
-        border-left: 4px solid #9E94A5;
+        opacity: 1;
     }
 
     &__title {

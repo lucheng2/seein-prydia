@@ -91,7 +91,6 @@ const formatTime = (time?: string) => {
 
     &__header {
         padding: 24px 32px 16px;
-        border-bottom: 1px solid var(--el-border-color-light);
         background: #1E1F25;
 
         .back-btn {
