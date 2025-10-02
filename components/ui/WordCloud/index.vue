@@ -1,255 +1,492 @@
+<template>
+    <div class="word-cloud-container" :style="containerStyle">
+        <svg ref="svgRef" />
+    </div>
+</template>
+
 <script setup lang="ts">
-const props = defineProps<Props>()
+import * as d3 from 'd3'
+import cloud from 'd3-cloud' // 需要安装: npm install d3-cloud
+import { ref, onMounted, watch, computed } from 'vue'
 
-// 简化事件定义 - 只保留最重要的
-const emits = defineEmits<{
-  ready: []
-}>()
+const props = defineProps({
+    // 词语数据
+    words: {
+        type: Array,
+        required: true,
+        // 格式: [{ text: 'word', weight: 10 }, ...]
+    },
 
-const WordCloud = ref()
+    // 尺寸设置
+    width: {
+        type: Number,
+        default: 800,
+    },
+    height: {
+        type: Number,
+        default: 600,
+    },
 
-interface WordCloudItem {
-  /** 词语文本 */
-  text: string
-  /** 词语权重值，决定显示大小 */
-  weight: number
-  /** 额外数据，可在回调函数中使用 */
-  extraData?: any[]
-}
+    // 字体设置
+    fontFamily: {
+        type: [String, Function],
+        default: 'Inter, system-ui, Avenir, --apple-system, "Segoe UI", Rototo, Helvetica, Arial, sans-serif',
+    },
+    fontStyle: {
+        type: [String, Function],
+        default: 'normal',
+    },
+    fontWeight: {
+        type: [String, Function],
+        default: 'normal',
+    },
 
-interface Props {
-  /** 词云数据列表 - 必需属性 */
-  list: WordCloudItem[]
-}
+    // 字体大小设置
+    fontSize: {
+        type: Function,
+        default: (d) => Math.sqrt(d.value) * 8,
+    },
+    fontSizeMin: {
+        type: Number,
+        default: 12,
+    },
+    fontSizeMax: {
+        type: Number,
+        default: 100,
+    },
 
-const canvasRef = ref<HTMLCanvasElement>()
-const wordCloudInstance = ref<any>()
+    // 旋转设置
+    rotate: {
+        type: Function,
+        default: () => (~~(Math.random() * 6) - 3) * 30,
+    },
 
-const wordCloudList = computed(() => {
-  // 按权重从大到小排序，确保最大的单词优先放置在中间
-  const sortedList = [...props.list].sort((a, b) => b.weight - a.weight)
+    // 文本访问器
+    text: {
+        type: Function,
+        default: (d) => d.text,
+    },
 
-  return sortedList.map(item => [item.text, item.weight])
+    // 布局设置
+    padding: {
+        type: [Number, Function],
+        default: 5,
+    },
+    spiral: {
+        type: String,
+        default: 'archimedean', // 'archimedean' 或 'rectangular'
+        validator: (value) => ['archimedean', 'rectangular'].includes(value),
+    },
+
+    // 颜色设置
+    colors: {
+        type: [Array, Function],
+        default: null,
+    },
+    colorScheme: {
+        type: String,
+        default: 'schemeCategory10',
+        // d3.schemeCategory10, d3.schemeTableau10, d3.schemePastel1 等
+    },
+
+    // 动画设置
+    animation: {
+        type: Boolean,
+        default: true,
+    },
+    animationDuration: {
+        type: Number,
+        default: 800,
+    },
+    animationDelay: {
+        type: Function,
+        default: (d, i) => i * 50,
+    },
+
+    // 交互设置
+    enableHover: {
+        type: Boolean,
+        default: true,
+    },
+    hoverOpacity: {
+        type: Number,
+        default: 0.7,
+    },
+    enableClick: {
+        type: Boolean,
+        default: true,
+    },
+
+    // 随机数生成器
+    random: {
+        type: Function,
+        default: Math.random,
+    },
+
+    // 时间间隔设置
+    timeInterval: {
+        type: Number,
+        default: Infinity,
+    },
+
+    // 背景设置
+    backgroundColor: {
+        type: String,
+        default: 'transparent',
+    },
+
+    // 响应式设置
+    responsive: {
+        type: Boolean,
+        default: false,
+    },
+
+    // 文本对齐
+    textAnchor: {
+        type: String,
+        default: 'middle',
+        validator: (value) => ['start', 'middle', 'end'].includes(value),
+    },
 })
 
-// 设置高分辨率支持
-const setupHighDPI = (canvas: HTMLCanvasElement) => {
-  const dpr = window.devicePixelRatio || 1
-  const rect = canvas.getBoundingClientRect()
+const emit = defineEmits([
+    'wordClick',      // 点击词语
+    'wordHover',      // 悬停词语
+    'wordLeave',      // 离开词语
+    'complete',       // 布局完成
+    'wordPlaced',     // 单个词语放置完成
+    'error',           // 错误
+])
 
-  // 获取父容器的实际大小
-  const computedStyle = window.getComputedStyle(canvas.parentElement || canvas)
-  const width = Number.parseInt(computedStyle.width) || rect.width
-  const height = Number.parseInt(computedStyle.height) || rect.height
+const svgRef = ref(null)
+const containerStyle = computed(() => ({
+    backgroundColor: props.backgroundColor,
+    width: props.responsive ? '100%' : `${props.width}px`,
+    height: props.responsive ? '100%' : `${props.height}px`,
+}))
 
-  // 设置实际画布大小（考虑设备像素比）
-  canvas.width = width * dpr
-  canvas.height = height * dpr
-
-  // 设置CSS样式大小
-  canvas.style.width = `${width}px`
-  canvas.style.height = `${height}px`
-
-  // 缩放画布以匹配设备像素比
-  const ctx = canvas.getContext('2d')
-  if (ctx) {
-    ctx.scale(dpr, dpr)
-
-    // 设置文本渲染优化
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.imageSmoothingEnabled = true
-    if (ctx.imageSmoothingQuality) {
-      ctx.imageSmoothingQuality = 'high'
+// 获取颜色比例尺
+const getColorScale = () => {
+    if (typeof props.colors === 'function') {
+        return props.colors
     }
-  }
-}
 
-const drawWordCloud = () => {
-  if (!canvasRef.value) return
-
-  try {
-    // 停止之前的渲染
-    if (WordCloud.value.stop) {
-      WordCloud.value.stop()
+    if (Array.isArray(props.colors)) {
+        return d3.scaleOrdinal(props.colors)
     }
 
-    // 设置高分辨率支持
-    setupHighDPI(canvasRef.value)
-
-    wordCloudInstance.value = WordCloud.value(canvasRef.value, {
-      list: wordCloudList.value,
-      gridSize: 18,
-      weightFactor: 3,
-      // weightFactor: function (size) {
-      //     return Math.pow(size, 2.3) * canvasRef.value.width / 1024;
-      // },
-      color: 'random-light',
-      backgroundColor: '#312F36',
-      // 禁止旋转
-      rotationSteps: 0,
-    })
-
-    // 触发准备就绪事件
-    nextTick(() => {
-      emits('ready')
-    })
-  }
-  catch (error) {
-    console.error('WordCloud rendering error:', error)
-  }
+    // 使用预定义的配色方案
+    const scheme = d3[props.colorScheme] || d3.schemeCategory10
+    return d3.scaleOrdinal(scheme)
 }
 
-// 停止渲染的方法
-const stopWordCloud = () => {
-  if (WordCloud.value.stop) {
-    WordCloud.value.stop()
-  }
+// 规范化字体大小
+const normalizeFontSize = (size) => {
+    return Math.max(props.fontSizeMin, Math.min(props.fontSizeMax, size))
 }
 
-watch(() => props.list, () => {
-  nextTick(() => {
-    drawWordCloud()
-  })
-}, {
-  deep: true,
-})
-
-// 窗口大小变化处理
-const handleResize = () => {
-  nextTick(() => {
-    drawWordCloud()
-  })
+// 获取字体属性
+const getFontProperty = (prop, d) => {
+    return typeof prop === 'function' ? prop(d) : prop
 }
 
-onMounted(async () => {
-  if (import.meta.client) {
-    // 动态导入 wordcloud 库，只在客户端加载
-    const WordCloudModule = await import('wordcloud')
-    WordCloud.value = WordCloudModule.default || WordCloudModule
-
-    nextTick(() => {
-      drawWordCloud()
-      // 监听窗口大小变化
-      window.addEventListener('resize', handleResize)
+const list = computed(() => {
+    const result = (props.words || []).map((item: any) => {
+        return {
+            ...item,
+            value: item.weight
+        }
     })
-  }
+    return result
 })
 
-onBeforeUnmount(() => {
-  stopWordCloud()
-  window.removeEventListener('resize', handleResize)
+// 生成词云
+const generateWordCloud = () => {
+    if (!svgRef.value) return
+
+    try {
+        const svg = d3.select(svgRef.value)
+        svg.selectAll('*').remove()
+
+        const actualWidth = props.responsive
+            ? svgRef.value.clientWidth || props.width
+            : props.width
+        const actualHeight = props.responsive
+            ? svgRef.value.clientHeight || props.height
+            : props.height
+
+        const g = svg
+            .attr('width', actualWidth)
+            .attr('height', actualHeight)
+            .append('g')
+            .attr('transform', `translate(${actualWidth / 2},${actualHeight / 2})`)
+
+        // 创建布局
+        const layout = cloud()
+            .size([actualWidth, actualHeight])
+            .words(list.value)
+            .padding(props.padding)
+            .rotate(props.rotate)
+            .font(d => getFontProperty(props.fontFamily, d))
+            .fontStyle(d => getFontProperty(props.fontStyle, d))
+            .fontWeight(d => getFontProperty(props.fontWeight, d))
+            .fontSize(d => normalizeFontSize(props.fontSize(d)))
+            .text(props.text)
+            .spiral(props.spiral)
+            .random(props.random)
+            .timeInterval(props.timeInterval)
+            .on('word', (word) => {
+                emit('wordPlaced', word)
+            })
+            .on('end', draw)
+
+        layout.start()
+
+        function draw(words) {
+            const colorScale = getColorScale()
+
+            const text = g.selectAll('text')
+                .data(words)
+                .enter()
+                .append('text')
+                .style('font-size', d => `${d.size}px`)
+                .style('font-family', d => d.font || getFontProperty(props.fontFamily, d))
+                .style('font-style', d => getFontProperty(props.fontStyle, d))
+                .style('font-weight', d => getFontProperty(props.fontWeight, d))
+                .style('fill', (d, i) => colorScale(i))
+                .style('cursor', props.enableClick ? 'pointer' : 'default')
+                .attr('text-anchor', props.textAnchor)
+                .attr('transform', d => `translate(${d.x},${d.y}) rotate(${d.rotate})`)
+                .text(d => d.text)
+
+            // 添加动画
+            if (props.animation) {
+                text
+                    .style('opacity', 0)
+                    .transition()
+                    .duration(props.animationDuration)
+                    .delay(props.animationDelay)
+                    .style('opacity', 1)
+            }
+
+            // 添加交互效果
+            if (props.enableHover) {
+                text
+                    .on('mouseenter', function (event, d) {
+                        d3.select(this)
+                            .transition()
+                            .duration(200)
+                            .style('opacity', props.hoverOpacity)
+                            .style('font-size', `${d.size * 1.1}px`)
+                        emit('wordHover', d, event)
+                    })
+                    .on('mouseleave', function (event, d) {
+                        d3.select(this)
+                            .transition()
+                            .duration(200)
+                            .style('opacity', 1)
+                            .style('font-size', `${d.size}px`)
+                        emit('wordLeave', d, event)
+                    })
+            }
+
+            if (props.enableClick) {
+                text.on('click', (event, d) => {
+                    emit('wordClick', d, event)
+                })
+            }
+
+            // 计算边界
+            const bounds = [
+                { x0: d3.min(words, d => d.x), y0: d3.min(words, d => d.y) },
+                { x1: d3.max(words, d => d.x), y1: d3.max(words, d => d.y) },
+            ]
+
+            emit('complete', words, bounds)
+        }
+    } catch (error) {
+        console.error('Word cloud generation error:', error)
+        emit('error', error)
+    }
+}
+
+// 响应式处理
+let resizeObserver = null
+
+onMounted(() => {
+    generateWordCloud()
+
+    if (props.responsive && svgRef.value) {
+        resizeObserver = new ResizeObserver(() => {
+            generateWordCloud()
+        })
+        resizeObserver.observe(svgRef.value)
+    }
 })
 
-// 获取词云图片数据URL
+// 监听数据变化
+watch(() => props.words, () => {
+    generateWordCloud()
+}, { deep: true })
+
+// 监听其他配置变化
+watch(
+    () => [
+        props.width,
+        props.height,
+        props.fontFamily,
+        props.fontSize,
+        props.rotate,
+        props.padding,
+        props.spiral,
+        props.colors,
+        props.colorScheme,
+    ],
+    () => {
+        generateWordCloud()
+    },
+    { deep: true }
+)
+
+// 获取词云图片数据URL（将 SVG 渲染到 Canvas 后转为 PNG）
 const getWordCloudImageDataURL = async (): Promise<string> => {
-  return canvasRef.value.toDataURL('image/png')
+    if (!svgRef.value) throw new Error('SVG is not ready')
+
+    const svgEl = svgRef.value as unknown as SVGSVGElement
+    const width = Number(svgEl.getAttribute('width') || props.width)
+    const height = Number(svgEl.getAttribute('height') || props.height)
+
+    const serializer = new XMLSerializer()
+    const svgString = serializer.serializeToString(svgEl)
+    const svgBlob = new Blob([
+        `<?xml version="1.0" standalone="no"?>\n` + svgString,
+    ], { type: 'image/svg+xml;charset=utf-8' })
+    const url = URL.createObjectURL(svgBlob)
+
+    try {
+        const image = await new Promise<HTMLImageElement>((resolve, reject) => {
+            const img = new Image()
+            img.onload = () => resolve(img)
+            img.onerror = (e) => reject(e)
+            img.src = url
+        })
+
+        const canvas = document.createElement('canvas')
+        canvas.width = width
+        canvas.height = height
+        const ctx = canvas.getContext('2d')
+        if (!ctx) throw new Error('Canvas 2D context is unavailable')
+
+        if (props.backgroundColor && props.backgroundColor !== 'transparent') {
+            ctx.fillStyle = props.backgroundColor
+            ctx.fillRect(0, 0, width, height)
+        }
+
+        ctx.drawImage(image, 0, 0, width, height)
+        return canvas.toDataURL('image/png')
+    } finally {
+        URL.revokeObjectURL(url)
+    }
 }
+
 
 // 复制图片到剪贴板
 const copyImage = async (): Promise<boolean> => {
-  try {
-    const dataURL = await getWordCloudImageDataURL()
-
-    // 将DataURL转换为Blob
-    const response = await fetch(dataURL)
-    const blob = await response.blob()
-
-    // 复制到剪贴板
-    await navigator.clipboard.write([
-      new ClipboardItem({
-        'image/png': blob,
-      }),
-    ])
-
-    console.log('词云图片已复制到剪贴板')
-    return true
-  }
-  catch (error: any) {
-    console.error('复制图片失败:', error)
-
-    // 如果剪贴板API失败，尝试创建链接下载作为降级方案
     try {
-      const dataURL = await getWordCloudImageDataURL()
-      const link = document.createElement('a')
-      link.href = dataURL
-      link.download = `词云-${new Date().getTime()}.png`
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      console.log('复制失败，已转为下载方式')
-      return false
+        const dataURL = await getWordCloudImageDataURL()
+
+        // 将DataURL转换为Blob
+        const response = await fetch(dataURL)
+        const blob = await response.blob()
+
+        // 复制到剪贴板（特性检测）
+        const ClipboardItemCtor = (window as any).ClipboardItem
+        if (navigator.clipboard && (navigator.clipboard as any).write && ClipboardItemCtor) {
+            await (navigator.clipboard as any).write([
+                new ClipboardItemCtor({ 'image/png': blob }),
+            ])
+        } else {
+            throw new Error('当前环境不支持剪贴板图片写入')
+        }
+
+        console.log('Word cloud image copied to clipboard')
+        return true
     }
-    catch (downloadError) {
-      console.error('下载也失败了:', downloadError)
-      throw error
+    catch (error: any) {
+        console.error('Failed to copy image:', error)
+
+        // 如果剪贴板API失败，尝试创建链接下载作为降级方案
+        try {
+            const dataURL = await getWordCloudImageDataURL()
+            const link = document.createElement('a')
+            link.href = dataURL
+            link.download = `wordcloud-${new Date().getTime()}.png`
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+            console.log('Copy failed, switched to download fallback')
+            return false
+        }
+        catch (downloadError) {
+            console.error('Download fallback also failed:', downloadError)
+            throw error
+        }
     }
-  }
 }
 
 // 下载图片
 const downloadImage = async (filename?: string): Promise<boolean> => {
-  try {
-    const dataURL = await getWordCloudImageDataURL()
+    try {
+        const dataURL = await getWordCloudImageDataURL()
 
-    // 创建下载链接
-    const link = document.createElement('a')
-    const timestamp = new Date().toISOString().split('T')[0]
-    const defaultFilename = `词云分析-${timestamp}.png`
+        // 创建下载链接
+        const link = document.createElement('a')
+        const timestamp = new Date().toISOString().split('T')[0]
+        const defaultFilename = `WordCloud-Analysis-${timestamp}.png`
 
-    link.href = dataURL
-    link.download = filename || defaultFilename
+        link.href = dataURL
+        link.download = filename || defaultFilename
 
-    // 触发下载
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+        // 触发下载
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
 
-    console.log('词云图片下载成功')
-    return true
-  }
-  catch (error: any) {
-    console.error('下载图片失败:', error)
-    throw error
-  }
+        console.log('Word cloud image downloaded successfully')
+        return true
+    }
+    catch (error: any) {
+        console.error('Failed to download image:', error)
+        throw error
+    }
 }
 
-// 暴露方法给父组件
+
+// 暴露方法
 defineExpose({
-  drawWordCloud,
-  stopWordCloud,
-  copyImage,
-  downloadImage,
+    regenerate: generateWordCloud,
+    copyImage,
+    downloadImage,
+})
+
+// 组件卸载时清理
+import { onUnmounted } from 'vue'
+onUnmounted(() => {
+    if (resizeObserver) {
+        resizeObserver.disconnect()
+    }
 })
 </script>
 
-<template>
-    <ClientOnly>
-        <div class="component-word-cloud">
-            <canvas ref="canvasRef" class="canvas-word-cloud"></canvas>
-        </div>
-    </ClientOnly>
-</template>
-
 <style scoped>
-.component-word-cloud {
-    width: 100%;
-    height: 100%;
+.word-cloud-container {
     display: flex;
-    align-items: center;
     justify-content: center;
-    position: relative;
+    align-items: center;
+    overflow: hidden;
 }
 
-.canvas-word-cloud {
-    width: 100%;
-    height: 100%;
+.word-cloud-container svg {
     display: block;
-    /* 确保画布不会被压缩 */
-    max-width: 100%;
-    max-height: 100%;
-    /* 优化渲染性能 */
-    image-rendering: -webkit-optimize-contrast;
-    image-rendering: crisp-edges;
 }
 </style>

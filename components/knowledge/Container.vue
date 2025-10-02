@@ -13,8 +13,6 @@ useHead({
 const articles = ref<Article[]>([])
 const selectedArticle = ref<Article>()
 const loading = ref(false)
-const isMobile = ref(false)
-const showMobileDetail = ref(false)
 
 // Knowledge base functionality Hook
 const useKnowledgeBase = () => {
@@ -47,45 +45,26 @@ const { loadArticles } = useKnowledgeBase()
 // 事件处理
 const handleSelectArticle = (article: Article) => {
   selectedArticle.value = article
-  if (isMobile.value) {
-    showMobileDetail.value = true
-  }
-}
-
-const handleMobileBack = () => {
-  showMobileDetail.value = false
-}
-
-// 响应式检测
-const checkMobile = () => {
-  isMobile.value = window.innerWidth < 768
 }
 
 // 生命周期
 onMounted(() => {
   if (import.meta.client) {
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
     loadArticles()
 
     // 默认选择第一篇文章（非移动端）
     nextTick(() => {
-      if (!isMobile.value && articles.value.length > 0) {
+      if (articles.value.length > 0) {
         selectedArticle.value = articles.value[0]
       }
     })
   }
 })
-
-onUnmounted(() => {
-  window.removeEventListener('resize', checkMobile)
-})
 </script>
 
 <template>
   <div class="knowledge-page">
-    <!-- PC端布局 -->
-    <div v-if="!isMobile" class="knowledge-desktop">
+    <div class="knowledge-desktop">
       <!-- 左侧：文章列表 -->
       <div class="knowledge-sidebar">
         <KnowledgeArticleList :articles="articles" :selected-id="selectedArticle?.id" :loading="loading"
@@ -95,20 +74,6 @@ onUnmounted(() => {
       <!-- 右侧：文章详情 -->
       <div class="knowledge-main">
         <KnowledgeArticleDetail :article="selectedArticle" :loading="loading" />
-      </div>
-    </div>
-
-    <!-- 移动端布局 -->
-    <div v-else class="knowledge-mobile">
-      <!-- 文章列表视图 -->
-      <div v-if="!showMobileDetail" class="mobile-list-view">
-        <KnowledgeArticleList :articles="articles" :selected-id="selectedArticle?.id" :loading="loading"
-          @select="handleSelectArticle" />
-      </div>
-
-      <!-- 文章详情视图 -->
-      <div v-else class="mobile-detail-view">
-        <KnowledgeArticleDetail :article="selectedArticle" :loading="loading" @back="handleMobileBack" />
       </div>
     </div>
   </div>
@@ -121,7 +86,6 @@ onUnmounted(() => {
 
   border-radius: 30px 30px 30px 30px;
   overflow: hidden;
-  padding: 1px;
   background:
         linear-gradient(#1E1F25, #1E1F25) padding-box,
         linear-gradient(135deg, rgba(112, 62, 219, 1), rgba(255, 209, 42, 1)) border-box;
@@ -136,8 +100,7 @@ onUnmounted(() => {
   margin: 0 auto;
 
   .knowledge-sidebar {
-    width: 260px;
-    max-width: 480px;
+    width: 213px;
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -154,89 +117,9 @@ onUnmounted(() => {
   }
 }
 
-// 移动端布局
-.knowledge-mobile {
-
-  .mobile-list-view,
-  .mobile-detail-view {
-    min-height: 100%;
-    background: #1E1F25;
-  }
-
-  .mobile-list-view {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .mobile-detail-view {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 1000;
-    background: #1E1F25;
-    display: flex;
-    flex-direction: column;
-  }
-}
-
-// 响应式适配
-@media (max-width: 1200px) {
-  .knowledge-desktop {
-    .knowledge-sidebar {
-      width: 250px;
-    }
-  }
-}
-
-@media (max-width: 992px) {
-  .knowledge-desktop {
-    .knowledge-sidebar {
-      width: 220px;
-    }
-  }
-}
-
-// 平板适配
-@media (max-width: 768px) {
-  .knowledge-page {
-    padding: 0;
-  }
-}
-
-// 过渡动画
-.mobile-detail-view {
-  animation: slideInRight 0.3s ease-out;
-}
-
-@keyframes slideInRight {
-  from {
-    transform: translateX(100%);
-  }
-
-  to {
-    transform: translateX(0);
-  }
-}
-
 // 滚动条样式
 .knowledge-sidebar,
 .knowledge-main {
   @include no-arrow-scrollbar;
-}
-
-// 深色模式适配
-@media (prefers-color-scheme: dark) {
-  .knowledge-page {
-    background: #1E1F25;
-  }
-
-  .knowledge-sidebar,
-  .knowledge-main,
-  .mobile-list-view,
-  .mobile-detail-view {
-    background: #1E1F25;
-  }
 }
 </style>

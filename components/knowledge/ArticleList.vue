@@ -26,20 +26,19 @@ watch(() => arrivedState.bottom, (isBottom) => {
 <template>
     <div class="article-list">
         <div class="article-list__header">
-            <h3 class="title">Knowledge Base</h3>
-            <div class="subtitle">Explore knowledge and discover more</div>
+            <h3 class="title">Knowledge</h3>
         </div>
 
         <div ref="listRef" class="article-list__content">
             <div v-for="article in articles" :key="article.id" class="article-item"
                 :class="{ 'active': selectedId === article.id }" @click="handleSelectArticle(article)">
                 <div class="article-item__title">{{ article.title }}</div>
-                <div v-if="article.summary" class="article-item__summary">
+                <!-- <div v-if="article.summary" class="article-item__summary">
                     {{ article.summary }}
                 </div>
                 <div v-if="article.createTime" class="article-item__time">
                     {{ new Date(article.createTime).toLocaleDateString() }}
-                </div>
+                </div> -->
             </div>
 
             <!-- 加载状态 -->
@@ -64,15 +63,16 @@ watch(() => arrivedState.bottom, (isBottom) => {
     height: 100%;
     display: flex;
     flex-direction: column;
+    box-shadow: inset -1px 0px 0px 0px #302D37;
 
     &__header {
         padding: 24px 20px 16px;
 
         .title {
             margin: 0 0 8px 0;
-            font-size: 20px;
-            font-weight: 600;
-            color: #fff;
+            font-weight: 500;
+            font-size: 24px;
+            color: #FFFFFF;
         }
 
         .subtitle {
@@ -90,29 +90,35 @@ watch(() => arrivedState.bottom, (isBottom) => {
 }
 
 .article-item {
-    padding: 16px 20px;
+    padding: 0 8px;
     cursor: pointer;
     transition: all 0.2s ease;
-    opacity: 0.6;
 
     &.active {
         background-color: var(--el-color-primary-dark-9);
         opacity: 1;
+
+        .article-item__title{
+            border-radius: 16px 16px 16px 16px;
+
+            background:
+                    linear-gradient(#1E1F25, #1E1F25) padding-box,
+                    linear-gradient(to bottom, rgba(112, 62, 219, 1), rgba(38, 0, 230, 1), rgba(255, 209, 42, 1)) border-box;
+            border: 1px solid transparent;
+
+            font-weight: bold;
+            color: #FFFFFF;
+        }
     }
 
     &__title {
-        font-size: 16px;
-        font-weight: 500;
-        color: #E6E8EB;
-        margin-bottom: 8px;
         line-height: 1.4;
 
-        // 最多显示2行
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
+        // height: 32px;
+        font-weight: 400;
+        font-size: 14px;
+        color: #CBCACC;
+        padding: 16px;
     }
 
     &__summary {
@@ -160,28 +166,5 @@ watch(() => arrivedState.bottom, (isBottom) => {
     }
 }
 
-// 移动端适配
-@media (max-width: 768px) {
-    .article-list {
-        &__header {
-            padding: 16px;
-
-            .title {
-                font-size: 18px;
-            }
-        }
-    }
-
-    .article-item {
-        padding: 12px 16px;
-
-        &__title {
-            font-size: 15px;
-        }
-
-        &__summary {
-            font-size: 13px;
-        }
-    }
-}
+/* 移动端适配已移除 */
 </style>

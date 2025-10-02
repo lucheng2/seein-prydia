@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { WordCloudItem } from '~/components/ui/WordCloud/types'
 import closeIcon from '@/assets/images/icon/close.png'
 import { getWordCloudData } from '~/apis/server'
 
@@ -14,7 +13,7 @@ const loading = ref(false)
 const error = ref('')
 const copying = ref(false)
 const downloading = ref(false)
-const rawData = ref<WordCloudItem[]>([
+const rawData = ref<any[]>([
   { weight: 26, text: 'Web Technologies' },
   { weight: 20, text: 'HTML' },
   { weight: 20, text: '<canvas>' },
@@ -187,7 +186,13 @@ defineExpose({
         <!-- 词云内容 -->
         <div v-else-if="rawData.length > 0" class="wordcloud-content">
           <div class="wordcloud-canvas-wrapper">
-            <UiWordCloud ref="wordCloudRef" :list="rawData" />
+            <UiWordCloud
+              ref="wordCloudRef"
+              :words="rawData"
+              :width="760"
+              :height="540"
+              background-color="#312f36"
+            />
           </div>
 
           <!-- 操作按钮组 -->
@@ -198,7 +203,7 @@ defineExpose({
               title="Copy"
               @click="handleCopyImage"
             >
-              <span class="action-icon">📋</span>
+              <img src="@/assets/images/icon/copy.png" class="action-icon" />
               <span class="action-text">{{
                 copying ? "copying..." : "copy"
               }}</span>
@@ -209,7 +214,7 @@ defineExpose({
               title="download"
               @click="handleDownloadImage"
             >
-              <span class="action-icon">💾</span>
+              <img src="@/assets/images/icon/download.png" class="action-icon" />
               <span class="action-text">{{
                 downloading ? "downloading..." : "save"
               }}</span>
@@ -309,7 +314,7 @@ defineExpose({
 .wordcloud-content {
   width: 100%;
   height: 100%;
-  min-height: 300px;
+  min-height: 600px;
   background-color: linear-gradient(
     135deg,
     rgba(255, 255, 255, 0.1) 0%,
@@ -323,6 +328,8 @@ defineExpose({
 /* 词云画布包装器 */
 .wordcloud-canvas-wrapper {
   flex: 1;
+  flex-shrink: 0;
+  height: 600px;
   width: 100%;
   border-radius: 8px;
   overflow: hidden;
@@ -339,52 +346,40 @@ defineExpose({
 }
 
 .action-button {
+  width: 150px;
+  height: 40px;
+  border-radius: 40px;
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 12px 24px;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+  background: #4F4D56;
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
   transition: all 0.2s ease;
-  color: #333;
+  color: #fff;
   min-width: 100px;
   justify-content: center;
   backdrop-filter: blur(10px);
 }
 
 .action-button:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 1);
-  border-color: rgba(0, 0, 0, 0.15);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .action-button:active:not(:disabled) {
   transform: translateY(0);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .action-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-  background: rgba(255, 255, 255, 0.7);
-}
-
-.copy-button:hover:not(:disabled) {
-  border-color: rgba(24, 144, 255, 0.3);
-  color: #1890ff;
-}
-
-.download-button:hover:not(:disabled) {
-  border-color: rgba(82, 196, 26, 0.3);
-  color: #52c41a;
 }
 
 .action-icon {
+  width: 20px;
+  height: 20px;
   font-size: 14px;
   line-height: 1;
 }

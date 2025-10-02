@@ -1,31 +1,11 @@
 <script setup lang="ts">
-import type { ArticleDetailEmits, ArticleDetailProps } from './types'
+import type { ArticleDetailProps } from './types'
 
 const props = withDefaults(defineProps<ArticleDetailProps>(), {
     loading: false,
 })
 
-const emit = defineEmits<ArticleDetailEmits>()
-
-// 检测是否为移动端
-const isMobile = ref(false)
-
-const checkMobile = () => {
-    isMobile.value = window.innerWidth < 768
-}
-
-onMounted(() => {
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-})
-
-onUnmounted(() => {
-    window.removeEventListener('resize', checkMobile)
-})
-
-const handleBack = () => {
-    emit('back')
-}
+// 移动端相关逻辑已移除
 
 // 格式化时间
 const formatTime = (time?: string) => {
@@ -38,23 +18,17 @@ const formatTime = (time?: string) => {
     <div class="article-detail">
         <!-- 头部 -->
         <div class="article-detail__header">
-            <el-button v-if="isMobile" type="text" class="back-btn" @click="handleBack">
-                <el-icon>
-                    <ElIconArrowLeft />
-                </el-icon>
-                Back to List
-            </el-button>
 
             <div v-if="article" class="article-meta">
                 <h1 class="article-title">{{ article.title }}</h1>
-                <div class="article-info">
+                <!-- <div class="article-info">
                     <span v-if="article.createTime" class="time">
                         Published: {{ formatTime(article.createTime) }}
                     </span>
                     <span v-if="article.updateTime && article.updateTime !== article.createTime" class="time">
                         Updated: {{ formatTime(article.updateTime) }}
                     </span>
-                </div>
+                </div> -->
             </div>
         </div>
 
@@ -90,7 +64,7 @@ const formatTime = (time?: string) => {
     flex-direction: column;
 
     &__header {
-        padding: 24px 32px 16px;
+        padding: 32px 24px 0;
         background: #1E1F25;
 
         .back-btn {
@@ -114,10 +88,10 @@ const formatTime = (time?: string) => {
 .article-meta {
     .article-title {
         margin: 0 0 12px 0;
-        font-size: 28px;
-        font-weight: 600;
-        color: #fff;
-        line-height: 1.3;
+
+        font-weight: 500;
+        font-size: 24px;
+        color: #FFFFFF;
     }
 
     .article-info {
@@ -132,6 +106,15 @@ const formatTime = (time?: string) => {
     }
 }
 
+.article-content {
+    padding: 16px 24px;
+    :deep(.seein-markdown) {
+        --color-fg-default: #CBCACC;
+        font-size: 14px;
+    }
+}
+
+
 .loading-state {
     padding: 80px 20px;
     text-align: center;
@@ -141,9 +124,6 @@ const formatTime = (time?: string) => {
         font-size: 32px;
         margin-bottom: 16px;
     }
-}
-
-.article-content {
 }
 
 .empty-state {
@@ -170,39 +150,5 @@ const formatTime = (time?: string) => {
     }
 }
 
-// 移动端适配
-@media (max-width: 768px) {
-    .article-detail {
-        &__header {
-            padding: 16px;
-        }
-    }
-
-    .article-meta {
-        .article-title {
-            font-size: 22px;
-        }
-
-        .article-info {
-            .time {
-                font-size: 13px;
-            }
-        }
-    }
-
-    .article-content {
-    }
-
-    .empty-state {
-        padding: 80px 16px;
-
-        .empty-icon {
-            font-size: 56px;
-        }
-
-        .empty-title {
-            font-size: 18px;
-        }
-    }
-}
+/* 移动端适配已移除 */
 </style>

@@ -90,7 +90,7 @@ const handleWordcloud = () => {
                   class="mt-[20px] cursor-pointer"
                   @click="handleWordcloud"
                 >
-                  <img class="mr-[12px] h-[24px] w-[24px] flex-shrink-0" />
+                  <img class="mr-[12px] h-[24px] w-[24px] flex-shrink-0" src="@/assets/images/icon/word-cloud.svg" />
                   <div text="16px">Word Cloud</div>
                 </div>
               </div>

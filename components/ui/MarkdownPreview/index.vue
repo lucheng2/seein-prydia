@@ -40,7 +40,6 @@ const { markdown } = useMarkdown()
 @import url('./github-theme.less');
 
 .seein-markdown{
-    padding: 16px 32px;
     overflow-y: auto;
 }
 </style>
