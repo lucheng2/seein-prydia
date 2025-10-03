@@ -25,17 +25,18 @@ const handleSelect = (val: any) => {
     <UiCard class="mb-[12px]" rotating-height="1000%" rotating-width="1000%">
       <AiChatInput
         v-model="textVal"
-        class="w-[900px]"
+        class="w-[48vw]"
         :coach-list="coachList"
         @handle-send="handleSend"
         @handle-select="handleSelect"
       />
     </UiCard>
-    <div flex="~" class="w-[900px] flex-wrap gap-[12px]" text="18px #F5F7FA">
+    <div flex="~" class="w-[48vw] flex-wrap gap-[12px]" text="18px #F5F7FA">
       <UiCard
         v-for="coach in coachList"
         :key="coach.value"
-        class="w-[444px] cursor-pointer"
+        class="cursor-pointer"
+        style="flex: 1 1 48%;"
         border-color="linear-gradient(135deg, rgba(112, 62, 219, 1), rgba(255, 209, 42, 1))"
         rotating-height="100%"
         rotating-width="100%"
