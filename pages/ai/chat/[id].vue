@@ -908,7 +908,7 @@ const bgRef = ref()
           <div
             ref="messagesScrollbarRef"
             flex="~ 1"
-            class="my-[20px] w-[900px] overflow-y-auto"
+            class="my-[20px] w-[48vw] overflow-y-auto"
             @scroll="handleScroll"
           >
             <div ref="messagesContainerRef" class="w-full">
@@ -925,7 +925,7 @@ const bgRef = ref()
             >
               <AiChatInput
                 v-model="inputMessage"
-                class="w-[900px]"
+                class="w-[48vw]"
                 :coach-list="coachList"
                 @handle-select="setCoachScene"
                 @handle-send="sendMessage"
