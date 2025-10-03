@@ -37,6 +37,7 @@ export class Request {
   private setupRequestInterceptor() {
     this.instance.interceptors.request.use(
       (config) => {
+        config.headers['Proxy-Connection'] = undefined
         // 在发送请求之前做些什么z
         const token = getToken()
         if (token) {
