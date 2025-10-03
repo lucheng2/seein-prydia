@@ -3,7 +3,10 @@ import type { FormInstance } from 'element-plus'
 import * as api from '@/apis'
 import bgImg from '@/assets/images/bg.png'
 import closeIcon from '@/assets/images/icon/close.png'
+import cardImg from '@/assets/images/login/login-bg.png'
 import loginDescImg from '@/assets/images/login/login-desc.png'
+import emailIcon from '@/assets/svg/email.svg'
+import passwordIcon from '@/assets/svg/password.svg'
 import prydiaText from '@/assets/svg/prydia.svg'
 import { useHead } from '@unhead/vue'
 import { useEnterLogic } from '~/hooks'
@@ -356,9 +359,7 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                         flex="~ items-center"
                         :style="{ background: 'rgba(255,255,255,0.05)' }"
                       >
-                        <div
-                          class="ml-[20px] mr-[16px] h-[20px] w-[20px]"
-                        ></div>
+                          <img :src="emailIcon" class="ml-[20px] mr-[16px] h-[20px] w-[20px]" />
                         <input
                           v-model="loginForm.email"
                           text="#fff 16px"
@@ -373,9 +374,7 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                         flex="~ items-center"
                         :style="{ background: 'rgba(255,255,255,0.05)' }"
                       >
-                        <div
-                          class="ml-[20px] mr-[16px] h-[20px] w-[20px]"
-                        ></div>
+                        <img :src="passwordIcon" class="ml-[20px] mr-[16px] h-[20px] w-[20px]" />
                         <input
                           v-model="loginForm.password"
                           text="#fff 16px"
@@ -434,9 +433,7 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                         flex="~ items-center"
                         :style="{ background: 'rgba(255,255,255,0.05)' }"
                       >
-                        <div
-                          class="ml-[20px] mr-[16px] h-[20px] w-[20px]"
-                        ></div>
+                        <img :src="emailIcon" class="ml-[20px] mr-[16px] h-[20px] w-[20px]" />
                         <input
                           v-model="registerForm.email"
                           text="#fff 16px"
@@ -482,9 +479,7 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                         flex="~ items-center"
                         :style="{ background: 'rgba(255,255,255,0.05)' }"
                       >
-                        <div
-                          class="ml-[20px] mr-[16px] h-[20px] w-[20px]"
-                        ></div>
+                        <img :src="emailIcon" class="ml-[20px] mr-[16px] h-[20px] w-[20px]" />
                         <input
                           v-model="registerForm.email"
                           text="#fff 16px"
@@ -500,9 +495,7 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                         flex="~ items-center"
                         :style="{ background: 'rgba(255,255,255,0.05)' }"
                       >
-                        <div
-                          class="ml-[20px] mr-[16px] h-[20px] w-[20px]"
-                        ></div>
+                        <img :src="passwordIcon" class="ml-[20px] mr-[16px] h-[20px] w-[20px]" />
                         <input
                           v-model="registerForm.captcha"
                           text="#fff 16px"
@@ -547,9 +540,7 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                         flex="~ items-center"
                         :style="{ background: 'rgba(255,255,255,0.05)' }"
                       >
-                        <div
-                          class="ml-[20px] mr-[16px] h-[20px] w-[20px]"
-                        ></div>
+                        <img :src="emailIcon" class="ml-[20px] mr-[16px] h-[20px] w-[20px]" />
                         <input
                           v-model="registerForm.email"
                           text="#fff 16px"
@@ -565,9 +556,7 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                         flex="~ items-center"
                         :style="{ background: 'rgba(255,255,255,0.05)' }"
                       >
-                        <div
-                          class="ml-[20px] mr-[16px] h-[20px] w-[20px]"
-                        ></div>
+                        <img :src="passwordIcon" class="ml-[20px] mr-[16px] h-[20px] w-[20px]" />
                         <input
                           v-model="registerForm.captcha"
                           text="#fff 16px"
@@ -583,9 +572,7 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                         flex="~ items-center"
                         :style="{ background: 'rgba(255,255,255,0.05)' }"
                       >
-                        <div
-                          class="ml-[20px] mr-[16px] h-[20px] w-[20px]"
-                        ></div>
+                        <img :src="passwordIcon" class="ml-[20px] mr-[16px] h-[20px] w-[20px]" />
                         <input
                           v-model="registerForm.password"
                           text="#fff 16px"
@@ -601,9 +588,7 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                         flex="~ items-center"
                         :style="{ background: 'rgba(255,255,255,0.05)' }"
                       >
-                        <div
-                          class="ml-[20px] mr-[16px] h-[20px] w-[20px]"
-                        ></div>
+                        <img :src="passwordIcon" class="ml-[20px] mr-[16px] h-[20px] w-[20px]" />
                         <input
                           v-model="registerForm.password2"
                           text="#fff 16px"
@@ -638,7 +623,7 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
             </div>
           </template>
           <template v-else>
-            <div flex="~ justify-center" class="w-full">
+            <div flex="~ justify-center" class="z-99 w-full">
               <el-button
                 class="login-btn mt-[80px]"
                 @click="isClickLogin = true"
@@ -646,6 +631,7 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                 Start Chat Now
               </el-button>
             </div>
+            <img :src="cardImg" class="absolute right-0 top-0" />
           </template>
         </div>
 
