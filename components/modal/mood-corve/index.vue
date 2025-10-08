@@ -78,11 +78,11 @@ defineExpose({
 
 // 愤怒|不悦|一般|舒适|开心
 const EmojiType = {
-  愤怒: 0,
-  不悦: 1,
-  一般: 2,
-  舒适: 3,
-  开心: 4,
+  anger: 0,
+  displeasure: 1,
+  neutral: 2,
+  comfort: 3,
+  joy: 4,
 }
 
 const option = computed(() => {
