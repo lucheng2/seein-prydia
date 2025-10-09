@@ -22,6 +22,7 @@ interface Props {
 
 const isCollapsed = defineModel('isCollapsed', { type: Boolean })
 const activeTab = defineModel('activeTab', { type: String })
+const chatType = defineModel('chatType', { type: String })
 </script>
 
 <template>
@@ -30,6 +31,7 @@ const activeTab = defineModel('activeTab', { type: String })
       <ConversationsA
         v-model:is-collapsed="isCollapsed"
         v-model:active-tab="activeTab"
+        v-model:chat-type="chatType"
         :is-new="isNew"
         :conversation-id="conversationId"
         :conversations="conversations"
@@ -43,6 +45,7 @@ const activeTab = defineModel('activeTab', { type: String })
         :key="1232"
         v-model:is-collapsed="isCollapsed"
         v-model:active-tab="activeTab"
+        v-model:chat-type="chatType"
         :is-new="isNew"
         :conversation-id="conversationId"
         :conversations="conversations"

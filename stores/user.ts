@@ -10,6 +10,7 @@ export const useUserStore = defineStore(
 
     function setToken(value) {
       token.value = value
+      
     }
 
     function removeToken() {

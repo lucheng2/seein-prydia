@@ -224,9 +224,9 @@ const useChatHistory = () => {
     }
 
     // 检查缓存
-    if (conversationCache.has(conversationId) && conversationCache.get(conversationId)) {
-      return conversationCache.get(conversationId)
-    }
+    // if (conversationCache.has(conversationId) && conversationCache.get(conversationId)) {
+    //   return conversationCache.get(conversationId)
+    // }
 
     historyLoading.value = true
     try {
@@ -255,7 +255,6 @@ const useChatHistory = () => {
     else {
       const historyData = await loadChatHistory(targetId)
       if (historyData && historyData.length > 0) {
-        chatType.value = historyData[0]?.prydiaChatType === 'CHAT_BOT' ? 'bot' : 'coach'
         activeTab.value = chatType.value
         // 有历史记录，转换格式并显示
         const result: any[] = []
@@ -876,6 +875,7 @@ const bgRef = ref()
       <AiChatConversations
         v-model:active-tab="activeTab"
         v-model:is-collapsed="isCollapsed"
+        v-model:chat-type="chatType"
         style="height: calc(100vh - 94px - 24px);"
         :is-new="isNew"
         :conversation-id="currentConversationId"

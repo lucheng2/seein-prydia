@@ -24,6 +24,7 @@ interface Props {
 }
 
 const isCollapsed = defineModel('isCollapsed', { type: Boolean })
+const chatType = defineModel('chatType', { type: String })
 const { isMobile } = useView()
 
 // 添加对话列表容器的引用
@@ -76,12 +77,14 @@ function scrollToCurrentConversation(conversationId: string) {
 
 const handleSelect = async (conversation) => {
   if (isMobile.value) isCollapsed.value = true
+  chatType.value = conversation.prydiaChatType === 'COACH' ? 'coach' : 'bot'
   navigateTo(`/ai/chat/${conversation.conversationId}`)
 }
 
 const handleNew = async () => {
   if (props.isNew) return
   isCollapsed.value = true
+  chatType.value = 'bot'
   navigateTo('/ai/chat/new?new=true')
 }
 
