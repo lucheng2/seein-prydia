@@ -3,9 +3,9 @@ import type { Article } from '~/components/knowledge'
 import * as api from '~/apis'
 
 // Page settings
-useHead({
-  title: 'Knowledge Base - Articles & Learning',
-})
+// useHead({
+//   title: 'Knowledge Base - Articles & Learning',
+// })
 
 // Data type definitions have been extracted to ~/components/knowledge/types.ts
 
@@ -67,8 +67,10 @@ onMounted(() => {
     <div class="knowledge-desktop">
       <!-- 左侧：文章列表 -->
       <div class="knowledge-sidebar">
-        <KnowledgeArticleList :articles="articles" :selected-id="selectedArticle?.id" :loading="loading"
-          @select="handleSelectArticle" />
+        <KnowledgeArticleList
+:articles="articles" :selected-id="selectedArticle?.id" :loading="loading"
+          @select="handleSelectArticle"
+/>
       </div>
 
       <!-- 右侧：文章详情 -->

@@ -431,6 +431,7 @@ const useCoach = () => {
       })
     }
     setChatTypeToCoach()
+    activeTab.value = 'coach'
     coachScene.value = coach.value
     sendMessage(coach.label)
   }
@@ -908,15 +909,14 @@ const bgRef = ref()
           <div
             ref="messagesScrollbarRef"
             flex="~ 1"
-            class="my-[20px] w-[48vw] overflow-y-auto"
+            class="my-[20px] w-full overflow-y-auto"
             @scroll="handleScroll"
           >
             <div ref="messagesContainerRef" class="w-full">
               <AiChatMessage ref="aiChatMessageRef" :chat-type="chatType" :round="conversationRound" :message-list="messages" />
             </div>
           </div>
-
-          <div v-if="chatType === 'bot' || (chatType === 'coach' && !isCoachEnd)" class="shadow-box">
+          <div v-if="chatType === 'bot' || (chatType === 'coach' && !isCoachEnd)" class="shadow-box w-full">
             <UiCard
               class="mb-[12px]"
               rotating-height="100%"
@@ -925,7 +925,7 @@ const bgRef = ref()
             >
               <AiChatInput
                 v-model="inputMessage"
-                class="w-[48vw]"
+                class="w-full"
                 :coach-list="coachList"
                 @handle-select="setCoachScene"
                 @handle-send="sendMessage"

@@ -81,6 +81,7 @@ const {
       recentDays: recentDays.value,
     })
   },
+  { lazy: true },
 )
 
 // 获取词云数据

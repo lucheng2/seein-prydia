@@ -68,7 +68,7 @@ const handleWordcloud = () => {
                   v-for="coach in coachList"
                   :key="coach.value"
                   flex="~ justify-start items-center w-full"
-                  class="mt-[20px] cursor-pointer"
+                  class="mt-[20px] cursor-pointer hover:text-[#fff]"
                   @click="handleSelect(coach)"
                 >
                   <img
@@ -87,7 +87,7 @@ const handleWordcloud = () => {
               <div class="max-h-[260px] w-full w-full overflow-y-auto">
                 <div
                   flex="~ justify-start items-center w-full"
-                  class="mt-[20px] cursor-pointer"
+                  class="mt-[20px] cursor-pointer hover:text-[#fff]"
                   @click="handleWordcloud"
                 >
                   <img class="mr-[12px] h-[24px] w-[24px] flex-shrink-0" src="@/assets/images/icon/word-cloud.svg" />
