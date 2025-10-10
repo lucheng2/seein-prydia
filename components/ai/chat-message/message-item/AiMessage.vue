@@ -124,6 +124,9 @@ onMounted(async () => {
     isRendering.value = false
     isTextComplete.value = true // 标记文本渲染完成
     text.value = props.message.content
+    if (props.message.kuaKuaCard) {
+      kuakuaCardData.value = props.message.kuaKuaCard
+    }
   }
 })
 
@@ -197,7 +200,7 @@ const handleCopy = () => {
           />
         </div>
         <div v-if="kuakuaCardData && isTextComplete" class="mt-[4px] w-[500px] overflow-hidden rounded-[12px] bg-[#2C2933]">
-          <img :src="kuakuaCardData.imageUrl" class="h-[140px] w-[500px]" />
+          <img :src="kuakuaCardData.imageUrl" class="h-[140px] w-[500px] object-cover" />
           <div class="px-[20px] py-[10px] line-height-[28px]" text="#F5F7FA 16px">
             {{ kuakuaCardData.content }}
           </div>

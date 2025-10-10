@@ -241,7 +241,7 @@ const option = computed(() => {
           <UiLoadingSpinner />
           <div class="loading-text">Loading...</div>
         </div>
-        <template v-if="!loading">
+        <div v-show="!loading">
           <VChart
             v-show="rawData.length > 0"
             ref="chartRef"
@@ -253,7 +253,7 @@ const option = computed(() => {
             <div class="empty-icon">📊</div>
             <div class="empty-text">Empty</div>
           </div>
-        </template>
+        </div>
       </div>
     </el-dialog>
   </div>
