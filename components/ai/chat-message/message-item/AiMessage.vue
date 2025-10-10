@@ -124,6 +124,9 @@ onMounted(async () => {
     isRendering.value = false
     isTextComplete.value = true // 标记文本渲染完成
     text.value = props.message.content
+    if (props.message.kuaKuaCard) {
+      kuakuaCardData.value = props.message.kuaKuaCard
+    }
   }
 })
 

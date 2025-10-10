@@ -256,26 +256,34 @@ const useChatHistory = () => {
       const historyData = await loadChatHistory(targetId)
       if (historyData && historyData.length > 0) {
         activeTab.value = chatType.value
+        isCoachEnd.value = false
         // 有历史记录，转换格式并显示
         const result: any[] = []
         historyData.forEach((item: any) => {
-          const user = {
-            id: `user_${item.id}`,
-            sender: 'user',
-            content: item.prompt,
-            state: 'end',
+          if (item.prydiaMessageType === 'CHAT') {
+            const user = {
+              id: `user_${item.id}`,
+              sender: 'user',
+              content: item.prompt,
+              state: 'end',
+            }
+            const ai = {
+              id: `${item.id}`,
+              sender: 'ai',
+              content: item.answer,
+              state: 'end',
+              attrs: {
+                onRegenerate,
+              },
+            }
+            result.push(user, ai)
           }
-          const ai = {
-            id: `${item.id}`,
-            sender: 'ai',
-            content: item.answer,
-            state: 'end',
-            attrs: {
-              onRegenerate,
-            },
+          else if (item.prydiaMessageType === 'KUA_KUA_CARD') {
+            result[result.length - 1].kuaKuaCard = item.kuaKuaCard
+            isCoachEnd.value = true
           }
-          result.push(user, ai)
         })
+
         messages.value = result.filter(item => item.content)
 
         router.replace({
