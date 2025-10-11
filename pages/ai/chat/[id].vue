@@ -375,7 +375,8 @@ const useChatRegenerate = () => {
   }
 
   const onRegenerate = async (messageItem: any) => {
-    const message = messages.value.find(item => item.id === messageItem.id)
+    const messageIndex = messages.value.findIndex(item => item.id === messageItem.id)
+    const message = messages.value[messageIndex]
 
     if (!message) return
 
@@ -394,6 +395,9 @@ const useChatRegenerate = () => {
       onClose,
       onError,
     })
+
+    // 删除之后的全部
+    messages.value = messages.value.slice(0, messageIndex + 1)
   }
   return {
     onRegenerate,
@@ -751,6 +755,7 @@ const useChatConversationsTheme = () => {
       userId: '',
       conversationId,
       createTime: now,
+      prydiaChatType: type === 'bot' ? 'CHAT_BOT' : 'COACH',
     }
     if (type === 'bot') {
       conversations.value.unshift(obj)
