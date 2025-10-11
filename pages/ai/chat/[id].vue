@@ -927,7 +927,7 @@ const bgRef = ref()
             @scroll="handleScroll"
           >
             <div ref="messagesContainerRef" class="w-full">
-              <AiChatMessage ref="aiChatMessageRef" :chat-type="chatType" :round="conversationRound" :message-list="messages" />
+              <AiChatMessage ref="aiChatMessageRef" :chat-type="chatType" :round="currentMessageId" :message-list="messages" />
             </div>
           </div>
           <div v-if="chatType === 'bot' || (chatType === 'coach' && !isCoachEnd)" class="shadow-box w-full">
