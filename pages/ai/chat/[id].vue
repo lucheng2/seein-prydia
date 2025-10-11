@@ -872,6 +872,7 @@ const bgRef = ref()
   <NuxtLayout
     v-model:is-collapsed="isCollapsed"
     v-model:is-collapsedknowledge="isCollapsedknowledge"
+    v-model:chat-type="chatType"
     nav-bar-logo="none"
     bg-color="white"
     name="chat-text"

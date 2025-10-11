@@ -20,6 +20,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const isCollapsed = defineModel<boolean>('isCollapsed')
 const isCollapsedknowledge = defineModel<boolean>('isCollapsedknowledge')
+const chatType = defineModel('chatType', { type: String })
 
 // 切换侧边栏收起状态
 const toggleSidebar = () => {
@@ -29,6 +30,7 @@ const toggleSidebar = () => {
 const handleNew = async () => {
   if (props.isNew) return
   isCollapsed.value = true
+  chatType.value = 'bot'
   navigateTo('/ai/chat/new?new=true')
 }
 
