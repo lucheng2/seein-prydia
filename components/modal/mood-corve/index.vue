@@ -5,6 +5,7 @@ import emoji3 from '@/assets/images/emoji/3.png'
 import emoji4 from '@/assets/images/emoji/4.png'
 import emoji5 from '@/assets/images/emoji/5.png'
 import closeIcon from '@/assets/images/icon/close.png'
+import emptyImg from '@/assets/images/not-find.png'
 
 import * as echarts from 'echarts'
 import VChart from 'vue-echarts'
@@ -250,8 +251,10 @@ const option = computed(() => {
             autoresize
           />
           <div v-show="rawData.length === 0" class="empty-container">
-            <div class="empty-icon">📊</div>
-            <div class="empty-text">Empty</div>
+            <img class="empty-icon" :src="emptyImg" />
+            <div class="empty-text">
+              You need to chat to view the mood curve
+            </div>
           </div>
         </div>
       </div>
@@ -294,20 +297,18 @@ const option = computed(() => {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 16px;
-    padding: 60px 20px;
-    opacity: 0.8;
+    padding: 60px 0;
   }
 
   .empty-icon {
-    font-size: 64px;
-    opacity: 0.5;
+    width: 120px;
+    height: 120px;
+    margin-bottom: 16px;
   }
 
   .empty-text {
     font-size: 16px;
-    color: #999;
-    font-weight: 500;
+    color: #fefefe;
   }
 }
 </style>

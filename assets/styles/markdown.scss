@@ -13,8 +13,8 @@
   --md-scrollbar-thumb-color: #0000004d;
   --md-scrollbar-thumb-hover-color: #00000059;
   --md-scrollbar-thumb-active-color: #00000061;
-  --md-theme-bg-color-inset: #43404B;
-  --md-theme-quote-border: 5px solid #703EDB;
+  --md-theme-bg-color-inset: #45404F;
+  --md-theme-quote-border: 2px solid #6633EE;
 
   :deep(*) {
     word-break: break-word;
@@ -55,5 +55,9 @@
 
   :deep(.md-editor-preview-wrapper .md-editor-preview p) {
     margin: 0;
+  }
+
+  :deep(.md-editor-preview blockquote) {
+    border-radius: 0px 12px 12px 0px;
   }
 }

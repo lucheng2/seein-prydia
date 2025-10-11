@@ -73,6 +73,10 @@ export class Request {
       (error) => {
         // 超出 2xx 范围的状态码都会触发该函数。
         this.logError(error)
+        if (error.status === 400) {
+          removeToken()
+          location.href = '/'
+        }
         return Promise.reject(error)
       },
     )

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import closeIcon from '@/assets/images/icon/close.png'
+import emptyImg from '@/assets/images/not-find.png'
 import { getWordCloudData } from '~/apis/server'
 
 const props = withDefaults(defineProps<Props>(), {})
@@ -163,12 +164,16 @@ defineExpose({
       <template #header />
       <div class="mb-[18px] flex justify-between">
         <div text="#FFFFFF 24px" font="500">Word Cloud</div>
-          <div class="cursor-pointer rounded-[6px]" @click="close">
-            <img class="z-10 block h-[20px] w-[20px]" :src="closeIcon" />
-          </div>
+        <div class="cursor-pointer rounded-[6px]" @click="close">
+          <img class="z-10 block h-[20px] w-[20px]" :src="closeIcon" />
         </div>
+      </div>
       <div class="wordcloud-container">
-        <UiSelect v-model="recentDays" :options="recentDaysOptions" @handle-select="fetchWordCloudData" />
+        <UiSelect
+          v-model="recentDays"
+          :options="recentDaysOptions"
+          @handle-select="fetchWordCloudData"
+        />
         <!-- 加载状态 -->
         <div v-if="loading" class="loading-container">
           <UiLoadingSpinner />
@@ -215,7 +220,10 @@ defineExpose({
               title="download"
               @click="handleDownloadImage"
             >
-              <img src="@/assets/images/icon/download.png" class="action-icon" />
+              <img
+                src="@/assets/images/icon/download.png"
+                class="action-icon"
+              />
               <span class="action-text">{{
                 downloading ? "downloading..." : "save"
               }}</span>
@@ -225,8 +233,8 @@ defineExpose({
 
         <!-- 空状态 -->
         <div v-else class="empty-container">
-          <div class="empty-icon">📊</div>
-          <div class="empty-text">暂无词云数据</div>
+          <img class="empty-icon" :src="emptyImg" />
+          <div class="empty-text">You need to chat to view the wordcloud</div>
         </div>
       </div>
     </el-dialog>
@@ -235,7 +243,7 @@ defineExpose({
 
 <style lang="scss" scoped>
 :deep(.el-dialog) {
-    @apply w-[80%] md:w-[800px];
+  @apply w-[80%] md:w-[800px];
 }
 :deep(.el-dialog__header) {
   display: none;
@@ -245,9 +253,9 @@ defineExpose({
   height: 100%;
   min-height: 488px;
   position: relative;
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
+  //   display: flex;
+  //   align-items: center;
+  //   justify-content: center;
   border-radius: 12px;
   overflow: hidden;
 }
@@ -354,7 +362,7 @@ defineExpose({
   align-items: center;
   gap: 8px;
   padding: 12px 24px;
-  background: #4F4D56;
+  background: #4f4d56;
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
@@ -396,20 +404,18 @@ defineExpose({
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
-  padding: 60px 20px;
-  opacity: 0.8;
+  padding: 60px 0;
 }
 
 .empty-icon {
-  font-size: 64px;
-  opacity: 0.5;
+  width: 120px;
+  height: 120px;
+  margin-bottom: 16px;
 }
 
 .empty-text {
   font-size: 16px;
-  color: #999;
-  font-weight: 500;
+  color: #fefefe;
 }
 
 /* 响应式设计 */
