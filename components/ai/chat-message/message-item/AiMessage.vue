@@ -142,11 +142,11 @@ const useKuakuaCard = () => {
   const kuakuaCardData = ref()
   watch(() => sseIsEnd.value, async (newVal) => {
     if (newVal) {
-      if (props.chatType === 'coach' && await checkCoachIsEnd()) {
+      const isEnd = await checkCoachIsEnd()
+      if (props.chatType === 'coach' && isEnd) {
         emits('endCoach')
         getKuakuaCardData()
       }
-      emits('endCoach')
     }
   })
 
