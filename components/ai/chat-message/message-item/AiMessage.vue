@@ -34,12 +34,16 @@ const showLike = computed(
     && isTextComplete.value,
 )
 
-const showRegenerate = computed(
-  () =>
-    props.message?.state === 'end'
-    && props.message.sender === 'ai'
-    && isTextComplete.value,
-)
+const showRegenerate = computed(() => {
+  const t1
+    = props.message?.state === 'end'
+      && props.message.sender === 'ai'
+      && isTextComplete.value
+  const t2
+    = props.chatType === 'bot'
+      || (props.chatType === 'coach' && !props.isCoachEnd)
+  return t1 && t2
+})
 
 // 新增队列和渲染控制相关变量
 const textQueue = ref<any[]>([]) // 待渲染的文本队列
@@ -241,7 +245,6 @@ const handleCopy = () => {
           </div>
         </div>
         <DisLike
-          v-if="chatType === 'bot' || (chatType === 'coach' && !isCoachEnd)"
           :show-regenerate="showRegenerate"
           :show-like="showLike"
           :is-coach-end="isCoachEnd"
