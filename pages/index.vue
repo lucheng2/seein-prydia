@@ -403,7 +403,7 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                     :loading="loadingLogin"
                     @click="handleLogin(loginForm0)"
                   >
-                    Login
+                    Log in
                   </el-button>
                   <div flex="~ justify-center" class="mt-[30px]">
                     <el-button
@@ -461,7 +461,7 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                       link
                       @click="handleBackLogin"
                     >
-                      Back to Login
+                      Back to Log in
                     </el-button>
                   </div>
                 </div>
@@ -523,7 +523,7 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                       link
                       @click="handleBackLogin"
                     >
-                      Back to Login
+                      Back to Log in
                     </el-button>
                   </div>
                 </div>
@@ -615,7 +615,7 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                       link
                       @click="handleBackLogin"
                     >
-                      Back to Login
+                      Back to Log in
                     </el-button>
                   </div>
                 </div>
