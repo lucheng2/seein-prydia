@@ -108,7 +108,6 @@ const submit = async (params: any) => {
       </div>
     </template>
     <div
-      v-if="showRegenerate"
       class="flex cursor-pointer items-center rounded-[6px] p-[2px] hover:bg-gray-700"
       @click="handleCopy"
     >
