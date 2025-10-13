@@ -457,6 +457,7 @@ const useCoach = () => {
     setChatTypeToCoach()
     activeTab.value = 'coach'
     coachScene.value = coach.value
+    isCoachEnd.value = false
     sendMessage(coach.label)
   }
 
