@@ -324,6 +324,12 @@ const useChatHistory = () => {
       }
       else if (newId !== oldId && oldId !== 'new') {
         await initializeMessages(newId)
+
+        if (coachScene.value) {
+          const find = coachList.value.find(item => item.value === coachScene.value)
+          isNew.value = true
+          setCoachScene(find)
+        }
       }
     },
   )
@@ -444,7 +450,13 @@ const useCoach = () => {
   ])
   const coachScene = ref(1)
 
-  const setCoachScene = (coach: any) => {
+  const setCoachScene = async (coach: any) => {
+    if (!isNew.value) {
+      // 是否创建新的coach聊天
+      modal('Tip', 'You will leave the current chat and start a new one. Do you want to continue?')
+        .then(() => createdChat(coach.value))
+      return
+    }
     const findIndex = messages.value.findIndex(item => item.sender === 'topic')
     if (findIndex === -1) {
       messages.value.unshift({
@@ -454,10 +466,15 @@ const useCoach = () => {
         icon: coach.icon,
       })
     }
+    else {
+      messages.value[findIndex].content = coach.label
+      messages.value[findIndex].icon = coach.icon
+    }
     setChatTypeToCoach()
     activeTab.value = 'coach'
     coachScene.value = coach.value
     isCoachEnd.value = false
+    isNew.value = false
     sendMessage(coach.label)
   }
 
@@ -568,15 +585,17 @@ const useChat = () => {
   }
 
   // 创建新会话
-  const createdChat = async () => {
+  const createdChat = async (coach = 0) => {
     try {
       const data = await api.createChat()
       currentConversationId.value = String(data)
       // 重新初始化消息（新会话）
       // await initializeMessages(data)
-
       router.replace({
-        query: { new: 'true' },
+        query: {
+          new: 'true',
+          coach,
+        },
         params: { id: data },
       })
     }
@@ -673,6 +692,7 @@ const useChat = () => {
     () => route.params.id,
     () => {
       currentConversationId.value = route.params.id as string
+      coachScene.value = Number(route.query.coach) || 0
     },
   )
 
