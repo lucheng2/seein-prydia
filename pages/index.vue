@@ -166,7 +166,21 @@ const useRegister = () => {
   const handleSendCode = async (formEl: FormInstance | undefined) => {
     await verifyForm(formEl)
     await doSendCode()
+    startCountdown()
     registerStep.value = 2
+  }
+
+  // 验证码倒计时
+  const countdown = ref(0)
+  const timer = ref<NodeJS.Timeout>()
+  const startCountdown = () => {
+    countdown.value = 60
+    timer.value = setInterval(() => {
+      countdown.value--
+      if (countdown.value <= 0) {
+        clearInterval(timer.value)
+      }
+    }, 1000)
   }
 
   const doSendCode = async () => {
@@ -244,6 +258,7 @@ const useRegister = () => {
 
   return {
     loading,
+    countdown,
     registerForm,
     handleBackLogin,
     handleToRegister,
@@ -255,6 +270,7 @@ const useRegister = () => {
 
 const {
   loading,
+  countdown,
   registerForm,
   handleBackLogin,
   handleToRegister,
@@ -359,7 +375,10 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                         flex="~ items-center"
                         :style="{ background: 'rgba(255,255,255,0.05)' }"
                       >
-                          <img :src="emailIcon" class="ml-[20px] mr-[16px] h-[20px] w-[20px]" />
+                        <img
+                          :src="emailIcon"
+                          class="ml-[20px] mr-[16px] h-[20px] w-[20px]"
+                        />
                         <input
                           v-model="loginForm.email"
                           text="#fff 16px"
@@ -374,7 +393,10 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                         flex="~ items-center"
                         :style="{ background: 'rgba(255,255,255,0.05)' }"
                       >
-                        <img :src="passwordIcon" class="ml-[20px] mr-[16px] h-[20px] w-[20px]" />
+                        <img
+                          :src="passwordIcon"
+                          class="ml-[20px] mr-[16px] h-[20px] w-[20px]"
+                        />
                         <input
                           v-model="loginForm.password"
                           text="#fff 16px"
@@ -433,7 +455,10 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                         flex="~ items-center"
                         :style="{ background: 'rgba(255,255,255,0.05)' }"
                       >
-                        <img :src="emailIcon" class="ml-[20px] mr-[16px] h-[20px] w-[20px]" />
+                        <img
+                          :src="emailIcon"
+                          class="ml-[20px] mr-[16px] h-[20px] w-[20px]"
+                        />
                         <input
                           v-model="registerForm.email"
                           text="#fff 16px"
@@ -479,7 +504,10 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                         flex="~ items-center"
                         :style="{ background: 'rgba(255,255,255,0.05)' }"
                       >
-                        <img :src="emailIcon" class="ml-[20px] mr-[16px] h-[20px] w-[20px]" />
+                        <img
+                          :src="emailIcon"
+                          class="ml-[20px] mr-[16px] h-[20px] w-[20px]"
+                        />
                         <input
                           v-model="registerForm.email"
                           text="#fff 16px"
@@ -495,7 +523,10 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                         flex="~ items-center"
                         :style="{ background: 'rgba(255,255,255,0.05)' }"
                       >
-                        <img :src="passwordIcon" class="ml-[20px] mr-[16px] h-[20px] w-[20px]" />
+                        <img
+                          :src="passwordIcon"
+                          class="ml-[20px] mr-[16px] h-[20px] w-[20px]"
+                        />
                         <input
                           v-model="registerForm.captcha"
                           text="#fff 16px"
@@ -503,6 +534,15 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                           placeholder="Enter Verification Code"
                           @keyup.enter="handleVerifyCode(loginForm2)"
                         />
+                        <el-button
+                          class="ml-[20px] mr-[16px]"
+                          link
+                          :loading="loading.sendCode"
+                          :disabled="countdown > 0"
+                          @click="handleSendCode(loginForm1)"
+                        >
+                          Resend{{ countdown > 0 ? `(${countdown}s)` : '' }}
+                        </el-button>
                       </div>
                     </el-form-item>
                   </el-form>
@@ -540,7 +580,10 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                         flex="~ items-center"
                         :style="{ background: 'rgba(255,255,255,0.05)' }"
                       >
-                        <img :src="emailIcon" class="ml-[20px] mr-[16px] h-[20px] w-[20px]" />
+                        <img
+                          :src="emailIcon"
+                          class="ml-[20px] mr-[16px] h-[20px] w-[20px]"
+                        />
                         <input
                           v-model="registerForm.email"
                           text="#fff 16px"
@@ -556,7 +599,10 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                         flex="~ items-center"
                         :style="{ background: 'rgba(255,255,255,0.05)' }"
                       >
-                        <img :src="passwordIcon" class="ml-[20px] mr-[16px] h-[20px] w-[20px]" />
+                        <img
+                          :src="passwordIcon"
+                          class="ml-[20px] mr-[16px] h-[20px] w-[20px]"
+                        />
                         <input
                           v-model="registerForm.captcha"
                           text="#fff 16px"
@@ -572,7 +618,10 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                         flex="~ items-center"
                         :style="{ background: 'rgba(255,255,255,0.05)' }"
                       >
-                        <img :src="passwordIcon" class="ml-[20px] mr-[16px] h-[20px] w-[20px]" />
+                        <img
+                          :src="passwordIcon"
+                          class="ml-[20px] mr-[16px] h-[20px] w-[20px]"
+                        />
                         <input
                           v-model="registerForm.password"
                           text="#fff 16px"
@@ -588,7 +637,10 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                         flex="~ items-center"
                         :style="{ background: 'rgba(255,255,255,0.05)' }"
                       >
-                        <img :src="passwordIcon" class="ml-[20px] mr-[16px] h-[20px] w-[20px]" />
+                        <img
+                          :src="passwordIcon"
+                          class="ml-[20px] mr-[16px] h-[20px] w-[20px]"
+                        />
                         <input
                           v-model="registerForm.password2"
                           text="#fff 16px"
