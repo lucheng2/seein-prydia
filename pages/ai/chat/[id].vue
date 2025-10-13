@@ -953,6 +953,7 @@ const bgRef = ref()
               <AiChatInput
                 v-model="inputMessage"
                 class="w-full"
+                :loading="loading"
                 :coach-list="coachList"
                 @handle-select="setCoachScene"
                 @handle-send="sendMessage"
