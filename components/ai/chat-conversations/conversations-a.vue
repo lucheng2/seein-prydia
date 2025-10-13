@@ -119,6 +119,14 @@ const activeTab = defineModel('activeTab', { type: String })
 const handleTab = (tab: string) => {
   activeTab.value = tab
 }
+
+const getActiveConversation = (conversation) => {
+  if (conversation.conversationId === props.conversationId) {
+    chatType.value = conversation.prydiaChatType === 'COACH' ? 'coach' : 'bot'
+    return true
+  }
+  return false
+}
 </script>
 
 <template>
@@ -185,7 +193,7 @@ const handleTab = (tab: string) => {
                 :data-conversation-id="conversation.conversationId"
                 class="flex cursor-pointer items-center self-start rounded-lg p-[10px] transition-colors hover:bg-gray-700"
                 :class="{
-                  'bg-gray-700': conversationId === conversation.conversationId,
+                  'bg-gray-700': getActiveConversation(conversation),
                 }"
                 @click="handleSelect(conversation)"
               >

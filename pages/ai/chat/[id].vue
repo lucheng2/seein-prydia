@@ -255,7 +255,6 @@ const useChatHistory = () => {
     else {
       const historyData = await loadChatHistory(targetId)
       if (historyData && historyData.length > 0) {
-        activeTab.value = chatType.value
         isCoachEnd.value = false
         // 有历史记录，转换格式并显示
         const result: any[] = []
@@ -286,10 +285,23 @@ const useChatHistory = () => {
 
         messages.value = result.filter(item => item.content)
 
+        if (historyData.length > 0) {
+          if (historyData[0]?.prydiaChatType === 'COACH') {
+            chatType.value = 'coach'
+          }
+          else {
+            chatType.value = 'bot'
+          }
+        }
+        activeTab.value = chatType.value
+
         router.replace({
           params: { id: targetId },
         })
+
         isNew.value = false
+
+        scrollToBottom()
       }
       else {
         // 没有历史记录但不是新会话
@@ -927,7 +939,7 @@ const bgRef = ref()
             @scroll="handleScroll"
           >
             <div ref="messagesContainerRef" class="w-full">
-              <AiChatMessage ref="aiChatMessageRef" :chat-type="chatType" :round="currentConversationId" :message-list="messages" />
+              <AiChatMessage ref="aiChatMessageRef" :is-coach-end="isCoachEnd" :chat-type="chatType" :round="currentConversationId" :message-list="messages" />
             </div>
           </div>
           <div v-if="chatType === 'bot' || (chatType === 'coach' && !isCoachEnd)" class="shadow-box w-full">

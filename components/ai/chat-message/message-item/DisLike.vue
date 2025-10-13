@@ -13,6 +13,7 @@ interface Props {
   messageId: string
   showLike: boolean
   showRegenerate: boolean
+  isCoachEnd: boolean
 }
 const activeVal = ref([])
 const otherVal = ref('')

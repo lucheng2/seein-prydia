@@ -10,6 +10,7 @@ interface Props {
   message: any
   round: string | number
   chatType: 'bot' | 'coach'
+  isCoachEnd: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -139,16 +140,20 @@ onUnmounted(() => {
 })
 
 const useKuakuaCard = () => {
+  const kuakuaCardLoading = ref(false)
   const kuakuaCardData = ref()
-  watch(() => sseIsEnd.value, async (newVal) => {
-    if (newVal) {
-      const isEnd = await checkCoachIsEnd()
-      if (props.chatType === 'coach' && isEnd) {
-        emits('endCoach')
-        getKuakuaCardData()
+  watch(
+    () => sseIsEnd.value,
+    async (newVal) => {
+      if (newVal) {
+        const isEnd = await checkCoachIsEnd()
+        if (props.chatType === 'coach' && isEnd) {
+          emits('endCoach')
+          getKuakuaCardData()
+        }
       }
-    }
-  })
+    },
+  )
 
   // 检查是否结束
   const checkCoachIsEnd = async () => {
@@ -157,21 +162,35 @@ const useKuakuaCard = () => {
   }
 
   const getKuakuaCardData = async () => {
-    const data = await api.getFlatteryCard({ round: props.round })
-    kuakuaCardData.value = data
+    try {
+      kuakuaCardLoading.value = true
+      const data = await api.getFlatteryCard({ round: props.round })
+      kuakuaCardData.value = data
+      setTimeout(() => {
+        emits('scrollToBottom')
+      }, 1000)
+    }
+    catch (error) {
+      console.log(error)
+    }
+    finally {
+      kuakuaCardLoading.value = false
+    }
   }
 
   return {
+    kuakuaCardLoading,
     kuakuaCardData,
     getKuakuaCardData,
   }
 }
 
-const { kuakuaCardData } = useKuakuaCard()
+const { kuakuaCardData, kuakuaCardLoading } = useKuakuaCard()
 
 const handleCopy = () => {
   const textToCopy = text.value
-  navigator.clipboard.writeText(textToCopy)
+  navigator.clipboard
+    .writeText(textToCopy)
     .then(() => {
       console.log('Text copied to clipboard')
       message('Text copied to clipboard', { type: 'success' })
@@ -200,15 +219,32 @@ const handleCopy = () => {
             :auto-fold-threshold="AutoFoldThreshold"
           />
         </div>
-        <div v-if="kuakuaCardData && isTextComplete" class="mt-[4px] w-[500px] overflow-hidden rounded-[12px] bg-[#2C2933]">
-          <img :src="kuakuaCardData.imageUrl" class="h-[140px] w-[500px] object-cover" />
-          <div class="px-[20px] py-[10px] line-height-[28px]" text="#F5F7FA 16px">
+        <div
+          v-if="kuakuaCardLoading"
+          class="seein-ai-message-loading h-[52px] w-full flex items-center justify-start"
+        >
+          <UiLoadingSpinner />
+        </div>
+        <div
+          v-else-if="kuakuaCardData && isTextComplete"
+          class="mt-[4px] w-[500px] overflow-hidden rounded-[12px] bg-[#2C2933]"
+        >
+          <img
+            :src="kuakuaCardData.imageUrl"
+            class="h-[140px] w-[500px] object-cover"
+          />
+          <div
+            class="px-[20px] py-[10px] line-height-[28px]"
+            text="#F5F7FA 16px"
+          >
             {{ kuakuaCardData.content }}
           </div>
         </div>
         <DisLike
+          v-if="chatType === 'bot' || (chatType === 'coach' && !isCoachEnd)"
           :show-regenerate="showRegenerate"
           :show-like="showLike"
+          :is-coach-end="isCoachEnd"
           :message-id="message.id"
           @regenerate="handleRegenerate"
           @copy="handleCopy"

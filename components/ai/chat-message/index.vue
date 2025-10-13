@@ -5,6 +5,7 @@ interface Props {
   round: string | number
   messageList: any[]
   chatType: 'bot' | 'coach'
+  isCoachEnd: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   messageList: () => [],
@@ -61,6 +62,7 @@ defineExpose({
           :message="item"
           :round="round"
           :chat-type="chatType"
+          :is-coach-end="isCoachEnd"
           @on="emit"
         />
       </template>
