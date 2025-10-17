@@ -10,7 +10,6 @@ export const useUserStore = defineStore(
 
     function setToken(value) {
       token.value = value
-      
     }
 
     function removeToken() {
@@ -33,9 +32,9 @@ export const useUserStore = defineStore(
       })
     }
 
-    async function loginByToken(param) {
+    async function loginByToken(token) {
       try {
-        await setToken(param.token)
+        await setToken(token)
         await getUserInfo()
       }
       catch (error) {

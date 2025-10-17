@@ -10,9 +10,19 @@ export const register = (params: any) => {
   return request.post('/prydia-api/user/serein_user/registerUser', params)
 }
 
-/** 获取验证码 */
+/** 设置密码 */
+export const setPwd = (params: any, token: string) => {
+  return request.post('/prydia-api/user/serein_user/setUserPassword', params, { __token: token })
+}
+
+/** 获取验证码（注册） */
 export const getCaptcha = (params: any) => {
-  return request.get('/prydia-api/user/serein_user/captcha', params)
+  return request.get('/prydia-api/user/serein_user/getCaptchaForRegister', params)
+}
+
+/** 获取验证码（找回密码） */
+export const getCaptchaByFindPwd = (params: any) => {
+  return request.get('/prydia-api/user/serein_user/getCaptchaForResetPassword', params)
 }
 
 /** 校验验证码 */

@@ -1,4 +1,4 @@
-import type { AxiosInstance } from 'axios'
+import type { AxiosInstance, InternalAxiosRequestConfig } from 'axios'
 
 import type { RequestConfig, Response } from '../types'
 import axios from 'axios'
@@ -36,10 +36,10 @@ export class Request {
 
   private setupRequestInterceptor() {
     this.instance.interceptors.request.use(
-      (config) => {
+      (config: InternalAxiosRequestConfig<any> | any) => {
         config.headers['Proxy-Connection'] = undefined
-        // 在发送请求之前做些什么z
-        const token = getToken()
+        // 在发送请求之前做些什么
+        const token = config.__token || getToken()
         if (token) {
           config.headers.Authorization = `${token}`
         }
@@ -74,8 +74,10 @@ export class Request {
         // 超出 2xx 范围的状态码都会触发该函数。
         this.logError(error)
         if (error.status === 400) {
-          removeToken()
-          location.href = '/'
+          if (error.response.data.code !== 2005) {
+            removeToken()
+            location.href = '/'
+          }
         }
         return Promise.reject(error)
       },

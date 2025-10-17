@@ -142,6 +142,11 @@ const isClickLogin = ref(false)
 // 注册
 const registerStep = ref(0)
 const useRegister = () => {
+  // 临时token
+  const tempToken = ref('')
+
+  const isRegister = ref(true)
+
   const loading = ref({
     sendCode: false,
     verifyCode: false,
@@ -160,6 +165,12 @@ const useRegister = () => {
   }
 
   const handleToRegister = () => {
+    isRegister.value = true
+    registerStep.value = 1
+  }
+
+  const handleToFindPassword = () => {
+    isRegister.value = false
     registerStep.value = 1
   }
 
@@ -187,7 +198,8 @@ const useRegister = () => {
     // TODO: 发送验证码
     try {
       loading.value.sendCode = true
-      await api.getCaptcha({
+      const doApi = isRegister.value ? api.getCaptcha : api.getCaptchaByFindPwd
+      await doApi({
         email: registerForm.value.email,
       })
       message('Success send code!', { type: 'success' })
@@ -218,6 +230,7 @@ const useRegister = () => {
         message('error verify code!', { type: 'error' })
         throw new Error('error verify code!')
       }
+      tempToken.value = data.token
     }
     catch (error) {
       throw new Error(error)
@@ -237,13 +250,13 @@ const useRegister = () => {
     // TODO: 注册
     try {
       loading.value.register = true
-      const { token } = await api.register({
+      const { token } = await api.setPwd({
         email: registerForm.value.email,
-        captcha: registerForm.value.captcha,
         password: registerForm.value.password,
-      })
+      }, tempToken.value)
       await loginByToken(token)
-      message('Success register!', { type: 'success' })
+      const msg = isRegister.value ? 'Success register!' : 'Success find password!'
+      message(msg, { type: 'success' })
       setTimeout(() => {
         window.location.href = '/ai/chat/new?new=true'
       }, 1000)
@@ -260,11 +273,13 @@ const useRegister = () => {
     loading,
     countdown,
     registerForm,
+    isRegister,
     handleBackLogin,
     handleToRegister,
     handleRegister,
     handleSendCode,
     handleVerifyCode,
+    handleToFindPassword,
   }
 }
 
@@ -272,11 +287,13 @@ const {
   loading,
   countdown,
   registerForm,
+  isRegister,
   handleBackLogin,
   handleToRegister,
   handleRegister,
   handleVerifyCode,
   handleSendCode,
+  handleToFindPassword,
 } = useRegister()
 
 const useBg = () => {
@@ -416,6 +433,7 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                       }"
                       color="#7f7f7f"
                       link
+                      @click="handleToFindPassword"
                     >
                       Forgot password
                     </el-button>
@@ -593,25 +611,6 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                         />
                       </div>
                     </el-form-item>
-                    <el-form-item prop="captcha">
-                      <div
-                        class="h-[60px] w-[376px] rounded-[12px]"
-                        flex="~ items-center"
-                        :style="{ background: 'rgba(255,255,255,0.05)' }"
-                      >
-                        <img
-                          :src="passwordIcon"
-                          class="ml-[20px] mr-[16px] h-[20px] w-[20px]"
-                        />
-                        <input
-                          v-model="registerForm.captcha"
-                          text="#fff 16px"
-                          class="h-[24px] flex-1 pr-[20px]"
-                          placeholder="Enter Verification Code"
-                          disabled
-                        />
-                      </div>
-                    </el-form-item>
                     <el-form-item prop="password">
                       <div
                         class="h-[60px] w-[376px] rounded-[12px]"
@@ -655,7 +654,7 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                     class="login-btn mt-[28px]"
                     @click="handleRegister(loginForm3)"
                   >
-                    Complete Registration
+                    {{ isRegister ? 'Complete Registration' : 'Complete Reset Password' }}
                   </el-button>
                   <div flex="~ justify-center" class="mt-[30px]">
                     <el-button
