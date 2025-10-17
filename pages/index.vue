@@ -653,6 +653,7 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                   </el-form>
                   <el-button
                     class="login-btn mt-[28px]"
+                    :loading="loading.register"
                     @click="handleRegister(loginForm3)"
                   >
                     {{ isRegister ? 'Complete Registration' : 'Complete Reset Password' }}
