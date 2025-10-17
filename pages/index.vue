@@ -550,6 +550,7 @@ const { revealImgRef, handleMouseMove, handleMouseLeave } = useBg()
                           text="#fff 16px"
                           class="h-[24px] flex-1 pr-[20px]"
                           placeholder="Enter Verification Code"
+                          :maxlength="6"
                           @keyup.enter="handleVerifyCode(loginForm2)"
                         />
                         <el-button
