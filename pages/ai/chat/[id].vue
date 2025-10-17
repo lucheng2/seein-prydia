@@ -359,9 +359,16 @@ const useChatRegenerate = () => {
       }
       return
     }
+
+    const stageType = data.stageType
+
     aiChatMessageRef.value
       ?.getMessageRef(currentMessageId.value)
-      ?.addText(data.content || '')
+      ?.addText(data.content || '', stageType === 'END')
+
+    if (stageType === 'ON_GOING') {
+      isAnswering.value = true
+    }
   }
 
   const doClose = () => {
@@ -418,11 +425,13 @@ const useChatRegenerate = () => {
     messages.value = messages.value.slice(0, messageIndex + 1)
   }
   return {
+    stopStream,
+    doClose,
     onRegenerate,
   }
 }
 
-const { onRegenerate } = useChatRegenerate()
+const { onRegenerate, stopStream: stopStreamRe, doClose: doCloseRe } = useChatRegenerate()
 
 const useCoach = () => {
   const isCoachEnd = ref(false)
@@ -550,9 +559,17 @@ const useChat = () => {
       }
       return
     }
+
+    const stageType = data.stageType
+
     aiChatMessageRef.value
       ?.getMessageRef(currentMessageId.value)
-      ?.addText(data.content || '', data.stageType === 'END')
+      ?.addText(data.content || '', stageType === 'END')
+
+    if (stageType === 'ON_GOING') {
+      isAnswering.value = true
+    }
+
     scrollToBottom()
   }
 
@@ -635,6 +652,9 @@ const useChat = () => {
       attrs: {
         onScrollToBottom: () => scrollToBottom(),
         onRegenerate,
+        onEnd: () => {
+          isAnswering.value = false
+        },
         onEndCoach: () => {
           message('Coach end', { type: 'info' })
           isCoachEnd.value = true
@@ -710,6 +730,8 @@ const useChat = () => {
     historyLoading,
     sendMessage,
     createdChat,
+    doClose,
+    stopStream,
   }
 }
 
@@ -724,6 +746,8 @@ const {
   historyLoading,
   sendMessage,
   createdChat,
+  doClose,
+  stopStream,
 } = useChat()
 
 // 聊天主题生成
@@ -896,6 +920,41 @@ const {
   handleScroll,
 } = useScroll()
 
+// 打断
+const useStopAnswering = () => {
+  // ai是否在回答
+  const isAnswering = ref(false)
+  const stopLoading = ref(false)
+  const stopAnswering = async () => {
+    try {
+      stopLoading.value = true
+      setTimeout(() => {
+        doClose()
+        stopStream()
+        doCloseRe()
+        stopStreamRe()
+        stopLoading.value = false
+        isAnswering.value = false
+      }, 1000)
+    }
+    catch (error) {
+      console.log(error)
+    }
+  }
+
+  return {
+    isAnswering,
+    stopLoading,
+    stopAnswering,
+  }
+}
+
+const {
+  isAnswering,
+  stopLoading,
+  stopAnswering,
+} = useStopAnswering()
+
 const isCollapsed = ref(false)
 watch(isCollapsed, (val) => {
   if (!isCollapsed.value) {
@@ -974,9 +1033,12 @@ const bgRef = ref()
                 v-model="inputMessage"
                 class="w-full"
                 :loading="loading"
+                :stop-loading="stopLoading"
+                :is-answering="isAnswering"
                 :coach-list="coachList"
                 @handle-select="setCoachScene"
                 @handle-send="sendMessage"
+                @handle-stop="stopAnswering"
               />
             </UiCard>
           </div>

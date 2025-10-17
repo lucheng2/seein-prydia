@@ -17,7 +17,7 @@ const props = withDefaults(defineProps<Props>(), {
   message: () => ({}),
 })
 
-const emits = defineEmits(['send', 'scrollToBottom', 'regenerate', 'endCoach'])
+const emits = defineEmits(['send', 'scrollToBottom', 'regenerate', 'endCoach', 'end'])
 const AutoFoldThreshold = Number.MAX_SAFE_INTEGER
 const editorId = computed(() => `markdown-content_${props.message.id}`)
 const loading = ref(true)
@@ -150,11 +150,14 @@ const useKuakuaCard = () => {
     () => sseIsEnd.value,
     async (newVal) => {
       if (newVal) {
-        const isEnd = await checkCoachIsEnd()
-        if (props.chatType === 'coach' && isEnd) {
-          emits('endCoach')
-          getKuakuaCardData()
+        if (props.chatType === 'coach') {
+          const isEnd = await checkCoachIsEnd()
+          if (isEnd) {
+            emits('endCoach')
+            getKuakuaCardData()
+          }
         }
+        emits('end')
       }
     },
   )

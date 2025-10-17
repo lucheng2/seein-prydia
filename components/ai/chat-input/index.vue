@@ -1,21 +1,32 @@
 <script setup lang="ts">
 import sendIcon from '@/assets/images/ai/send.png'
+import stopIcon from '@/assets/images/ai/stop.png'
+import { Loading } from '@element-plus/icons-vue'
 import CoachSelect from './CoachSelect.vue'
 
 interface Props {
   loading?: boolean
+  stopLoading?: boolean
   inputDisabled?: boolean
   coachList?: any[]
+  isAnswering?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   loading: false,
+  stopLoading: false,
   inputDisabled: false,
+  isAnswering: false,
 })
 
-const emits = defineEmits(['handleSend', 'handleSelect'])
+const emits = defineEmits(['handleSend', 'handleStop', 'handleSelect'])
 const modelValue = defineModel<string>('modelValue')
 const handleSend = () => {
+  if (sendDisabled.value) return
   emits('handleSend', modelValue.value)
+}
+const handleStop = () => {
+  if (stopDisabled.value) return
+  emits('handleStop')
 }
 const handleSelect = (val: any) => {
   emits('handleSelect', val)
@@ -42,6 +53,10 @@ const handleKeyCode = (e: KeyboardEvent) => {
 
 const sendDisabled = computed(() => {
   return !modelValue.value || props.loading
+})
+
+const stopDisabled = computed(() => {
+  return props.stopLoading
 })
 </script>
 
@@ -74,15 +89,36 @@ const sendDisabled = computed(() => {
           <CoachSelect :coach-list="coachList" @handle-select="handleSelect" />
         </div>
         <div
-          class="seein-chat-input__btns--item send-button" :style="{
-          cursor: sendDisabled ? 'not-allowed' : 'pointer',
-          color: sendDisabled
-            ? 'var(--el-color-primary-light-5)'
-            : 'var(--el-color-primary)',
+          v-if="!isAnswering"
+          class="seein-chat-input__btns--item send-button"
+          :style="{
+            cursor: sendDisabled ? 'not-allowed' : 'pointer',
+            color: sendDisabled
+              ? 'var(--el-color-primary-light-5)'
+              : 'var(--el-color-primary)',
           }"
-          :class="[{ 'send-button--disabled': sendDisabled }]" @click="handleSend"
+          :class="[{ 'send-button--disabled': sendDisabled }]"
+          @click="handleSend"
         >
           <img :src="sendIcon" />
+        </div>
+        <div
+          v-else
+          class="seein-chat-input__btns--item send-button"
+          :style="{
+            cursor: stopDisabled ? 'not-allowed' : 'pointer',
+            color: stopDisabled
+              ? 'var(--el-color-primary-light-5)'
+              : 'var(--el-color-primary)',
+          }"
+          :class="[{ 'send-button--disabled': stopDisabled }]"
+          flex="~ justify-center items-center"
+          @click="handleStop"
+        >
+          <img v-if="!stopLoading" :src="stopIcon" />
+          <el-icon v-else class="is-loading" size="20">
+            <Loading />
+          </el-icon>
         </div>
       </div>
     </div>
@@ -90,8 +126,6 @@ const sendDisabled = computed(() => {
 </template>
 
 <style lang="scss" scoped>
-.seein-chat-input::after {
-}
 .seein-chat-input {
   padding: 12px 16px;
   display: flex;
@@ -109,7 +143,7 @@ const sendDisabled = computed(() => {
     left: 50%;
     transform: translateX(-50%);
     height: 2px;
-    background: linear-gradient( 134deg, #703EDB 0%, #EE3942 59%, #FFD12A 100%);
+    background: linear-gradient(134deg, #703edb 0%, #ee3942 59%, #ffd12a 100%);
     width: 0;
     animation: nofocus-animation 0.2s ease-in-out;
   }
@@ -192,7 +226,7 @@ const sendDisabled = computed(() => {
 .send-button {
   transition: all 0.2s ease-in-out;
   border-radius: 50%;
-  background: linear-gradient( 134deg, #703EDB 0%, #EE3942 59%, #FFD12A 100%);
+  background: linear-gradient(134deg, #703edb 0%, #ee3942 59%, #ffd12a 100%);
 }
 
 /* 正常状态的交互效果 */
@@ -218,5 +252,4 @@ const sendDisabled = computed(() => {
 }
 </style>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>
