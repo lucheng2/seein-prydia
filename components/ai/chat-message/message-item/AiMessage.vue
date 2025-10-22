@@ -118,8 +118,17 @@ const addText = (textChunk: string, isEnd = false) => {
   }
 }
 
+// 清除队列
+const clearQueue = () => {
+  textQueue.value = []
+  isRendering.value = false
+  isTextComplete.value = true
+  loading.value = false
+}
+
 defineExpose({
   addText,
+  clearQueue,
 })
 
 onMounted(async () => {

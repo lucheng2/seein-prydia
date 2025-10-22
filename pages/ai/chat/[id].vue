@@ -929,10 +929,14 @@ const useStopAnswering = () => {
     try {
       stopLoading.value = true
       setTimeout(() => {
+        console.log('stop answer')
         doClose()
         stopStream()
         doCloseRe()
         stopStreamRe()
+        aiChatMessageRef.value
+          ?.getMessageRef(currentMessageId.value)
+          ?.clearQueue()
         stopLoading.value = false
         isAnswering.value = false
       }, 1000)
