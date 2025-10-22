@@ -51,12 +51,23 @@ const handleKeyCode = (e: KeyboardEvent) => {
   }
 }
 
+// 计算文本大小是否超出32k
+const isTextOverflow = computed(() => {
+  const encoder = new TextEncoder()
+  const byteLength = encoder.encode(modelValue.value).length
+  return byteLength > 32000
+})
+
 const sendDisabled = computed(() => {
-  return !modelValue.value || props.loading
+  return !modelValue.value || props.loading || isTextOverflow.value
 })
 
 const stopDisabled = computed(() => {
   return props.stopLoading
+})
+
+const tips = computed(() => {
+  return props.isAnswering ? 'Stop' : isTextOverflow.value ? 'Text size exceeds 32k' : 'Send'
 })
 </script>
 
@@ -88,38 +99,45 @@ const stopDisabled = computed(() => {
         <div>
           <CoachSelect :coach-list="coachList" @handle-select="handleSelect" />
         </div>
-        <div
-          v-if="!isAnswering"
-          class="seein-chat-input__btns--item send-button"
-          :style="{
-            cursor: sendDisabled ? 'not-allowed' : 'pointer',
-            color: sendDisabled
-              ? 'var(--el-color-primary-light-5)'
-              : 'var(--el-color-primary)',
-          }"
-          :class="[{ 'send-button--disabled': sendDisabled }]"
-          @click="handleSend"
+        <el-tooltip
+          effect="dark"
+          :content="tips"
+          placement="top-start"
+          :popper-style="{ color: '#fff', padding: '2px 6px' }"
         >
-          <img :src="sendIcon" />
-        </div>
-        <div
-          v-else
-          class="seein-chat-input__btns--item send-button"
-          :style="{
-            cursor: stopDisabled ? 'not-allowed' : 'pointer',
-            color: stopDisabled
-              ? 'var(--el-color-primary-light-5)'
-              : 'var(--el-color-primary)',
-          }"
-          :class="[{ 'send-button--disabled': stopDisabled }]"
-          flex="~ justify-center items-center"
-          @click="handleStop"
-        >
-          <img v-if="!stopLoading" :src="stopIcon" />
-          <el-icon v-else class="is-loading" size="20">
-            <Loading />
-          </el-icon>
-        </div>
+          <div
+            v-if="!isAnswering"
+            class="seein-chat-input__btns--item send-button"
+            :style="{
+              cursor: sendDisabled ? 'not-allowed' : 'pointer',
+              color: sendDisabled
+                ? 'var(--el-color-primary-light-5)'
+                : 'var(--el-color-primary)',
+            }"
+            :class="[{ 'send-button--disabled': sendDisabled }]"
+            @click="handleSend"
+          >
+            <img :src="sendIcon" />
+          </div>
+          <div
+            v-else
+            class="seein-chat-input__btns--item send-button"
+            :style="{
+              cursor: stopDisabled ? 'not-allowed' : 'pointer',
+              color: stopDisabled
+                ? 'var(--el-color-primary-light-5)'
+                : 'var(--el-color-primary)',
+            }"
+            :class="[{ 'send-button--disabled': stopDisabled }]"
+            flex="~ justify-center items-center"
+            @click="handleStop"
+          >
+            <img v-if="!stopLoading" :src="stopIcon" />
+            <el-icon v-else class="is-loading" size="20">
+              <Loading />
+            </el-icon>
+          </div>
+        </el-tooltip>
       </div>
     </div>
   </div>

@@ -15,7 +15,10 @@
   --md-scrollbar-thumb-active-color: #00000061;
   --md-theme-bg-color-inset: #45404F;
   --md-theme-quote-border: 2px solid #6633EE;
-
+  :deep(blockquote) {
+    background-color: #45404F;
+    border-left: 2px solid #6633EE;
+  }
   :deep(*) {
     word-break: break-word;
     font-size: 16px;

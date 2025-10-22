@@ -247,6 +247,7 @@ const useChatHistory = () => {
 
   // 初始化消息列表
   const initializeMessages = async (conversationId?: string) => {
+    isAnswering.value = false
     const targetId = conversationId || currentConversationId.value
     if (!targetId) {
       // 新会话显示欢迎消息
@@ -615,6 +616,7 @@ const useChat = () => {
         },
         params: { id: data },
       })
+      isAnswering.value = false
     }
     catch (error) {
       console.log(error)
