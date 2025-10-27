@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 
-const emits = defineEmits(['setting', 'contact', 'logout'])
+const emits = defineEmits(['setting', 'profile', 'logout'])
 
 const { userInfo } = storeToRefs(useUserStore())
 
@@ -36,6 +36,19 @@ const nickname = computed(() => userInfo.value?.nickname || `${email.value}`)
     >
       <UiIcon icon="telegram-alt" width="16" class="mr-[12px]" />联系我们
     </NuxtLink> -->
+    <NuxtLink
+      class="cursor-pointer px-[12px] py-[8px] text-[14px] text-[#fff] transition-all"
+      rounded="6px"
+      hover:bg="gray-600"
+      flex="~ items-center"
+      to="/profile"
+    >
+      <UiIcon
+        icon="settings-1-line"
+        width="16"
+        class="mr-[12px]"
+      />View Profile
+    </NuxtLink>
     <NuxtLink
       class="cursor-pointer px-[12px] py-[8px] text-[14px] text-[#fff] transition-all"
       rounded="6px"
