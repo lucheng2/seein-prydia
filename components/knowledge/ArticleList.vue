@@ -41,29 +41,24 @@ watch(
         @click="handleSelectArticle(article)"
       >
         <div class="article-item__title">{{ article.title }}</div>
-        <!-- <div v-if="article.summary" class="article-item__summary">
-                    {{ article.summary }}
-                </div>
-                <div v-if="article.createTime" class="article-item__time">
-                    {{ new Date(article.createTime).toLocaleDateString() }}
-                </div> -->
       </div>
+    </div>
 
-      <!-- 加载状态 -->
-
-      <!-- 空状态 -->
-      <div v-if="!loading && articles.length === 0" class="empty-state">
+    <template v-if="!loading && articles.length === 0">
+      <div class="empty-state">
         <div class="empty-icon">📚</div>
         <div class="empty-text">No articles available</div>
       </div>
+    </template>
 
-      <div v-else-if="loading" class="loading-item-2">
+    <template v-else-if="loading">
+      <div class="loading-item-2">
         <el-icon class="is-loading">
           <ElIconLoading />
         </el-icon>
         <span>Loading...</span>
       </div>
-    </div>
+    </template>
   </div>
 </template>
 
